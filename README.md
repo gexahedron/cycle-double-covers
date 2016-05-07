@@ -1,5 +1,7 @@
-# Code for different unsolved problems related to cycle double cover conjecture
-Main references:
+# Cycle double cover conjecture
+Here you will find code for different unsolved problems related to cycle double cover conjecture.
+
+## Main references
 - [Cycle double cover conjecture](http://www.openproblemgarden.org/op/cycle_double_cover_conjecture)
 - [5-flow conjecture](http://www.openproblemgarden.org/op/5_flow_conjecture)
 - [The Berge-Fulkerson conjecture](http://www.openproblemgarden.org/op/the_berge_fulkerson_conjecture)
