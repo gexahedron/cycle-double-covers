@@ -1,6 +1,8 @@
 # Cycle double cover conjecture
 
+[![DOI](https://zenodo.org/badge/22121/gexahedron/cycle-double-covers.svg)](https://zenodo.org/badge/latestdoi/22121/gexahedron/cycle-double-covers)
 [![Join the chat at https://gitter.im/gexahedron/cycle-double-covers](https://badges.gitter.im/gexahedron/cycle-double-covers.svg)](https://gitter.im/gexahedron/cycle-double-covers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Here you will find code for different unsolved problems related to cycle double cover conjecture.
 
 ## Main references
