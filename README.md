@@ -9,3 +9,7 @@ Here you will find code for different unsolved problems related to cycle double 
 - [Bouchet's 6-flow conjecture](http://www.openproblemgarden.org/op/bouchets_6_flow_conjecture)
 - [Unit vector flows](http://www.openproblemgarden.org/op/unit_vector_flows)
 - [The three 4-flows conjecture](http://www.openproblemgarden.org/op/three_4_flows_conjecture)
+
+## License
+
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
