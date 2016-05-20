@@ -1,2 +1,2 @@
 language: cpp
-script: cd three_4_flows/ && tmake
+script: cd three_4_flows/ && make
