@@ -5,6 +5,9 @@
  * Modified by: Nikolay Ulyanov (ulyanick@gmail.com)
  */
 
+#ifndef _UTIL_H
+#define _UTIL_H
+
 #pragma once
 
 #include <iostream>
@@ -26,7 +29,7 @@ typedef unsigned int GRAPH[MAXN][REG]; // adjacency list
 
 /*************************** Useful auxiliary methods ***************************/
 
-void AddEdge(GRAPH graph, unsigned int adj[], unsigned int v, unsigned int w) {
+inline void AddEdge(GRAPH graph, unsigned int adj[], unsigned int v, unsigned int w) {
     graph[v][adj[v]] = w;
     graph[w][adj[w]] = v;
     ++adj[v];
@@ -36,7 +39,7 @@ void AddEdge(GRAPH graph, unsigned int adj[], unsigned int v, unsigned int w) {
 /**
  * Decodes the code (which is in multicode format) of a graph
  */
-void DecodeMulticode(unsigned char code[], int code_length, int number_of_vertices, GRAPH graph) {
+inline void DecodeMulticode(unsigned char code[], int code_length, int number_of_vertices, GRAPH graph) {
     unsigned int adj[number_of_vertices];
 
     if (number_of_vertices != code[0]) {
@@ -68,7 +71,7 @@ void DecodeMulticode(unsigned char code[], int code_length, int number_of_vertic
 // TODO: DecodeGraph6(unsigned char code[], int code_length, int number_of_vertices, GRAPH graph) {
 //}
 
-void PrintGraph(GRAPH graph, int number_of_vertices) {
+inline void PrintGraph(GRAPH graph, int number_of_vertices) {
     std::cerr << "Printing graph:" << std::endl;
     for (int i = 0; i < number_of_vertices; ++i) {
         std::cerr << i << " :";
@@ -78,3 +81,5 @@ void PrintGraph(GRAPH graph, int number_of_vertices) {
         std::cerr << std::endl;
     }
 }
+
+#endif  /* _UTIL_H */
