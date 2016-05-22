@@ -3,6 +3,7 @@
 [![DOI](https://zenodo.org/badge/22121/gexahedron/cycle-double-covers.svg)](https://zenodo.org/badge/latestdoi/22121/gexahedron/cycle-double-covers)
 [![Join the chat at https://gitter.im/gexahedron/cycle-double-covers](https://badges.gitter.im/gexahedron/cycle-double-covers.svg)](https://gitter.im/gexahedron/cycle-double-covers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/gexahedron/cycle-double-covers.svg?branch=master)](https://travis-ci.org/gexahedron/cycle-double-covers)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
 Here you will find code (in Python and C++) for different unsolved problems related to cycle double cover conjecture.
 
