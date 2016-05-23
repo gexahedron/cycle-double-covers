@@ -144,10 +144,13 @@ bool CheckPartitions() {
         return false;
     }
 
-    if (max_flow_values[0] != 2)
+    if (max_flow_values[0] != 2) {
         return CheckNowhereZeroness(1, max_flow_values[1]) && CheckNowhereZeroness(2, max_flow_values[2]);
-    else
-        return CheckNowhereZeroness(0, max_flow_values[0]) && CheckNowhereZeroness(1, max_flow_values[1]) && CheckNowhereZeroness(2, max_flow_values[2]);
+    } else {
+        return CheckNowhereZeroness(0, max_flow_values[0]) &&
+            CheckNowhereZeroness(1, max_flow_values[1]) &&
+            CheckNowhereZeroness(2, max_flow_values[2]);
+    }
 }
 
 bool BuildPartitions(int edge_index) {
@@ -252,10 +255,10 @@ void ParseArgs(int argc, char** argv) {
 }
 
 void ReadGraphs(unsigned long long int& number_of_graphs_read) {
-    int codelength = number_of_vertices * REG / 2 + number_of_vertices;
-    unsigned char code[codelength];
-    while (fread(code, sizeof(unsigned char), codelength, stdin)) {
-        DecodeMulticode(code, codelength, number_of_vertices, graph);
+    int code_length = number_of_vertices * REG / 2 + number_of_vertices;
+    unsigned char code[code_length];
+    while (fread(code, sizeof(unsigned char), code_length, stdin)) {
+        DecodeMulticode(code, code_length, number_of_vertices, graph);
         ++number_of_graphs_read;
         if (number_of_graphs_to_skip >= number_of_graphs_read) {
             continue;
