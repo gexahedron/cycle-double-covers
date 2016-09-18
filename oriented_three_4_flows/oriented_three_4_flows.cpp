@@ -216,7 +216,7 @@ bool BuildPartitions(int edge_index) {
 
 bool CompareProfiles(int i, int j) {
     for (int partition = 0; partition < number_of_partitions; ++partition) {
-        if (profiles[i][partition] < profiles[j][partition]) { 
+        if (profiles[i][partition] < profiles[j][partition]) {
             return false;
         }
     }
@@ -292,7 +292,7 @@ bool HasPartitionedFlows() {
 
         has_profile[profile] = BuildPartitions(0);
         for (int partition = 0; partition < number_of_partitions; ++partition) {
-            cerr << profiles[profile][partition]; 
+            cerr << profiles[profile][partition];
         }
         cerr << ": ";
         if (has_profile[profile])

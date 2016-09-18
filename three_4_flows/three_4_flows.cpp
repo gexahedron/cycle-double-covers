@@ -238,7 +238,7 @@ bool HasPartitionedFlows() {
         }
         if (has_profile[profile]) {
             for (int partition = 0; partition < number_of_partitions; ++partition) {
-                cerr << profiles[profile][partition]; 
+                cerr << profiles[profile][partition];
             }
             cerr << ":     ; ";
             continue;
@@ -267,7 +267,7 @@ bool HasPartitionedFlows() {
 
         has_profile[profile] = BuildPartitions(0);
         for (int partition = 0; partition < number_of_partitions; ++partition) {
-            cerr << profiles[profile][partition]; 
+            cerr << profiles[profile][partition];
         }
         cerr << ": ";
         if (has_profile[profile])
