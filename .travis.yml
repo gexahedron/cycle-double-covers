@@ -10,4 +10,4 @@ install:
 - sudo apt-get install -qq g++-4.8
 - export CXX="g++-4.8"
 
-script: cd three_4_flows/ && make
+script: cd three_4_flows/ && make && cd ../oriented_three_4_flows/ && make && cd ../bipartizing_matchings/ && make
