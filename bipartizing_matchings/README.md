@@ -19,5 +19,7 @@ It seems likely, that:
 
 
 [1] H. Fleischner, (Some of) the many uses of Eulerian graphs in graph theory (plus some applications), Discrete Math. 230 (2001) 23–43.
+
 [2] H. Fleischner, Bipartizing matchings and Sabidussi’s compatibility conjecture, Discrete Math. 244 (2002) 77–82.
+
 [3] A. Hoffman-Ostenhoff, A counterexample to the bipartizing matching conjecture, Discrete Math. 307 (2007), 2723-2733.
