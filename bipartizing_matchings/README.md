@@ -18,6 +18,7 @@ It seems likely, that:
 * if we don't mind having 2 and more circuits, and still having the domination property (every edge lies in the cycle or is connected to it), then there are no counterexamples (checked for all snarks with upto and including 30 vertices).
 
 
+##References
 [1] H. Fleischner, (Some of) the many uses of Eulerian graphs in graph theory (plus some applications), Discrete Math. 230 (2001) 23–43.
 
 [2] H. Fleischner, Bipartizing matchings and Sabidussi’s compatibility conjecture, Discrete Math. 244 (2002) 77–82.
