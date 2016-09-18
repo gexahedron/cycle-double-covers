@@ -17,6 +17,15 @@ If we still ask for D to be a dominating circuit, then there is a counterexample
 It seems likely, that:
 * if we don't mind having 2 and more circuits, and still having the domination property (every edge lies in the cycle or is connected to it), then there are no counterexamples (checked for all snarks with upto and including 30 vertices).
 
+In any case, we also have the following result: if 3dBMs is true, then we also can construct an oriented 7-cycle 4-cover of the graph.
+
+Proof: each bipartizing matching gives us a 3-flow:
+* 1 for edges in the dominating cycle
+* 2 for edges not in the matching
+So, equivalently, we have an oriented 3-cycle double cover of edges of dominating cycle and edges not in the matching, where the dominating cycle is one of the layers. If we combine all of this, we get a 9-cycle:
+* 6-cover of dominating cycle
+* 4-cover of other edges
+With 3 layers consisting exclusively of dominating cycle edges. We remove 2 layers and thus we get an oriented 7-cycle 4-cover.
 
 ##References
 [1] H. Fleischner, (Some of) the many uses of Eulerian graphs in graph theory (plus some applications), Discrete Math. 230 (2001) 23–43.
