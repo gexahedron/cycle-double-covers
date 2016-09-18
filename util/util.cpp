@@ -69,7 +69,7 @@ bool DecodeGraph6(FILE* input, int& number_of_vertices, int& number_of_edges, GR
 
 void ReadGraphs(const function<bool()>& experiment, int number_of_graphs_to_skip, int& number_of_vertices, int& number_of_edges, GRAPH graph) {
     unsigned long long int number_of_graphs_read = 0;
-
+    unsigned long long int number_of_graphs_with_failed_experiment = 0;
     while (DecodeNextGraph(stdin, number_of_vertices, number_of_edges, graph)) {
         ++number_of_graphs_read;
         if (number_of_graphs_to_skip >= number_of_graphs_read) {
@@ -77,11 +77,14 @@ void ReadGraphs(const function<bool()>& experiment, int number_of_graphs_to_skip
         }
         cerr << "g" << number_of_graphs_read << "\t";
 
-        experiment();
+        if (!experiment()) {
+            ++number_of_graphs_with_failed_experiment;
+        }
     }
 
     cerr << "Fin" << endl;
     cerr << "Read " << number_of_graphs_read << " graphs" << endl;
+    cerr << "Found " << number_of_graphs_with_failed_experiment << " graphs with failed experiment" << endl;
 }
 
 void ParseArgs(int argc, char** argv, int& number_of_graphs_to_skip) {
