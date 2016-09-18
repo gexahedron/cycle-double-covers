@@ -28,7 +28,7 @@ Use this file as an input to the program:
 
 `./three_4_flows 22 < Generated_graphs.22.05.sn.cyc4`
 
-##Main result here (as of May 20, 2016)
+##Main result here (May 20, 2016)
 The conjecture about 233-flows, stated in the last section in [openproblemgarden](http://www.openproblemgarden.org/op/three_4_flows_conjecture) text is already false for Petersen graph (234-flows and 235-flow also don't exist for Petersen graph).
 
 Looks like there do exist 333-flows and 244-flows for all snarks (verified for all snarks with 10, 18, 20, 22, 24, 26 vertices).
