@@ -29,15 +29,15 @@ Use this file as an input to the program:
 `./three_4_flows 22 < Generated_graphs.22.05.sn.cyc4`
 
 ##Main result here (as of May 20, 2016)
-The conjecture about 233-flows, stated in the last section in [openproblemgarden](http://www.openproblemgarden.org/op/three_4_flows_conjecture) text is already false for Petersen graph (234-flows also don't exist for Petersen graph).
+The conjecture about 233-flows, stated in the last section in [openproblemgarden](http://www.openproblemgarden.org/op/three_4_flows_conjecture) text is already false for Petersen graph (234-flows and 235-flow also don't exist for Petersen graph).
 
 Looks like there do exist 333-flows and 244-flows for all snarks (verified for all snarks with 10, 18, 20, 22, 24, 26 vertices).
 
 Also looks like almost all snarks have 233-flows. Here are the exceptions (5-edge connected snarks):
 
-* 10 vertices: g1 (no 233- and no 234- flows)
+* 10 vertices: g1 (no 23k- flows)
 * 18 vertices: none
-* 20 vertices: g1 (no 233- and no 234- flows)
+* 20 vertices: g1 (no 23k- flows)
 * 22 vertices: g6 (no 233-flows)
 * 24 vertices: g7, g12, g26, g29 (no 233-flows)
-* 26 vertices: g62, g67, g88, g89, g93, g98, g109, g119, g138, g143, g166, g177, g189, g191, g203, g246, g277 (no 233-flows); g141 (no 233- and no 234- flows)
+* 26 vertices: g62, g67, g88, g89, g93, g98, g109, g119, g138, g143, g166, g177, g189, g191, g203, g246, g277 (no 233-flows); g141 (no 23k- flows)

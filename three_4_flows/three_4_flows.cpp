@@ -1,7 +1,7 @@
 /*
- * File:   244_flows.cpp
+ * File:   three_4_flows.cpp
  * Main result: the conjecture of 233-flows is wrong for Petersen graph (and no 234-flows; but it has 333-flows and 244-flows)
- * Program checks existence of 233, 333, 234, 334 and 244 -flows for snarks
+ * Program checks existence of 233-, 333-, 234-, 334- and 244- flows for snarks
  * Actually it looks like 333-flows and 244-flows always exist
  *
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
@@ -30,37 +30,46 @@ int number_of_edges;
 int number_of_graphs_to_skip = 0;
 unsigned int edge_index[MAXN][MAXN];
 
+/* The code is too slow to find any solutions here, but still, here are the main candidates for decompositions into abcd- flows */
+//const int number_of_profiles = 4;
+//const int number_of_partitions = 4;
+//int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 2, 3}, {2, 2, 3, 3}, {2, 2, 2, 4}, {2, 2, 3, 4}};
+
+const int number_of_profiles = 6;
+const int number_of_partitions = 3;
+int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {3, 3, 3}, {2, 3, 4}, {3, 3, 4}, {2, 3, 5}, {2, 4, 4}};
+
 int vertices[REG * MAXN / 2][2];
 int default_trackback_to = REG * MAXN;
 int trackback_to;
 int vertex_last_edge_index[MAXN];
-int partition_num[REG * MAXN / 2];
-int partition_degs[MAXN][3];
+int partition_num[REG * MAXN / 2][2];
+int partition_degs[MAXN][number_of_partitions];
 int number_of_flowed_edges_at_vertex[MAXN];
 int edge_flows[REG * MAXN / 2];
 int vertex_flows[MAXN];
-int stored_edge_flows[MAXN][3];
-int max_flow_values[3];
+int max_flow_values[number_of_partitions];
 
-const int number_of_profiles = 5;
-int profiles[number_of_profiles][3] = {{2, 3, 3}, {3, 3, 3}, {2, 3, 4}, {3, 3, 4}, {2, 4, 4}};
 bool has_profile[number_of_profiles];
 
 
 /********************************** Functions *************************************/
 
-bool BuildFlow(int partition, int edge_index, int max_flow_value) {
+bool BuildFlow(int partition, int edge_index) {
     if (edge_index >= number_of_edges) {
-        for (int e = 0; e < number_of_edges; ++e) {
-            stored_edge_flows[e][partition] = edge_flows[e];
-        }
         return true;
     }
-    if (partition_num[edge_index] == partition) {
-        return BuildFlow(partition, edge_index + 1, max_flow_value);
+    if (partition_num[edge_index][0] == partition) {
+        return BuildFlow(partition, edge_index + 1);
+    }
+    if (number_of_partitions == 4) {
+        if (partition_num[edge_index][1] == partition) {
+            return BuildFlow(partition, edge_index + 1);
+        }
     }
 
-    int right_bound = max_flow_value - 1;
+
+    int right_bound = max_flow_values[partition] - 1;
     int left_bound = -right_bound;
 
     int v1 = vertices[edge_index][0];
@@ -86,10 +95,10 @@ bool BuildFlow(int partition, int edge_index, int max_flow_value) {
         bool all_is_good = (
             (vertex_flows[v1] == 0 || number_of_flowed_edges_at_vertex[v1] != partition_degs[v1][partition]) &&
             (vertex_flows[v2] == 0 || number_of_flowed_edges_at_vertex[v2] != partition_degs[v2][partition]) &&
-            (abs(vertex_flows[v1]) < max_flow_value || number_of_flowed_edges_at_vertex[v1] != partition_degs[v1][partition] - 1) &&
-            (abs(vertex_flows[v2]) < max_flow_value || number_of_flowed_edges_at_vertex[v2] != partition_degs[v2][partition] - 1)
+            (abs(vertex_flows[v1]) < max_flow_values[partition] || number_of_flowed_edges_at_vertex[v1] != partition_degs[v1][partition] - 1) &&
+            (abs(vertex_flows[v2]) < max_flow_values[partition] || number_of_flowed_edges_at_vertex[v2] != partition_degs[v2][partition] - 1)
         );
-        if (all_is_good && BuildFlow(partition, edge_index + 1, max_flow_value)) {
+        if (all_is_good && BuildFlow(partition, edge_index + 1)) {
             return true;
         }
 
@@ -102,7 +111,7 @@ bool BuildFlow(int partition, int edge_index, int max_flow_value) {
     return false;
 }
 
-bool CheckNowhereZeroness(int partition, int max_flow_value) {
+bool CheckNowhereZeroness(int partition) {
     for (int e = 0; e < number_of_edges; ++e) {
         edge_flows[e] = 0;
     }
@@ -110,23 +119,28 @@ bool CheckNowhereZeroness(int partition, int max_flow_value) {
         vertex_flows[v] = 0;
         number_of_flowed_edges_at_vertex[v] = 0;
     }
-    return BuildFlow(partition, 0, max_flow_value);
+    return BuildFlow(partition, 0);
 }
 
 bool CheckPartitions() {
-    for (int i = 0; i < 3; ++i) {
+    for (int partition = 0; partition < number_of_partitions; ++partition) {
         for (int v = 0; v < number_of_vertices; ++v) {
-            partition_degs[v][i] = 3;
+            partition_degs[v][partition] = REG;
         }
     }
     for (int e = 0; e < number_of_edges; ++e) {
-        int partition = partition_num[e];
+        int partition = partition_num[e][0];
         --partition_degs[vertices[e][0]][partition];
         --partition_degs[vertices[e][1]][partition];
+        if (number_of_partitions == 4) {
+            int partition2 = partition_num[e][1];
+            --partition_degs[vertices[e][0]][partition2];
+            --partition_degs[vertices[e][1]][partition2];
+        }
     }
-    for (int i = 0; i < 3; ++i) {
+    for (int partition = 0; partition < number_of_partitions; ++partition) {
         for (int v = 0; v < number_of_vertices; ++v) {
-            if (partition_degs[v][i] == 1) {
+            if (partition_degs[v][partition] == 1) {
                 trackback_to = min(trackback_to, vertex_last_edge_index[v]);
             }
         }
@@ -134,7 +148,7 @@ bool CheckPartitions() {
 
     if (max_flow_values[0] == 2) {
         for (int v = 0; v < number_of_vertices; ++v) {
-            if (partition_degs[v][0] == 3) {
+            if (partition_degs[v][0] == REG) {
                 trackback_to = min(trackback_to, vertex_last_edge_index[v]);
             }
         }
@@ -144,28 +158,50 @@ bool CheckPartitions() {
         return false;
     }
 
-    if (max_flow_values[0] != 2) {
-        return CheckNowhereZeroness(1, max_flow_values[1]) && CheckNowhereZeroness(2, max_flow_values[2]);
-    } else {
-        return CheckNowhereZeroness(0, max_flow_values[0]) &&
-            CheckNowhereZeroness(1, max_flow_values[1]) &&
-            CheckNowhereZeroness(2, max_flow_values[2]);
+    for (int partition = 0; partition < number_of_partitions; ++partition) {
+        if (!CheckNowhereZeroness(partition)) {
+            return false;
+        }
     }
+    return true;
 }
 
 bool BuildPartitions(int edge_index) {
     if (edge_index >= number_of_edges)
         return CheckPartitions();
-    for (int i = 0; i < 3; ++i) {
-        partition_num[edge_index] = i;
-        if (BuildPartitions(edge_index + 1)) {
-            return true;
+    for (int partition = 0; partition < number_of_partitions; ++partition) {
+        partition_num[edge_index][0] = partition;
+        if (number_of_partitions == 4) {
+            for (int partition2 = partition + 1; partition2 < number_of_partitions; ++partition2) {
+                partition_num[edge_index][1] = partition2;
+
+                if (BuildPartitions(edge_index + 1)) {
+                    return true;
+                }
+                if (trackback_to < edge_index)
+                    return false;
+                trackback_to = default_trackback_to;
+
+            }
+        } else {
+            if (BuildPartitions(edge_index + 1)) {
+                return true;
+            }
+            if (trackback_to < edge_index)
+                return false;
+            trackback_to = default_trackback_to;
         }
-        if (trackback_to < edge_index)
-            return false;
-        trackback_to = default_trackback_to;
     }
     return false;
+}
+
+bool CompareProfiles(int i, int j) {
+    for (int partition = 0; partition < number_of_partitions; ++partition) {
+        if (profiles[i][partition] < profiles[j][partition]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool HasPartitionedFlows() {
@@ -195,24 +231,27 @@ bool HasPartitionedFlows() {
 
     for (int profile = 0; profile < number_of_profiles; ++profile) {
         for (int i = 0; i < profile; ++i) {
-            if (has_profile[i] && profiles[profile][0] >= profiles[i][0] && profiles[profile][1] >= profiles[i][1] && profiles[profile][2] >= profiles[i][2]) {
+            if (has_profile[i] && CompareProfiles(profile, i)) {
                 has_profile[profile] = true;
                 break;
             }
         }
         if (has_profile[profile]) {
-            cerr << profiles[profile][0] << profiles[profile][1] << profiles[profile][2] << ":     ; ";
+            for (int partition = 0; partition < number_of_partitions; ++partition) {
+                cerr << profiles[profile][partition]; 
+            }
+            cerr << ":     ; ";
             continue;
         }
 
-        for (int i = 0; i < 3; ++i) {
-            max_flow_values[i] = profiles[profile][i];
+        for (int partition = 0; partition < number_of_partitions; ++partition) {
+            max_flow_values[partition] = profiles[profile][partition];
         }
         trackback_to = default_trackback_to;
 
-        for (int i = 0; i < 3; ++i) {
+        for (int partition = 0; partition < number_of_partitions; ++partition) {
             for (int v = 0; v < number_of_vertices; ++v) {
-                partition_degs[v][i] = 3;
+                partition_degs[v][partition] = REG;
             }
         }
 
@@ -222,11 +261,15 @@ bool HasPartitionedFlows() {
         }
         for (int e = 0; e < number_of_edges; ++e) {
             edge_flows[e] = 0;
-            partition_num[e] = -1;
+            partition_num[e][0] = -1;
+            partition_num[e][1] = -1;
         }
 
         has_profile[profile] = BuildPartitions(0);
-        cerr << profiles[profile][0] << profiles[profile][1] << profiles[profile][2] << ": ";
+        for (int partition = 0; partition < number_of_partitions; ++partition) {
+            cerr << profiles[profile][partition]; 
+        }
+        cerr << ": ";
         if (has_profile[profile])
             cerr << "YES!; ";
         else
@@ -235,44 +278,8 @@ bool HasPartitionedFlows() {
     cerr << endl;
 }
 
-void ParseArgs(int argc, char** argv) {
-    if (argc < 2 || argc > 3) {
-        cerr << "Error: invalid number of arguments" << endl;
-        cerr << "Usage: " << argv[0] << " <number_of_vertices>" << endl;
-        exit(1);
-    } else {
-        number_of_vertices = atoi(argv[1]);
-        number_of_edges = REG * number_of_vertices / 2;
-        if (number_of_vertices > MAXN) {
-            cerr << "Number of vertices is too big (limit is " << MAXN << ")" << endl;
-            exit(0);
-        }
-
-        if (argc >= 3) {
-            number_of_graphs_to_skip = atoi(argv[2]);
-        }
-    }
-}
-
-void ReadGraphs(unsigned long long int& number_of_graphs_read) {
-    int code_length = number_of_vertices * REG / 2 + number_of_vertices;
-    unsigned char code[code_length];
-    while (fread(code, sizeof(unsigned char), code_length, stdin)) {
-        DecodeMulticode(code, code_length, number_of_vertices, graph);
-        ++number_of_graphs_read;
-        if (number_of_graphs_to_skip >= number_of_graphs_read) {
-            continue;
-        }
-        cerr << "g" << number_of_graphs_read << "\t";
-        HasPartitionedFlows();
-    }
-}
-
 int main(int argc, char** argv) {
-    ParseArgs(argc, argv);
-    unsigned long long int number_of_graphs_read = 0;
-    ReadGraphs(number_of_graphs_read);
-    cerr << "Fin" << endl;
-    cerr << "Read " << number_of_graphs_read << " graphs" << endl;
+    ParseArgs(argc, argv, number_of_graphs_to_skip);
+    ReadGraphs(HasPartitionedFlows, number_of_graphs_to_skip, number_of_vertices, number_of_edges, graph);
     return(EXIT_SUCCESS);
 }

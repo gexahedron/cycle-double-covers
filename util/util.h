@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <cstdio>
+#include <functional>
 
 /********************************** Defines *************************************/
 
@@ -31,9 +32,16 @@ void AddEdge(GRAPH graph, unsigned int adj[], unsigned int v, unsigned int w);
 /**
  * Decodes the code (which is in multicode format) of a graph
  */
-void DecodeMulticode(unsigned char code[], int code_length, int number_of_vertices, GRAPH graph);
+bool DecodeNextGraph(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph);
 
-// TODO: void DecodeGraph6(unsigned char code[], int code_length, int number_of_vertices, GRAPH graph);
+/**
+ * Decodes the code (which is in graph6 format) of a graph
+ */
+bool DecodeGraph6(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph);
+
+void ReadGraphs(const std::function<bool()>& experiment, int number_of_graphs_to_skip, int& number_of_vertices, int& number_of_edges, GRAPH graph);
+
+void ParseArgs(int argc, char** argv, int& number_of_graphs_to_skip);
 
 void PrintGraph(GRAPH graph, int number_of_vertices);
 
