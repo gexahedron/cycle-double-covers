@@ -20,7 +20,7 @@ void AddEdge(GRAPH graph, unsigned int adj[], unsigned int v, unsigned int w) {
     ++adj[w];
 }
 
-bool DecodeNextGraph(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph) {
+bool DecodeNextGraphInMulticode(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph) {
     unsigned char code_for_number_of_vertices[1];
     if (!fread(code_for_number_of_vertices, sizeof(unsigned char), 1, input)) {
         return false;
@@ -70,7 +70,7 @@ bool DecodeGraph6(FILE* input, int& number_of_vertices, int& number_of_edges, GR
 void ReadGraphs(const function<bool()>& experiment, int number_of_graphs_to_skip, int& number_of_vertices, int& number_of_edges, GRAPH graph) {
     unsigned long long int number_of_graphs_read = 0;
     unsigned long long int number_of_graphs_with_failed_experiment = 0;
-    while (DecodeNextGraph(stdin, number_of_vertices, number_of_edges, graph)) {
+    while (DecodeNextGraphInMulticode(stdin, number_of_vertices, number_of_edges, graph)) {
         ++number_of_graphs_read;
         if (number_of_graphs_to_skip >= number_of_graphs_read) {
             continue;
