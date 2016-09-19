@@ -6,9 +6,9 @@ To compile the code just print "make" in your console (you need g++ compiler).
 To run this code you need to specify the number of vertices in the snarks and provide the file with snarks in multicode format.
 
 ##How to generate the file with snarks
-Download the code from [here](http://caagt.ugent.be/cubic/) (and for this you would also need to follow the installation instructions, which include downloading [nauty](http://cs.anu.edu.au/~bdm/nauty/) and copying files from nauty).
+Download the code of snarkhunter [2] from [here](http://caagt.ugent.be/cubic/) (and for this you would also need to follow the installation instructions, which include downloading [nauty](http://pallini.di.uniroma1.it/) (you can also find older versions here: http://cs.anu.edu.au/~bdm/nauty/) and copying files from nauty [1]).
 
-Then you can generate snkars in multicode format, e. g., if you want 4-edge connected snarks (also known as weak snarks) with 22 vertices:
+Then you can generate snarks in multicode format, e. g., if you want 4-edge connected snarks (also known as weak snarks) with 22 vertices:
 
 `./snarkhunter-64 22 4 s S C4`
 
@@ -41,3 +41,8 @@ Also looks like almost all snarks have 233-flows. Here are the exceptions (5-edg
 * 22 vertices: g6 (no 233-flows)
 * 24 vertices: g7, g12, g26, g29 (no 233-flows)
 * 26 vertices: g62, g67, g88, g89, g93, g98, g109, g119, g138, g143, g166, g177, g189, g191, g203, g246, g277 (no 233-flows); g141 (no 23k- flows)
+
+##References
+[1] McKay, B.D. and Piperno, A., Practical Graph Isomorphism, II, Journal of Symbolic Computation, 60 (2014), pp. 94-112.
+
+[2] G. Brinkmann, J. Goedgebeur and B.D. McKay, Generation of Cubic graphs, Discrete Mathematics and Theoretical Computer Science, 13(2):69-80, 2011.
