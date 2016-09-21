@@ -16,6 +16,63 @@ Here you will find code (in Python and C++) for different unsolved problems rela
 - [Unit vector flows](http://www.openproblemgarden.org/op/unit_vector_flows)
 - [The three 4-flows conjecture](http://www.openproblemgarden.org/op/three_4_flows_conjecture)
 
+# Upcoming code for:
+* oriented 5-cycle double cover conjecture (o5cdc)
+* strong Petersen colouring conjecture
+* (brand new!) oriented 6-cycle 4-cover conjecture (o6c4c) (what's new here is just the 'oriented' part; verified for all snarks upto and including 30 vertices)
+* oriented 9-cycle 6-cover conjecture (o9c6c) (but not for Petersen graph, because it doesn't have any 9-cycle 6-cover and it's kind of easy to understand why (TODO: write the proof): we have 6 different perfect matchings (which are all used in o6c4c solution)
+* investigations into common nowhere-zero 5-flows which come from 2BMs, 3BMs, o5cdc, o6c4c
+* maybe some code for conjectures related to signed graphs
+
+# Also upcoming:
+* oriented 10-cycle 6-cover for Petersen graph (there's plenty of solutions, actually)
+* diagram of all related theorems and conjectures, which i could find in the literature
+
+# Actually, one of 10-cycle 6-covers for Petersen graph
+Printing graph: 
+
+0 : 4 6 8
+
+1 : 5 6 9
+
+2 : 4 7 9
+
+3 : 5 7 8
+
+4 : 0 2 5
+
+5 : 1 3 4
+
+6 : 0 1 7
+
+7 : 2 3 6
+
+8 : 0 3 9
+
+9 : 1 2 8
+
+cycle 0 (colour 0): 0 4 2 7 3 5 1 6 
+
+cycle 1 (colour 1): 0 4 2 7 3 5 1 9 8 
+
+cycle 2 (colour 2): 0 4 2 7 3 8 9 1 6 
+
+cycle 3 (colour 3): 0 4 5 1 6 7 2 9 8 
+
+cycle 4 (colour 4): 0 4 5 3 7 6 1 9 8 
+
+cycle 5 (colour 5): 0 4 5 3 8 9 2 7 6 
+
+cycle 6 (colour 6): 0 6 7 3 8 
+
+cycle 7 (colour 6): 1 5 4 2 9 
+
+cycle 8 (colour 7): 0 6 1 9 2 4 5 3 8 
+
+cycle 9 (colour 8): 0 6 7 2 9 1 5 3 8 
+
+cycle 10 (colour 9): 1 5 4 2 9 8 3 7 6 
+
 ## License
 
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
