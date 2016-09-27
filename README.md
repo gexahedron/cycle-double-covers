@@ -76,3 +76,6 @@ cycle 10 (colour 9): 1 5 4 2 9 8 3 7 6
 ## License
 
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
+
+## Diagram of conjectures
+![Diagram of conjectures](/images/full_scheme.png)
