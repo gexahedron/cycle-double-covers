@@ -26,7 +26,7 @@ Here you will find code (in Python and C++) for different unsolved problems rela
 
 # Also upcoming:
 * oriented 10-cycle 6-cover for Petersen graph (there's plenty of solutions, actually)
-* diagram of all related theorems and conjectures, which i could find in the literature
+* diagram of all related theorems and conjectures, which i could find in the literature (actually i've uploaded the diagram, but now there's a lot of work of adding some last conjectures and it needs helpful notation)
 
 # Actually, one of 10-cycle 6-covers for Petersen graph
 Printing graph: 
