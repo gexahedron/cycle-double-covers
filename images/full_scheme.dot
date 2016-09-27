@@ -1,0 +1,498 @@
+digraph labelings {
+    graph [fontname = "georgia"];
+    node [fontname = "georgia"];
+    edge [fontname = "georgia"];
+    graph [overlap=false];
+    ranksep=0.1;
+    compound=true;
+    rankdir="LR";
+    node [color=lightblue, style=filled, shape=Mrecord];
+
+    subgraph important_thms {
+        node [color="black", fillcolor="khaki3"]
+        fct [label=<<B>4-colour theorem</B>>]
+        snark_thm [label=<<B>Snark theorem</B>>]
+        PPDC [label=<<B>PPDC</B>>];
+
+        node [style="filled,rounded", shape=record];
+        nz6 [label=<{<B>nz6</B> | <B>(4, 3)-flow parity-pair-cover</B>}>]
+    }
+
+    subgraph thms {
+        node [style="filled", color="black", fillcolor="khaki"];
+        cordial
+
+        schreier [label="Schreier coset graphs == 2k-regular graphs"];
+
+        SPCD
+        SCD [label="FKGM SCD"]
+        SPD [label="Donald SPD"]
+        SPDC
+        WC
+        WP
+        LC
+        LP
+        SCEC
+        c4c
+        c6c
+        oc6c
+        oc8c
+        sc_more2_c [label="sc≥2c"]
+        nz8
+        seven_c4c [label="7c4c"]
+        ten_c6c [label="10c6c"]
+        o11c6c
+        c10c
+        ct [label="cycles+triangles"]
+        ff [label="fractional faithful cycle cover"]
+        short_25_15 [label="25/15 (3-cycle cover)"]
+        short_44_27 [label="44/27 (3-cycle cover)"]
+        short_cubic_34_21 [label="cubic 34/21 (3-cycle cover)"]
+        fano6 [label="Fano 6-flow"]
+        I8
+        z6 [label="ℤ6-connectivity"]
+        weak_z3 [label="every 6-edge-connected graph is ℤ3-connected"]
+        nz12_signed [label="nz12 for signed graphs (DeVos)"]
+        cubic_nz4_no_petersen [label="nz4 for cubic graphs without Petersen minor"]
+        weak_nz3 [label="weak nz3 (Thomassen)"]
+        nz4_thm [label="nz4 for 4-edge-connected graphs"]
+
+        node [style="dashed,filled"];
+        inf_beta [label="β for infinite trees"];
+    }
+
+    subgraph important_conjectures {
+        node [fillcolor="lightblue3"]
+        beta [label=<<B>β, graceful</B>>]
+        seq [label=<<B>sequential</B>>]
+
+        GH [label=<<B>GH for 2m-regular graphs</B>>];
+
+        bf [label=<<B>6c4c, Berge-Fulkerson</B>>]
+        petersen [label=<<B>Petersen colouring</B>>]
+        nz5 [label=<<B>nz5</B>>]
+        dc [label=<<B>dominating circuit <BR/> (and 12 other equivalent formulations)</B>>]
+        short_21_15 [label=<<B>21/15, shortest cycle cover</B>>]
+        
+        Hadwiger [label=<<B>Hadwiger</B>>]
+
+        node [color="black", style="filled,rounded", shape=record];
+        cdc [label=<{<B>cdc </B> | <B> formulation for matroids</B>}>]
+    }
+
+    subgraph records {
+        node [style="filled,rounded", color="black", fillcolor="lightblue", shape=record];
+        rho_sigma [label=<{ρ<SUP>++</SUP>bi | σ<SUP>++</SUP>}>];
+        rho_bi [label=<{ρ bigraceful | Kotzig for K<SUB>n, n</SUB>}>];
+        rho [label=<{ρ | Kotzig for K<SUB>n</SUB>}>];
+
+        five_cdc [label=<{5cdc | (4, 4)-flow even-disjoint-pair-cover}>]
+        three_pp [label=<{(3, 3)-flow parity-pair-cover | (3, 3)-flow even-disjoint-pair-cover}>]
+        fano4 [label=<{Fano 4-flow | Fan-Raspaud}>]
+    }
+
+    subgraph cluster_alpha {
+        {
+            node [style="dashed,filled", color="red", fillcolor="lightblue"];
+            alpha [label="α"];
+        }
+        {
+            node [style="dashed,filled", color="black", fillcolor="lightblue"];
+            alpha_deg3 [label="α for max deg = 3"];
+        }
+    }
+
+    beta_plus_seq [label=<β<SUP>+</SUP>seq>];
+    alpha -> beta_plus_seq;
+    beta_plus_seq -> seq;
+    beta_plus [label=<β<SUP>+</SUP>>];
+    beta_plus_seq -> beta_plus;
+    semt [label="super-edge-magic total"]
+    harm [label="harmonious"]
+    seq -> semt;
+    semt -> harm;
+    beta_plus -> rho_sigma;
+
+    subgraph cluster_beta {
+        inf_beta
+        beta
+    }
+    beta_plus -> beta;
+    {
+        node [style="dashed,filled", color="black", fillcolor="lightblue"];
+        beta_rot [label="max-edge β-rotatability"]
+    }
+    beta_rot -> beta
+    beta -> cordial
+    harm -> cordial
+
+    subgraph cluster_factorization {
+        rho_bi
+        rho
+        ringelnn [label=<Ringel for K<SUB>n, n</SUB>>];
+        ringel [label=<Ringel for K<SUB>n</SUB>>];
+        one_factor [label=<perfect 1-factorization for K<SUB>2n</SUB>>]
+        subgraph cluster_tpc {
+            //style=invis
+            {
+                edge [dir=none];
+                tpc_odd [label="odd case of tree packing"]
+                tpc_dummy [shape=point, width=0.02, color="black", fillcolor="black"];
+                tpc_even [label="even case of tree packing"]
+                tpc [label="tree packing"]
+                tpc_bip [label="tree packing for bipartite graphs"]
+                //{rank=same tpc_even tpc_odd tpc_dummy}
+                tpc_odd -> tpc_dummy
+                tpc_even -> tpc_dummy
+            }
+            tpc_dummy -> tpc
+            {
+                node [style="filled", color="black", fillcolor="khaki"];
+                mpt [label="matrix packing theorem"]
+            }
+            graceful_tpc [label="graceful tree packing"]
+            graceful_tpc -> tpc
+        }
+    }
+    graceful_tpc -> beta
+    rho_bi -> ringelnn;
+    rho -> ringel;
+
+    harm -> rho_bi;
+    rho_sigma -> rho_bi;
+    rho_pp [label=<ρ<SUP>++</SUP>>];
+    rho_sigma -> rho_pp;
+    sigma_p [label=<σ<SUP>+</SUP>>];
+    rho_sigma -> sigma_p;
+    sigma [label="σ"];
+    beta -> sigma;
+    sigma_p -> sigma;
+    rho_p [label=<ρ<SUP>+</SUP>>];
+    rho_pp -> rho_p;
+    sigma_p -> rho_p;
+    sigma -> rho;
+    rho_p -> rho;
+    {
+        node [style="dashed,filled", color="black", fillcolor="lightblue"];
+        k_beta_p [label=<any-β<SUP>+</SUP>>];
+    }
+    k_beta_p -> beta_plus;
+
+    odd_beta [label="odd-β, odd-graceful"]
+    beta_plus -> odd_beta
+    super_beta [label="super β"]
+    beta -> super_beta
+    subgraph cluster_harmonious {
+        elegant
+        odd_harm [label="odd-harmonious"]
+        harm
+    }
+    seq -> felicitous
+    k_graceful [label="k-graceful"]
+    k_beta_p -> k_graceful
+    k_beta_p -> triangular
+
+    antimagic [label="(a, 1)-edge-antimagic"]
+    seq -> antimagic
+    seq_add [label="1-seq-additive"]
+    seq -> seq_add
+
+    alpha_2 [label=<α<SUB>2</SUB>>]
+    rho_sigma -> alpha_2
+    alpha_2 -> sigma
+
+    twoGH -> GH;
+    twoGH -> bipGH;
+    randomGH -> GH;
+    regular_randomGH -> randomGH;
+    GH -> ringel;
+    bipGH -> ringelnn;
+    twoGH -> schreier;
+    subgraph cluster_ppdc {
+        PPDC
+        RPPDC
+        EPPDC
+        OPPDC
+    }
+    twoGH -> RPPDC;
+    RPPDC -> PPDC [label=<<I>G regular</I>>];
+    EPPDC -> PPDC;
+    scdc -> PPDC;
+    three_d [label="Hoffman-Ostenhof 3-decomposition"]
+    hajos_scd [label="Hajós SCD"]
+    HD -> hajos_scd [label=<<I>G regular</I><BR/>  Δ ≥ (n - 1)/2>]
+    hajos_scd -> SCD [label="Δ = 4"]
+    hajos_scd -> SCC [label=<<I>G even</I>>]
+    hajos_scd -> scdc [label=<<I>G even</I>>]
+    SCC -> SCEC
+    scdc -> SCEC
+    hajos_scd -> SPCD
+    gallai_spd [label="Gallai SPD"] //TODO: , xlabel="[Gallai]"]
+    SPCD -> gallai_spd [label=<<I>G odd</I>>]
+    gallai_spd -> SPD
+    gallai_spd -> PPDC [label=<<I>G odd</I>>]
+    PPDC -> SPDC
+    gallai_spd -> SPDC [label=<<I>n even</I>>]
+    cdc -> c4c
+    cdc -> c6c
+    subgraph into_cdc {
+        edge [color="red"]
+        scdc -> cdc
+        ocdc -> cdc
+        five_cdc -> cdc
+        fcc -> cdc
+        short_21_15 -> cdc
+        ce -> cdc
+        strong_cdc -> cdc
+    }
+    subgraph into_nz5 {
+        edge [color="green"]
+        o5cdc -> nz5
+        three_pp -> nz5
+        kfdc -> nz5
+        sphere_dummy -> nz5
+        z5 -> nz5
+        circular -> nz5
+
+        edge [dir=none]
+        had_mat -> nz5 [label="k = 5"]
+    }
+    scdc -> WC
+    WC -> LC
+    LC -> LP
+    WC -> WP
+    WP -> LP
+    scdc -> sc_more2_c
+    SPDC -> WP
+    {
+        node [style="dashed,filled", color="black", fillcolor="lightblue"];
+        socdc
+        OPPDC
+    }
+    OPPDC -> PPDC
+    socdc -> OPPDC
+    socdc -> scdc
+    socdc -> ocdc
+    ocdc -> oc4c
+    ocdc -> oc10c
+    sab [label="Sabidussi compatibility"]
+    cdc -> sab
+    fff_flows [label="444-flows"]
+    petersen -> five_cdc
+    petersen -> bf
+    petersen -> fff_flows
+    o5cdc -> five_cdc
+    o6c4c -> bf
+    bf -> seven_c4c
+    o6c4c -> oc4c
+    o5cdc -> ocdc
+    subgraph cluster_bm {
+        ct
+        three_d
+        bm [label="modified 2 disjoint BMs"]
+        three_bm [label="3 disjoint BMs"]
+        three_pp
+        bm -> three_pp
+        three_bm -> three_pp
+    }
+    o5cdc -> three_pp
+    three_pp -> five_cdc
+    nz5 -> nz6
+    nz5 -> nz8
+    seven_c4c -> c4c
+    ten_c6c -> c6c
+    o11c6c -> oc6c
+    oc6c -> c6c
+    ocdc -> oc6c
+    c4c -> oc8c
+    ocdc -> oc8c
+    {
+        node [style="dashed,filled", color="black", fillcolor="lightblue"];
+        o9c6c
+        nine_c6c [label="9c6c"]
+    }
+    o9c6c -> nine_c6c
+    o9c6c -> o11c6c
+    nine_c6c -> ten_c6c
+    subgraph cluster_c6c {
+        o9c6c
+        nine_c6c
+        ten_c6c
+        o11c6c
+        oc6c
+        c6c
+    }
+    oc4c -> c4c
+    oc10c -> c10c
+    cdc -> c10c
+    kfdc [label="k-flow graph double cover"]
+    kfdc -> five_cdc
+    kfdc -> fff_flows
+    okfdc [label="oriented k-flow graph double cover"]
+    okfdc -> kfdc
+    okfdc -> o5cdc
+    skfdc [label="stronger k-flow graph double cover"]
+    tff_flows [label="244-flows"]
+    otff_flows [label="oriented 244-flows"]
+    ttf_flows [label="334-flows"]
+    ottf_flows [label="oriented 334-flows"]
+    sokfdc [label="stronger oriented k-flow graph double cover"]
+    ttt_flows [label="333-flows"]
+    thff_flows [label="344-flows"]
+    tff_flows -> thff_flows
+    ttf_flows -> thff_flows
+    thff_flows -> fff_flows
+    skfdc -> ttt_flows
+    skfdc -> tff_flows
+    sokfdc -> otff_flows
+    sokfdc -> ottf_flows
+    ttt_flows -> ttf_flows
+    ottf_flows -> ttf_flows
+    skfdc -> kfdc
+    sokfdc -> okfdc
+    otff_flows -> tff_flows
+    fff_flows -> oc4c
+    subgraph cluster_unit_vector_flow {
+        //style=invis;
+        edge [dir=none];
+        uvf [label="unit vector flow"]
+        sphere_dummy [shape=point, width=0.02, color="green", fillcolor="green"];
+        snz5 [label="sphere nz5 flow"]
+        uvf -> sphere_dummy [color="green"]
+        snz5 -> sphere_dummy [color="green"]
+    }
+    dc -> nz6
+    bm -> dc
+    three_bm -> o7c4c
+    o7c4c -> seven_c4c
+    o7c4c -> oc4c
+    o6c4c -> o7c4c
+    fcc [label="Seymour's faithful cycle cover"]
+    gfcc [label="Goddyn's faithful cycle cover"]
+    gfcc -> fcc
+    nz3 [label="nz3"]
+
+    subgraph cluster_short {
+        short_24_15 [label="24/15 (3-cycle cover)"]
+        short_14_9 [label="14/9 (3-cycle cover)"]
+        short_22_15 [label="22/15 (3-cycle cover)"]
+        short_21_15
+        short_92_57 [label="92/57 (3-cycle cover)"]
+        short_25_15
+        short_44_27
+        short_cubic_34_21
+    }
+    fano5 [label="Fano 5-flow"]
+    bf -> fano4
+    bc [label="Bonisoni-Cariolaro"]
+    bf -> bc
+    bf -> short_22_15
+    nz5 -> short_24_15
+    fano5 -> short_24_15
+    short_22_15 -> short_14_9
+    fano4 -> short_14_9
+    short_14_9 -> short_24_15
+    fano4 -> fano5
+    nz3 -> short_92_57
+    short_92_57 -> short_cubic_34_21
+    short_92_57 -> short_44_27
+    short_cubic_34_21 -> short_44_27
+    short_24_15 -> short_92_57
+    short_44_27 -> short_25_15
+    fano5 -> fano6
+    fano4 -> Mitre
+    z3z3 [label="ℤ3⨉ℤ3"]
+    z10 [label="ℤ10"]
+    z11 [label="ℤ11"]
+    fano4 -> I6
+    I6 -> I7
+    I7 -> I8
+    I6 -> z10
+    fano5 -> I7
+    fano5 -> z10
+    fano5 -> z3z3
+    I6 -> z11
+    Mitre -> z3z3
+    fano5 -> z11
+    ce [label="circular embedding"]
+    strong_cdc [label="strong cdc"]
+    five_ce [label="5-face-colourable circular embedding"]
+    five_ce -> ce
+    five_ce -> o5cdc
+    z3 [label="ℤ3-connectivity"]
+    z3 -> weak_z3
+    z3 -> nz3
+    z5 [label="ℤ5-connectivity"]
+    z6 -> nz6
+    nz6_signed [label="nz6 for signed graphs (Bouchet)"]
+    nz6_signed -> nz12_signed
+    nz3_gds [label="nz3 for any bridgeless graph degree sequence"]
+    tpc -> mpt
+    cut [label="cut-obstacles avoidance"]
+    cut -> ocdc
+    had_mat [label="Hadwiger for regular matroids"]
+    had_mat -> Hadwiger
+    Hadwiger -> had_mat [label="k ≥ 6"]
+    Hadwiger -> fct [label=<k = 4, 5>]
+
+    subgraph cluster_matroid {
+        Flowing
+        Cycling
+    }
+    snark_thm -> fct
+    nz4_no_petersen [label=<nz4 for graphs without Petersen minor<BR/> and formulation for matroids>]
+    nz4_no_petersen -> snark_thm
+    snark_thm -> cubic_nz4_no_petersen
+    subgraph cluster_nz4 {
+        fct
+        snark_thm
+        nz4_thm
+        nz4_no_petersen
+        cubic_nz4_no_petersen
+    }
+    subgraph cluster_nz3 {
+        nz3
+        weak_nz3
+        nz3_gds
+        z3
+        weak_z3
+    }
+    gen_fulk [label=<Generalized Fulkerson:<BR/> (any k-graph has 2k perfect matchings covering each edge exactly twice)>]
+    gen_fulk -> bf [label="k = 3"]
+    planar_k_graphs [label=<Seymour's "each planar k-graph is k-edge-colourable (proven for k = 4, 5)">]
+    k_graphs_no_petersen [label=<Lovász's "each k-graph without Petersen graph minor is k-edge-colourable">]
+    k_graphs_no_petersen -> planar_k_graphs
+    planar_k_graphs -> fct
+    k_regular [label=<k-regular planar graph has chromatic index k <BR/> if and only if <BR/> it is a k-graph (proven for k = 3, 4, 5, 6, 7, 8)>]
+    Cycling -> k_regular
+    Cycling -> nz4_no_petersen
+    k_regular -> fct [label="k = 3"]
+    subgraph cluster_k_graphs {
+        gen_fulk
+        planar_k_graphs
+        k_graphs_no_petersen
+        k_regular
+        subgraph cluster_GH {
+            twoGH [label="2-factor oriented Graham-Häggkvist"];
+            multigraphGH [label="multigraph GH?"];
+            GH
+            bipGH [label="GH for m-regular bipartite graphs"];
+            randomGH [label="Häggkvist's arbitrary set of trees for 2m-regular graphs"];
+            regular_randomGH [label="¿regular Häggkvist's arbitrary set of trees for 2m-regular graphs?"];
+            schreier
+        }
+    }
+    nz3 -> weak_nz3
+    circular [label="circular flow"]
+    circular -> nz3
+    subgraph cluster_faithful {
+        ff
+        fcc
+        gfcc
+    }
+    subgraph cluster_nz5 {
+        nz5
+        nz6_signed
+        nz12_signed
+    }
+}
