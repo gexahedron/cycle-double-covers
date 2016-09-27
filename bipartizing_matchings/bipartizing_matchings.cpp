@@ -21,7 +21,6 @@ using namespace std;
 
 /*************************Defines and global variables*************************/
 const bool PRINT_SOLUTIONS = false;
-unsigned long long int number_of_graphs_read = 0;
 
 GRAPH graph;
 int number_of_vertices;
