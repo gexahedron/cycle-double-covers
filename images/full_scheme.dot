@@ -5,8 +5,6 @@ digraph conjectures {
     // multigraph or hypergraph?
     // TODO: split matrix-packing-theorem into odd and even cases
     // gallai_spd [label="Gallai SPD"] //TODO: , xlabel="[Gallai]"]
-    // problem: from the diagram it looks like nz5 is a consequence of hadwiger conjecture, which is not true?
-        //Hadwiger -> had_mat [label="k ≥ 6"]
     // nowhere zero linear mappings
 
     graph [fontname = "georgia", overlap=false]
@@ -188,7 +186,7 @@ digraph conjectures {
 
     subgraph cluster_bm {
         ct
-        three_d
+        three_d [label="Hoffman-Ostenhof 3-decomposition"]
         bm [label="modified 2 disjoint BMs"]
         three_bm [label="3 disjoint BMs"]
         three_pp
@@ -363,6 +361,8 @@ digraph conjectures {
     circular [label="circular flow"]
 
     sab [label="Sabidussi compatibility"]
+
+    gallai_spd [label="Gallai SPD"]
 
     // dashed edges
     {
@@ -628,7 +628,8 @@ digraph conjectures {
     circular -> nz3
 
     Hadwiger -> fct [label=<k = 4, 5>]
-    had_mat -> Hadwiger
+    had_mat -> Hadwiger [label="k ≥ 6"]
+
     cycling -> planar_k_regular_k_edge_col
     cycling -> nz4_no_petersen
 

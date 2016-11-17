@@ -19,7 +19,7 @@
 <polygon fill="none" stroke="black" points="2029,-192 2029,-301 3290,-301 3290,-192 2029,-192"/>
 </g>
 <g id="clust15" class="cluster"><title>cluster_bm</title>
-<polygon fill="none" stroke="black" points="1428,-666 1428,-885 2195,-885 2195,-666 1428,-666"/>
+<polygon fill="none" stroke="black" points="1390,-666 1390,-885 2195,-885 2195,-666 1390,-666"/>
 </g>
 <g id="clust14" class="cluster"><title>cluster_ppdc</title>
 <polygon fill="none" stroke="black" points="2482,-1431 2482,-1595 2967,-1595 2967,-1431 2482,-1431"/>
@@ -128,14 +128,14 @@
 <text text-anchor="middle" x="2064" y="-103.3" font-family="georgia" font-size="14.00">SPCD</text>
 </g>
 <!-- gallai_spd -->
-<g id="node159" class="node"><title>gallai_spd</title>
-<path fill="lightblue" stroke="black" stroke-width="0" d="M2493.5,-73C2493.5,-73 2552.5,-73 2552.5,-73 2558.5,-73 2564.5,-79 2564.5,-85 2564.5,-85 2564.5,-97 2564.5,-97 2564.5,-103 2558.5,-109 2552.5,-109 2552.5,-109 2493.5,-109 2493.5,-109 2487.5,-109 2481.5,-103 2481.5,-97 2481.5,-97 2481.5,-85 2481.5,-85 2481.5,-79 2487.5,-73 2493.5,-73"/>
-<text text-anchor="middle" x="2523" y="-87.3" font-family="georgia" font-size="14.00">gallai_spd</text>
+<g id="node153" class="node"><title>gallai_spd</title>
+<path fill="lightblue" stroke="black" stroke-width="0" d="M2492,-73C2492,-73 2554,-73 2554,-73 2560,-73 2566,-79 2566,-85 2566,-85 2566,-97 2566,-97 2566,-103 2560,-109 2554,-109 2554,-109 2492,-109 2492,-109 2486,-109 2480,-103 2480,-97 2480,-97 2480,-85 2480,-85 2480,-79 2486,-73 2492,-73"/>
+<text text-anchor="middle" x="2523" y="-87.3" font-family="georgia" font-size="14.00">Gallai SPD</text>
 </g>
 <!-- SPCD&#45;&gt;gallai_spd -->
 <g id="edge91" class="edge"><title>SPCD&#45;&gt;gallai_spd</title>
-<path fill="none" stroke="black" d="M2091.21,-106.082C2164.78,-103.507 2374.11,-96.1779 2471.28,-92.7756"/>
-<polygon fill="black" stroke="black" points="2471.58,-96.2676 2481.45,-92.4197 2471.33,-89.2719 2471.58,-96.2676"/>
+<path fill="none" stroke="black" d="M2091.21,-106.082C2164.32,-103.523 2371.51,-96.2689 2469.46,-92.8395"/>
+<polygon fill="black" stroke="black" points="2469.85,-96.3281 2479.72,-92.4803 2469.6,-89.3324 2469.85,-96.3281"/>
 <text text-anchor="start" x="2324.5" y="-102.8" font-family="georgia" font-style="italic" font-size="14.00">G odd</text>
 </g>
 <!-- SCD -->
@@ -798,7 +798,7 @@
 <polygon fill="black" stroke="black" points="2480.57,-1521.2 2490.35,-1517.15 2480.17,-1514.22 2480.57,-1521.2"/>
 </g>
 <!-- scdc -->
-<g id="node153" class="node"><title>scdc</title>
+<g id="node154" class="node"><title>scdc</title>
 <path fill="lightblue" stroke="black" stroke-width="0" d="M2508,-569C2508,-569 2538,-569 2538,-569 2544,-569 2550,-575 2550,-581 2550,-581 2550,-593 2550,-593 2550,-599 2544,-605 2538,-605 2538,-605 2508,-605 2508,-605 2502,-605 2496,-599 2496,-593 2496,-593 2496,-581 2496,-581 2496,-575 2502,-569 2508,-569"/>
 <text text-anchor="middle" x="2523" y="-583.3" font-family="georgia" font-size="14.00">scdc</text>
 </g>
@@ -808,7 +808,7 @@
 <polygon fill="black" stroke="black" points="2487.16,-598.183 2495.97,-592.303 2485.41,-591.404 2487.16,-598.183"/>
 </g>
 <!-- ocdc -->
-<g id="node154" class="node"><title>ocdc</title>
+<g id="node155" class="node"><title>ocdc</title>
 <path fill="lightblue" stroke="black" stroke-width="0" d="M2508,-922C2508,-922 2538,-922 2538,-922 2544,-922 2550,-928 2550,-934 2550,-934 2550,-946 2550,-946 2550,-952 2544,-958 2538,-958 2538,-958 2508,-958 2508,-958 2502,-958 2496,-952 2496,-946 2496,-946 2496,-934 2496,-934 2496,-928 2502,-922 2508,-922"/>
 <text text-anchor="middle" x="2523" y="-936.3" font-family="georgia" font-size="14.00">ocdc</text>
 </g>
@@ -942,8 +942,8 @@
 </g>
 <!-- three_d -->
 <g id="node80" class="node"><title>three_d</title>
-<path fill="lightblue" stroke="black" stroke-width="0" d="M1499.5,-785C1499.5,-785 1542.5,-785 1542.5,-785 1548.5,-785 1554.5,-791 1554.5,-797 1554.5,-797 1554.5,-809 1554.5,-809 1554.5,-815 1548.5,-821 1542.5,-821 1542.5,-821 1499.5,-821 1499.5,-821 1493.5,-821 1487.5,-815 1487.5,-809 1487.5,-809 1487.5,-797 1487.5,-797 1487.5,-791 1493.5,-785 1499.5,-785"/>
-<text text-anchor="middle" x="1521" y="-799.3" font-family="georgia" font-size="14.00">three_d</text>
+<path fill="lightblue" stroke="black" stroke-width="0" d="M1410.5,-785C1410.5,-785 1631.5,-785 1631.5,-785 1637.5,-785 1643.5,-791 1643.5,-797 1643.5,-797 1643.5,-809 1643.5,-809 1643.5,-815 1637.5,-821 1631.5,-821 1631.5,-821 1410.5,-821 1410.5,-821 1404.5,-821 1398.5,-815 1398.5,-809 1398.5,-809 1398.5,-797 1398.5,-797 1398.5,-791 1404.5,-785 1410.5,-785"/>
+<text text-anchor="middle" x="1521" y="-799.3" font-family="georgia" font-size="14.00">Hoffman&#45;Ostenhof 3&#45;decomposition</text>
 </g>
 <!-- bm -->
 <g id="node81" class="node"><title>bm</title>
@@ -1132,6 +1132,7 @@
 <g id="edge196" class="edge"><title>had_mat&#45;&gt;Hadwiger</title>
 <path fill="none" stroke="black" d="M1052.1,-2048.08C1174.48,-2047.01 1371.89,-2045.29 1466.32,-2044.47"/>
 <polygon fill="black" stroke="black" points="1466.53,-2047.97 1476.5,-2044.38 1466.47,-2040.97 1466.53,-2047.97"/>
+<text text-anchor="middle" x="1214" y="-2051.8" font-family="georgia" font-size="14.00">k ≥ 6</text>
 </g>
 <!-- nz4_no_petersen&#45;&gt;snark_thm -->
 <g id="edge201" class="edge"><title>nz4_no_petersen&#45;&gt;snark_thm</title>
@@ -1277,7 +1278,7 @@
 <polygon fill="black" stroke="black" points="1430.09,-506.5 1440.09,-503 1430.09,-499.5 1430.09,-506.5"/>
 </g>
 <!-- o5cdc -->
-<g id="node155" class="node"><title>o5cdc</title>
+<g id="node156" class="node"><title>o5cdc</title>
 <path fill="lightblue" stroke="black" stroke-width="0" d="M1506,-976C1506,-976 1536,-976 1536,-976 1542,-976 1548,-982 1548,-988 1548,-988 1548,-1000 1548,-1000 1548,-1006 1542,-1012 1536,-1012 1536,-1012 1506,-1012 1506,-1012 1500,-1012 1494,-1006 1494,-1000 1494,-1000 1494,-988 1494,-988 1494,-982 1500,-976 1506,-976"/>
 <text text-anchor="middle" x="1521" y="-990.3" font-family="georgia" font-size="14.00">o5cdc</text>
 </g>
@@ -1764,6 +1765,23 @@
 <path fill="none" stroke="black" d="M2112.16,-1924.13C2256.98,-1930.15 2708.06,-1944.98 3080,-1915 3127.91,-1911.14 3182.61,-1901.84 3217.68,-1895.23"/>
 <polygon fill="black" stroke="black" points="3218.74,-1898.59 3227.91,-1893.28 3217.43,-1891.72 3218.74,-1898.59"/>
 </g>
+<!-- gallai_spd&#45;&gt;PPDC -->
+<g id="edge93" class="edge"><title>gallai_spd&#45;&gt;PPDC</title>
+<path fill="none" stroke="black" d="M2566.35,-87.3242C2604.72,-86.5576 2659.75,-92.345 2690,-127 2757.36,-204.157 2756.93,-943.701 2762,-1046 2762.53,-1056.66 2763.06,-1421.9 2770,-1430 2798.69,-1463.51 2852.35,-1466.28 2889.11,-1463.51"/>
+<polygon fill="black" stroke="black" points="2889.82,-1466.96 2899.46,-1462.56 2889.18,-1459.99 2889.82,-1466.96"/>
+<text text-anchor="start" x="2710.5" y="-1050.8" font-family="georgia" font-style="italic" font-size="14.00">G odd</text>
+</g>
+<!-- gallai_spd&#45;&gt;SPD -->
+<g id="edge92" class="edge"><title>gallai_spd&#45;&gt;SPD</title>
+<path fill="none" stroke="black" d="M2566.18,-83.176C2601.41,-76.6571 2652.97,-67.1547 2698,-59 2757.31,-48.2606 2825.26,-36.1746 2871.83,-27.9237"/>
+<polygon fill="black" stroke="black" points="2872.49,-31.3615 2881.73,-26.1715 2871.27,-24.4687 2872.49,-31.3615"/>
+</g>
+<!-- gallai_spd&#45;&gt;SPDC -->
+<g id="edge94" class="edge"><title>gallai_spd&#45;&gt;SPDC</title>
+<path fill="none" stroke="black" d="M2566.11,-86.9799C2689.43,-75.6606 3043.41,-46.5768 3080,-82 3124.49,-125.072 3057.51,-592.153 3098,-639 3127.07,-672.632 3181.57,-674.967 3217.84,-672.112"/>
+<polygon fill="black" stroke="black" points="3218.38,-675.576 3228,-671.14 3217.71,-668.608 3218.38,-675.576"/>
+<text text-anchor="start" x="2908" y="-86.8" font-family="georgia" font-style="italic" font-size="14.00">n even</text>
+</g>
 <!-- scdc&#45;&gt;PPDC -->
 <g id="edge81" class="edge"><title>scdc&#45;&gt;PPDC</title>
 <path fill="none" stroke="black" d="M2550.2,-589.277C2588.38,-594.156 2658.19,-609.32 2690,-656 2702.8,-674.78 2695.57,-1042.4 2698,-1065 2715.68,-1229.4 2651.95,-1314.22 2770,-1430 2801.23,-1460.63 2853.58,-1464.22 2889.4,-1462.42"/>
@@ -1840,12 +1858,12 @@
 <polygon fill="black" stroke="black" points="2503.86,-967.978 2507.63,-958.078 2498.51,-963.464 2503.86,-967.978"/>
 </g>
 <!-- HD -->
-<g id="node156" class="node"><title>HD</title>
+<g id="node157" class="node"><title>HD</title>
 <path fill="lightblue" stroke="black" stroke-width="0" d="M931,-221C931,-221 961,-221 961,-221 967,-221 973,-227 973,-233 973,-233 973,-245 973,-245 973,-251 967,-257 961,-257 961,-257 931,-257 931,-257 925,-257 919,-251 919,-245 919,-245 919,-233 919,-233 919,-227 925,-221 931,-221"/>
 <text text-anchor="middle" x="946" y="-235.3" font-family="georgia" font-size="14.00">HD</text>
 </g>
 <!-- hajos_scd -->
-<g id="node157" class="node"><title>hajos_scd</title>
+<g id="node158" class="node"><title>hajos_scd</title>
 <path fill="lightblue" stroke="black" stroke-width="0" d="M1493,-221C1493,-221 1549,-221 1549,-221 1555,-221 1561,-227 1561,-233 1561,-233 1561,-245 1561,-245 1561,-251 1555,-257 1549,-257 1549,-257 1493,-257 1493,-257 1487,-257 1481,-251 1481,-245 1481,-245 1481,-233 1481,-233 1481,-227 1487,-221 1493,-221"/>
 <text text-anchor="middle" x="1521" y="-235.3" font-family="georgia" font-size="14.00">hajos_scd</text>
 </g>
@@ -1874,7 +1892,7 @@
 <text text-anchor="start" x="2042" y="-595.8" font-family="georgia" font-style="italic" font-size="14.00">G even</text>
 </g>
 <!-- SCC -->
-<g id="node158" class="node"><title>SCC</title>
+<g id="node159" class="node"><title>SCC</title>
 <path fill="lightblue" stroke="black" stroke-width="0" d="M2508,-137C2508,-137 2538,-137 2538,-137 2544,-137 2550,-143 2550,-149 2550,-149 2550,-161 2550,-161 2550,-167 2544,-173 2538,-173 2538,-173 2508,-173 2508,-173 2502,-173 2496,-167 2496,-161 2496,-161 2496,-149 2496,-149 2496,-143 2502,-137 2508,-137"/>
 <text text-anchor="middle" x="2523" y="-151.3" font-family="georgia" font-size="14.00">SCC</text>
 </g>
@@ -1888,23 +1906,6 @@
 <g id="edge90" class="edge"><title>SCC&#45;&gt;SCEC</title>
 <path fill="none" stroke="black" d="M2550.2,-153.055C2620.14,-147.861 2811.43,-133.656 2891.74,-127.693"/>
 <polygon fill="black" stroke="black" points="2892.15,-131.172 2901.86,-126.941 2891.63,-124.191 2892.15,-131.172"/>
-</g>
-<!-- gallai_spd&#45;&gt;PPDC -->
-<g id="edge93" class="edge"><title>gallai_spd&#45;&gt;PPDC</title>
-<path fill="none" stroke="black" d="M2564.52,-87.366C2602.95,-86.3796 2659.26,-91.7897 2690,-127 2757.36,-204.157 2756.93,-943.701 2762,-1046 2762.53,-1056.66 2763.06,-1421.9 2770,-1430 2798.69,-1463.51 2852.35,-1466.28 2889.11,-1463.51"/>
-<polygon fill="black" stroke="black" points="2889.82,-1466.96 2899.46,-1462.56 2889.18,-1459.99 2889.82,-1466.96"/>
-<text text-anchor="start" x="2710.5" y="-1050.8" font-family="georgia" font-style="italic" font-size="14.00">G odd</text>
-</g>
-<!-- gallai_spd&#45;&gt;SPD -->
-<g id="edge92" class="edge"><title>gallai_spd&#45;&gt;SPD</title>
-<path fill="none" stroke="black" d="M2564.77,-83.4369C2600.03,-76.9125 2652.36,-67.2642 2698,-59 2757.31,-48.2606 2825.26,-36.1746 2871.83,-27.9237"/>
-<polygon fill="black" stroke="black" points="2872.49,-31.3615 2881.73,-26.1715 2871.27,-24.4687 2872.49,-31.3615"/>
-</g>
-<!-- gallai_spd&#45;&gt;SPDC -->
-<g id="edge94" class="edge"><title>gallai_spd&#45;&gt;SPDC</title>
-<path fill="none" stroke="black" d="M2564.8,-87.0999C2686.91,-75.8681 3043.28,-46.4509 3080,-82 3124.49,-125.072 3057.51,-592.153 3098,-639 3127.07,-672.632 3181.57,-674.967 3217.84,-672.112"/>
-<polygon fill="black" stroke="black" points="3218.38,-675.576 3228,-671.14 3217.71,-668.608 3218.38,-675.576"/>
-<text text-anchor="start" x="2908" y="-86.8" font-family="georgia" font-style="italic" font-size="14.00">n even</text>
 </g>
 <!-- oc4c&#45;&gt;c4c -->
 <g id="edge127" class="edge"><title>oc4c&#45;&gt;c4c</title>
