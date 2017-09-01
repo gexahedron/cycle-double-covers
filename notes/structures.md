@@ -41,6 +41,7 @@ faithful circuit cover, скажем, испольует 3 понятия
 в Z_5 connectivity тоже есть своё понятие: boundary
 в 2bm - dominating circuit и разбиение многих оставшихся рёбер на 2 множества
 в 3bm - набор circuit, которые в итоге dominating и разбиение оставшихся рёбер на 3 множества
+в 2bm и 3bm есть ignored вершины, не попавшие в dominating circuit(s)
 в hoffman-ostenhoff есть spanning tree
 	в nz6/Z_6 connectivity он вроде тоже есть?
 	в Z_6 есть TC3, и в этих TC3 вроде как есть 3 spanning tree (double cover)

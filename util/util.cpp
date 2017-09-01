@@ -65,6 +65,7 @@ bool DecodeNextGraphInMulticode(FILE* input, int& number_of_vertices, int& numbe
 
 bool DecodeGraph6(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph) {
     // TODO: implement
+    return false;
 }
 
 void ReadGraphs(const function<bool()>& experiment, int number_of_graphs_to_skip, int& number_of_vertices, int& number_of_edges, GRAPH graph) {
@@ -90,7 +91,7 @@ void ReadGraphs(const function<bool()>& experiment, int number_of_graphs_to_skip
 void ParseArgs(int argc, char** argv, int& number_of_graphs_to_skip) {
     if (argc > 2) {
         cerr << "Error: invalid number of arguments" << endl;
-        cerr << "Usage: " << argv[0] << " [optional: number_of_graphs_to_skip]" << endl;
+        cerr << "Usage: " << argv[0] << " [optional: <number_of_graphs_to_skip>]" << endl;
         exit(1);
     } else {
         if (argc >= 2) {

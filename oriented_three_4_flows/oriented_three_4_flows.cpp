@@ -2,6 +2,7 @@
  * File:   oriented_three_4_flows.cpp
  * Main result:
  * Program checks existence of oriented 233-, 333-, 234-, 334- and 244- flows for snarks
+ * and also 2233-flows
  *
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *

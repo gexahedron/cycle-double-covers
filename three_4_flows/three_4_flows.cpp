@@ -33,7 +33,7 @@ unsigned int edge_index[MAXN][MAXN];
 /* The code is too slow to find any solutions here, but still, here are the main candidates for decompositions into abcd- flows */
 //const int number_of_profiles = 4;
 //const int number_of_partitions = 4;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 2, 3}, {2, 2, 3, 3}, {2, 2, 2, 4}, {2, 2, 3, 4}};
+//int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}, {2, 2, 3, 4}};
 
 const int number_of_profiles = 6;
 const int number_of_partitions = 3;
@@ -67,7 +67,6 @@ bool BuildFlow(int partition, int edge_index) {
             return BuildFlow(partition, edge_index + 1);
         }
     }
-
 
     int right_bound = max_flow_values[partition] - 1;
     int left_bound = -right_bound;
@@ -276,6 +275,7 @@ bool HasPartitionedFlows() {
             cerr << "nope; ";
     }
     cerr << endl;
+    return false;
 }
 
 int main(int argc, char** argv) {

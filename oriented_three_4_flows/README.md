@@ -1,4 +1,4 @@
-#Oriented version of three 3-flows conjecture
+#Oriented version of three 4-flows conjecture
 
 ##How to run the code
 To compile the code just print "make" in your console (you need g++ compiler).
@@ -7,7 +7,7 @@ To run this code you need to specify the number of vertices in the snarks and pr
 (you can read instructions in README.md file in three_four_flows folder)
 
 ##Main result here (September 18, 2016)
-Looks like oriented 23k-flows don't exist for any snark (but I don't have any proof of intuition about why this is so).
+Looks like oriented 23k-flows don't exist for any snark. And it's easy to prove: if it would exist, we could take the difference between 2-flow and 3-flow and we would get a nowhere zero 4-flow for the snark.
 
 On the bright side, seems like oriented 334-flows and oriented 244-flows do always exist.
 
