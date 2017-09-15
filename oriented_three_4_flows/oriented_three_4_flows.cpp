@@ -34,12 +34,12 @@ unsigned int edge_index[MAXN][MAXN];
 //const int number_of_partitions = 4;
 //int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
 
-//const int number_of_profiles = 1;
-//const int number_of_partitions = 3;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 4, 4}};
-const int number_of_profiles = 4;
+const int number_of_profiles = 1;
 const int number_of_partitions = 3;
-int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {2, 3, 4}, {2, 3, 5}, {2, 3, 6}};
+int profiles[number_of_profiles][number_of_partitions] = {{2, 4, 4}};
+//const int number_of_profiles = 4;
+//const int number_of_partitions = 3;
+//int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {2, 3, 4}, {2, 3, 5}, {2, 3, 6}};
 
 
 //const int number_of_profiles = 6;
@@ -296,10 +296,12 @@ bool HasPartitionedFlows() {
             cerr << profiles[profile][partition];
         }
         cerr << ": ";
-        if (has_profile[profile])
+        if (has_profile[profile]) {
             cerr << "YES!; ";
-        else
+            // TODO: print solution
+        } else {
             cerr << "nope; ";
+        }
     }
     cerr << endl;
 }
