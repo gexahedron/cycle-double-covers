@@ -36,7 +36,7 @@ unsigned int edge_index[MAXN][MAXN];
 
 const int number_of_profiles = 1;
 const int number_of_partitions = 3;
-int profiles[number_of_profiles][number_of_partitions] = {{2, 4, 4}};
+int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}};
 //const int number_of_profiles = 4;
 //const int number_of_partitions = 3;
 //int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {2, 3, 4}, {2, 3, 5}, {2, 3, 6}};
@@ -139,6 +139,10 @@ bool CheckNowhereZeroness(int partition) {
     }
     for (int e = 0; e < number_of_edges; ++e) {
         edge_flows[e][partition] = 0;
+        if (partition == 0) {
+            is_oriented_edge_covered[e][0] = false;
+            is_oriented_edge_covered[e][1] = false;
+        }
     }
     for (int v = 0; v < number_of_vertices; ++v) {
         vertex_flows[v][partition] = 0;
@@ -183,7 +187,16 @@ bool CheckPartitions() {
         return false;
     }
 
-    return CheckNowhereZeroness(0);
+    // check o433-, o343-, o344- flows
+    for (int partition = 0; partition < number_of_partitions; ++partition) {
+        ++max_flow_values[partition];
+        bool res = CheckNowhereZeroness(0);
+        --max_flow_values[partition];
+        if (!res) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool BuildPartitions(int edge_index) {
@@ -287,8 +300,6 @@ bool HasPartitionedFlows() {
             }
             partition_num[e][0] = -1;
             partition_num[e][1] = -1;
-            is_oriented_edge_covered[e][0] = false;
-            is_oriented_edge_covered[e][1] = false;
         }
 
         has_profile[profile] = BuildPartitions(0);
