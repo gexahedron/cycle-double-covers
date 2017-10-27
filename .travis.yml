@@ -7,7 +7,7 @@ before_install:
 - sudo apt-get update -qq
 
 install:
-- sudo apt-get install -qq g++-4.8
-- export CXX="g++-4.8"
+- sudo apt-get install -qq g++-6
+- export CXX="g++-6"
 
 script: cd three_4_flows/ && make && cd ../oriented_three_4_flows/ && make && cd ../experiments/ && make
