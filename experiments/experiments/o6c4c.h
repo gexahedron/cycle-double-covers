@@ -25,15 +25,21 @@
 #include <algorithm>
 #include <string>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/boyer_myrvold_planar_test.hpp>
+
 namespace NExp6c4c {
 
-using namespace NExpMNKFlows;
+using namespace NExpMNKFlows; // TODO: rewrite?
 
 using namespace std;
 
 //using namespace NMNKFlows;
 
 set<TMask> cur_6c4c;
+
+unordered_set<TMask> v_minus_4_6c4c;
+unordered_set<TMask> v_minus_4_unvertex_neib_masks;
 
 vector<TMask> bit_cycles;
 int o6c4c_aggregated_solutions;
@@ -150,7 +156,7 @@ bool has_compatible_dominating_circuit(TGraph& graph) {
         }
     }*/
     int count = 0;
-    for (const auto& c : graph.all_dominating_circuits) {     
+    for (const auto& c : graph.all_dominating_circuits) {
         bool has_all_oriented_vertices = true;
         for (const auto& v : oriented_vertices) {
             bool has_edge = false;
@@ -214,7 +220,7 @@ bool orient_6c4c(TGraph& graph, int cur_circuit) {
                 int v2 = all_circuits_in_6c4c[c][vi + 1];
                 int ei = graph.edge_index[v1][v2];
                 int cur_edge_orientation = orientations[c];
-                    
+
                 int e1 = -1;
                 int e2 = -1;
                 int v0 = -1;
@@ -634,6 +640,101 @@ bool find_33pp_from_3pm(TGraph& graph) { // TODO: rewrite using check_33pp
     return false;*/
 }
 
+bool find_v_minus_4_cycle_from_6c4c(TGraph& graph) {
+    has_33pp_from_3pm = false;
+    has_333pp_from_3pm = false;
+    u33pp_solutions = 0;
+    int min_edge_count = graph.number_of_edges;
+    set<vector<int>> triples;
+    for (int i = 0; i < 6; ++i) {
+        u3_inv_pm[0] = u6c4c_cycles[i];
+        for (int j = i + 1; j < 6; ++j) {
+            u3_inv_pm[1] = u6c4c_cycles[j];
+            for (int k = j + 1; k < 6; ++k) {
+                u3_inv_pm[2] = u6c4c_cycles[k];
+                int cycle_len = 0;
+                TMask cycle = 0;
+                bool vertex_in_cycle[MAXN];
+                for (int v = 0; v < graph.number_of_vertices; ++v) {
+                    vertex_in_cycle[v] = false;
+                }
+
+                for (int e = 0; e < graph.number_of_edges; ++e) {
+                    int edge_count = 0;
+                    for (int part = 0; part < 3; ++part) {
+                        if ((BIT(e) & u3_inv_pm[part]) > 0) {
+                            ++edge_count;
+                        }
+                    }
+                    if (edge_count != 2) {
+                        cycle |= BIT(e);
+                        for (int ii = 0; ii < 2; ++ii) {
+                            vertex_in_cycle[graph.e2v[e][ii]] = true;
+                        }
+                        ++cycle_len;
+                    }
+                }
+                if (cycle_len == graph.number_of_vertices - 4) {
+                    v_minus_4_6c4c.insert(cycle);
+                    TMask m = 0;
+                    for (int v = 0; v < graph.number_of_vertices; ++v) {
+                        if (!vertex_in_cycle[v]) {
+                            m += BIT(v);
+                        }
+                        v_minus_4_unvertex_neib_masks.insert(m);
+                    }
+                    //return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool find_planarity_from_6c4c(TGraph& graph) {
+    has_33pp_from_3pm = false;
+    has_333pp_from_3pm = false;
+    u33pp_solutions = 0;
+    int min_edge_count = graph.number_of_edges;
+    set<vector<int>> triples;
+    for (int i = 0; i < 6; ++i) {
+        u3_inv_pm[0] = u6c4c_cycles[i];
+        for (int j = i + 1; j < 6; ++j) {
+            u3_inv_pm[1] = u6c4c_cycles[j];
+            for (int k = j + 1; k < 6; ++k) {
+                u3_inv_pm[2] = u6c4c_cycles[k];
+                using namespace boost;
+                typedef adjacency_list<vecS,
+                                       vecS,
+                                       undirectedS,
+                                       property<vertex_index_t, int>
+                                       > boost_graph;
+                boost_graph g1(graph.number_of_vertices);
+                boost_graph g2(graph.number_of_vertices);
+                for (int e = 0; e < graph.number_of_edges; ++e) {
+                    int edge_count = 0;
+                    for (int part = 0; part < 3; ++part) {
+                        if ((BIT(e) & u3_inv_pm[part]) > 0) {
+                            ++edge_count;
+                        }
+                    }
+                    if (edge_count != 1) {
+                        add_edge(graph.e2v[e][0], graph.e2v[e][1], g1);
+                    }
+                    if (edge_count != 3) {
+                        add_edge(graph.e2v[e][0], graph.e2v[e][1], g2);
+                    }
+                }
+
+                if (boyer_myrvold_planarity_test(g1) && boyer_myrvold_planarity_test(g2)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 bool find_33pp_from_6c4c(TGraph& graph) {
     has_33pp_from_3pm = false;
     has_333pp_from_3pm = false;
@@ -763,12 +864,29 @@ bool gen_o6c4c(TGraph& graph, int cur_cycle_layer, int min_cycle_idx, bool only_
         if (only_find) {
             return false;
         }
+
+        if (find_v_minus_4_cycle_from_6c4c(graph)) {
+            cerr << "found v-4 cycle" << endl;
+            has_or_comb = true;
+            return true;
+        }
+        if (graph.all_even_v_minus_4_cycles.size() == v_minus_4_6c4c.size()) {
+            return true;
+        }
+
+        /*if (find_planarity_from_6c4c(graph)) {
+            cerr << "found planar decomposition" << endl;
+            has_or_comb = true;
+            return true;
+        }*/
+
+        return false;
+
         if (check_orientability_6c4c(graph)) {
             cerr << "found o6c4c" << endl;
             return true;
         }
         bool has_o6c4c = (same_cycles_different_orientations > 0);
-        //return true;
 
         for (int i = 0; i < 6; ++i) {
             for (int j = i + 1; j < 6; ++j) {
@@ -784,7 +902,6 @@ bool gen_o6c4c(TGraph& graph, int cur_cycle_layer, int min_cycle_idx, bool only_
                 }
             }
         }
-        return false;
 
         all_33pp_triples.clear();
         find_33pp_from_6c4c(graph);
@@ -935,9 +1052,43 @@ void find_all_o6c4c(TGraph& graph, bool only_find = false) {
     u6c4c_min_poor = graph.number_of_edges;
     u6c4c_max_poor = 0;
 
+    v_minus_4_6c4c.clear();
     gen_o6c4c(graph, 0, 0, only_find);
+    bool has_unvertex = false;
+    for (const TMask& m : graph.all_vertex_neib_masks) {
+        if (v_minus_4_unvertex_neib_masks.find(m) != v_minus_4_unvertex_neib_masks.end()) {
+            has_unvertex = true;
+            break;
+        }
+    }
+    //if (graph.all_even_v_minus_4_cycles.size() == v_minus_4_6c4c.size()) {
+    if (has_unvertex) {
+        //cerr << "all v-4 are good" << endl;
+        cerr << "has unvertex" << endl;
+        return;
+    } else {
+        //cerr << "some v-4 are bad" << endl;
+        cerr << "no unvertex found" << endl;
+        cerr << graph.all_even_v_minus_4_cycles.size() << " " << v_minus_4_6c4c.size() << endl;
+        for (const auto& c : graph.all_even_v_minus_4_cycles) {
+            if (v_minus_4_6c4c.find(c) == v_minus_4_6c4c.end()) {
+                graph.print();
+                for (int e = 0; e < graph.number_of_edges; ++e) {
+                    cerr << e;
+                    if (BIT(e) & c) {
+                        cerr << ": in cycle";
+                    }
+                    cerr << endl;
+                }
+                break;
+            }
+        }
+        return;
+    }
     if (!only_find && !has_or_comb) {
-        cerr << "no oriented solution found!" << endl;
+        cerr << "no v-4 cycle found" << endl;
+        //cerr << "no planar decomposition found" << endl;
+        //cerr << "no oriented solution found!" << endl;
     }
 
     //for (const auto c : full_cycle_count) {

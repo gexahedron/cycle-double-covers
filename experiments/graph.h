@@ -23,8 +23,13 @@ using TMask = unsigned long long int;
 
 #define BIT(i) (1ULL << (i))
 
-#define MAXN 42 // Because edge labels are sometimes saved in a bitvector - 42 * 3 / 2 < 64
-#define REG 3
+constexpr int MAXN = 42; // Because edge labels are sometimes saved in a bitvector - 42 * 3 / 2 < 64
+// TODO: remove MAXN, replace with MAX_VERTEX
+constexpr int REG = 3;
+constexpr int MAX_VERTEX = 42;
+constexpr int MAX_EDGE = REG * MAXN / 2;
+// TODO: replace all REG * MAXN / 2 with MAX_EDGE
+constexpr int NONE = -1;
 
 struct TTreeCycleMatching {
     unordered_set<int> tree;
@@ -57,9 +62,12 @@ struct TGraph {
     unordered_set<TMask> all_cycles;
     unordered_set<TMask> all_circuits;
     unordered_set<TMask> all_even_cycles;
+    unordered_set<TMask> all_even_v_minus_4_cycles;
     unordered_set<TMask> all_full_cycles;
     unordered_set<TMask> all_dominating_circuits;
     unordered_map<TMask, vector<vector<int>>> cycles_as_circuits;
+
+    unordered_set<TMask> all_vertex_neib_masks;
 
     // flows
     vector<vector<int>> all_nz5_flows;
@@ -78,7 +86,7 @@ struct TGraph {
 
     // preimages
     map<set<TMask>, set<set<TMask>>> petersen_5cdc_6c4c_pairs;
-    map<set<TMask>, set<set<TMask>>> petersen_6c4c_5cdc_pairs; 
+    map<set<TMask>, set<set<TMask>>> petersen_6c4c_5cdc_pairs;
 
     // o6c4c
     map<set<TMask>, set<set<TMask>>> u244_6c4c_5cdc_pairs;
@@ -86,11 +94,16 @@ struct TGraph {
 
     // misc
     vector<int> faster_edge_order;
+
+    TGraph(unsigned int n = 0);
+    void add_edge(unsigned int v, unsigned int w);
+    bool has_edge(unsigned int v, unsigned int w) const;
+    void finish_init();
+    void print() const;
+    void find_faster_edge_order();
 };
 
 /*********************************Methods*********************************/
-
-void add_edge(TGraph& graph, unsigned int e, unsigned int v, unsigned int w);
 
 // Decodes the code (which is in multicode format) of a graph.
 bool decode_multicode(FILE* input, TGraph& graph);
@@ -106,4 +119,3 @@ inline TMask inv(TGraph& graph, TMask mask) {
 }
 
 void find_faster_edge_order(TGraph& graph);
-

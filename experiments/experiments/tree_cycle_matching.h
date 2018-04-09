@@ -2,7 +2,7 @@
  * File:   tree_cycle_matching.h
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
- * TODO: 
+ * TODO:
  */
 
 #pragma once
@@ -108,7 +108,9 @@ void preimage_tree_cycle_matchings(const TGraph& petersen_graph, TGraph& graph) 
             for (int e = 0; e < graph.number_of_edges; ++e) {
                 edge_in_tree[e] = false;
                 int petersen_edge = graph.petersen_colourings[col_idx][e];
-                if (petersen_graph.tree_cycle_matchings[ho_idx].tree.find(petersen_edge) != petersen_graph.tree_cycle_matchings[ho_idx].tree.end()) {
+                if (petersen_graph.tree_cycle_matchings[ho_idx].tree.find(petersen_edge) !=
+                        petersen_graph.tree_cycle_matchings[ho_idx].tree.end())
+                {
                     ++tree_edge_count;
                     edge_in_tree[e] = true;
                     /*for (int j = 0; j < 2; ++j) {
@@ -157,4 +159,3 @@ void preimage_tree_cycle_matchings(const TGraph& petersen_graph, TGraph& graph) 
 }
 
 } // NExpTreeCycleMatching
-

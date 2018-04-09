@@ -75,6 +75,9 @@ void build_cycle(int cur_vertex, int min_possible_edge, TGraph& graph) {
         }
         if (odd_cycle_count == 0) {
             graph.all_even_cycles.insert(bit_cycle);
+            if (cycle_length == graph.number_of_vertices - 4) {
+                graph.all_even_v_minus_4_cycles.insert(bit_cycle);
+            }
         }
         if (cycle_length == graph.number_of_vertices) {
             graph.oddness = min(graph.oddness, odd_cycle_count);

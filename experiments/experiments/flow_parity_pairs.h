@@ -48,6 +48,11 @@ set<TMask> all_333pp_full_cycles;
 /*********************************Methods*********************************/
 
 bool check_33pp(TGraph& graph, const TMask c) {
+    // FIXME: temp, remove:
+    if (graph.all_circuits.find(c) != graph.all_even_cycles.end()) {
+        return false;
+    }
+
     int three_flow_count = 0;
     TMask part_mask[3];
     bool has_3flow[3];
@@ -179,7 +184,7 @@ bool check_33pp(TGraph& graph, const TMask c) {
             }
         }
     }
- 
+
     if (three_flow_count < 3) {
         return false;
     }
@@ -358,6 +363,23 @@ bool check_33pp(TGraph& graph, const TMask c) {
         return false;
     }
     all_333pp_cycles.insert(c);
+    graph.print();
+    cerr << "cycle: ";
+    for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (BIT(e) & c) {
+            cerr << e << " ";
+        }
+    }
+    cerr << endl;
+    for (int i = 0; i < 3; ++i) {
+        cerr << "flow #" << i + 1 << ": ";
+        for (int e = 0; e < graph.number_of_edges; ++e) {
+            if (edge_in_cur_part[i][e]) {
+                cerr << e << "(" << graph.e2v[e][0] << "," << graph.e2v[e][1] << ") ";
+            }
+        }
+        cerr << endl;
+    }
     if (graph.all_even_cycles.find(c) != graph.all_even_cycles.end()) {
         all_333pp_even_cycles.insert(c);
     }
