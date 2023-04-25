@@ -4,6 +4,7 @@
 *tmp*
 *out*
 *err*
+*unsorted*
 *.DS_Store
 
 ### C++ ###
