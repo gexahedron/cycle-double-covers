@@ -1,11 +1,11 @@
 # Computations around Cycle double cover conjecture (and it's friends)
 
-How to run experiments, example:
-`./run_experiments mc < ../../multicode/Generated_graphs.10.05.sn.cyc4`
-
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.51766.svg)](http://dx.doi.org/10.5281/zenodo.51766)
-[![Join the chat at https://gitter.im/gexahedron/cycle-double-covers](https://badges.gitter.im/gexahedron/cycle-double-covers.svg)](https://gitter.im/gexahedron/cycle-double-covers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+
+How to run experiments, example:
+
+`./run_experiments mc < ../../multicode/Generated_graphs.10.05.sn.cyc4`
 
 Here you will find code (in Python and C++) for different unsolved problems related to cycle double cover conjecture.
 
