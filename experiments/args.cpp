@@ -12,8 +12,9 @@
 #include "constants.h"
 
 #include <iostream>
-#include <cstdlib>
 #include <fstream>
+#include <cassert>
+#include <cstdlib>
 
 using namespace std;
 
