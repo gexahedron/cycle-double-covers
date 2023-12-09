@@ -8,6 +8,7 @@
 *archive*
 *NEW*
 *unused.h*
+experiments/run_experiments
 *.DS_Store
 
 ### C++ ###
