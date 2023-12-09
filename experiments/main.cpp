@@ -24,7 +24,7 @@
 
 // place for including all needed experiments
 #include "experiments/cycles.h"
-#include "experiments/petersen_coloring.h"
+#include "experiments/petersen_colouring.h"
 #include "experiments/preimages.h"
 #include "experiments/o5cdc.h"
 #include "experiments/o6c4c.h"

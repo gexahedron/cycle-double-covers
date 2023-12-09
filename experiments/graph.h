@@ -10,7 +10,7 @@
 
 #include "constants.h"
 #include "experiments/cycles_data.h"
-#include "experiments/petersen_coloring_data.h"
+#include "experiments/petersen_colouring_data.h"
 #include "experiments/preimages_data.h"
 #include "experiments/o5cdc_data.h"
 #include "experiments/o6c4c_data.h"

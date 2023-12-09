@@ -1,5 +1,5 @@
 /*
- * File:   petersen_coloring_data.h
+ * File:   petersen_colouring_data.h
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
  * TODO:
