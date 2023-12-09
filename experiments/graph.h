@@ -45,7 +45,7 @@ struct Graph:
   int number_of_edges = 0; // TODO: -> edge_count
 
   int number = 0;
-  bool is_definitely_snark = true; // TODO: it's always true right now
+  bool is_definitely_snark = true; // FIXME: it's always true right now
 
   unsigned int deg[MAX_VERTEX];
   unsigned int v2v[MAX_VERTEX][MAX_DEG];

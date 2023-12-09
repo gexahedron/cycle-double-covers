@@ -13,7 +13,7 @@
  * - (3, 3)-flow parity-pair-covers (aka 33-pp)
  * - dominating circuits
  * - (m, n, k)-flow double covers
- * - unit vector flows
+ * - TODO: unit vector flows
  *
  */
 
@@ -84,6 +84,7 @@ void init() {
   srand(time(NULL));
 }
 
+// TODO: move to graph.cpp
 bool read_graph(const Args& args, Graph& graph) {
   if (args.filetype == "mc") {
     return decode_multicode(stdin, graph);
