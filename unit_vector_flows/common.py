@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from math import sqrt
 EPS = 1e-8
-
 LESS_EPS = 1e-8
+
+def distance(a, b):
+    return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
+
 
 def same(a, b):
     return abs(a - b) < EPS

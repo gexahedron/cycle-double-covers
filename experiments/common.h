@@ -11,11 +11,9 @@
 
 #include "graph.h"
 
-#include <map>
-#include <set>
+#include <map> // FIXME: remove?
+#include <set> // FIXME: remove?
 
-// TODO: move these somewhere else
-TMask u6c4c_cycles[6];
-TMask u3_inv_pm[3];
-
-map<pair<TMask, TMask>, set<set<TMask>>> u5cdc_from_33pp;
+// FIXME: hide these somewhere else in o6c4c in some data structure
+Mask u6c4c_cycles[6];
+Mask u3_inv_pm[3];

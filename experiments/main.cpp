@@ -1,111 +1,115 @@
 /*
- * File:   experiments.cpp
+ * File:   main.cpp
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
  * Created on 14 August 2017
  * Study of properties and relations
  * between various constructions
  * relevant to snarks:
- * normal (Petersen) colouring, o6c4c, o5cdc, nz5 (nz-mod5, 33-pp)
+ * - normal (Petersen) colouring
+ * - o6c4c
+ * - o5cdc
+ * - nz5, nz-mod5
+ * - (3, 3)-flow parity-pair-covers (aka 33-pp)
+ * - dominating circuits
+ * - (m, n, k)-flow double covers
+ * - unit vector flows
  *
  */
 
-// TODO: add some kind of documentation, e. g., doxygen-style
-// TODO: maybe add in every experiment structure, which will hold all additional data
-
+#include "main.h"
+#include "args.h"
+#include "constants.h"
 #include "graph.h"
 
-// include all experiments
-#include "experiments/petersen_colouring.h"
-#include "experiments/tree_cycle_matching.h"
+// place for including all needed experiments
 #include "experiments/cycles.h"
+#include "experiments/petersen_coloring.h"
 #include "experiments/preimages.h"
-#include "experiments/mnk_flows.h" // TODO: this is a subexperiment of 6c4c; needs rethinking a bit
-#include "experiments/o6c4c.h"
 #include "experiments/o5cdc.h"
-#include "experiments/nz5.h"
-#include "experiments/flow_parity_pairs.h"
-#include "experiments/matching_5cdc_and_6c4c.h"
-#include "experiments/tc3_joining.h"
+#include "experiments/o6c4c.h"
+#include "experiments/unit_vector_flows.h"
 
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 
-//const bool PRINT_SOLUTIONS = false;
 
 int main(int argc, char** argv) {
-    srand(time(NULL)); // TODO: add function init
+  init();
+  Args args(argc, argv);
 
-    // TODO: wrap up in TArgs and read_args function
-    int to_skip = 0;
-    if (argc < 2 || argc > 3) {
-        cerr << "Error: invalid number of arguments" << endl;
-        cerr << "Usage: " << argv[0] << " <path_to_petersen_graph> <number_of_graphs_to_skip>" << endl;
-        exit(1);
-    } else {
-        if (argc >= 3) {
-            to_skip = atoi(argv[2]);
-        }
+  // initialize petersen graph
+  Graph petersen_graph(10);
+  process_petersen_graph(petersen_graph);
+
+  size_t read_graphs_count = 0;
+  while (true) {
+    // initialize graph, which we experiment with
+    Graph graph;
+    if (!read_graph(args, graph)) {
+      break;
     }
 
-    // initialize petersen graph
-    TGraph petersen_graph;
-    FILE* petersen_file;
-    petersen_file = fopen(argv[1], "rb");
-    decode_multicode(petersen_file, petersen_graph);
-    petersen_graph.print();
-
-    NExpPetersenColouring::find_all_petersen_colourings(petersen_graph);
-    NExpPetersenColouring::create_cc_mapping(petersen_graph);
-    NExpCycles::prepare_build_cycle(petersen_graph);
-    cerr << "petersen cycles: " << petersen_graph.all_cycles.size() << endl;
-    cerr << "petersen perfect matchings: " << petersen_graph.all_full_cycles.size() << endl;
-    //cerr << "petersen tree-cycle-matching solutions: " << petersen_graph.tree_cycle_matchings.size() << endl;
-
-    // run some useful experiments for Petersen graph
-    NExp5cdc::find_all_o5cdc(petersen_graph, true);
-    NExp6c4c::find_all_o6c4c(petersen_graph, true);
-    cerr << "petersen 5cdc: " << petersen_graph.all_5cdc.size() << endl;
-    cerr << "petersen 6c4c: " << petersen_graph.all_6c4c.size() << endl;
-
-    NExp6c4c::NExpMNKFlows::gen_333flows_combinations();
-
-    size_t number_of_graphs_without_solution = 0;
-    size_t number_of_graphs_read = 0;
-    while (true) {
-        // initialize reference graph
-        TGraph ref_graph;
-        if (!decode_multicode(stdin, ref_graph)) {
-            break;
-        }
-        ++number_of_graphs_read;
-        if (to_skip >= number_of_graphs_read) {
-            continue;
-        }
-        cerr << "g" << number_of_graphs_read << "\t" << endl << flush;
-        cout << "g" << number_of_graphs_read << "\t" << endl << flush;
-
-        // building cycles
-        NExpCycles::prepare_build_cycle(ref_graph);
-
-        // TODO: delete code
-        for (int v = 0; v < ref_graph.number_of_vertices; ++v) {
-            TMask m = BIT(v);
-            for (int i = 0; i < REG; ++i) {
-                m += BIT(ref_graph.v2v[v][i]);
-            }
-            ref_graph.all_vertex_neib_masks.insert(m);
-        }
-
-        // experimenting
-        NExpTC3Joining::check_tc3_joinability(ref_graph);
+    ++read_graphs_count; // enumerating from 1, not 0
+    // filtering graphs
+    if (args.start_idx != NONE && read_graphs_count < args.start_idx) {
+      continue;
     }
-    cerr << "fin" << endl;
-    return(EXIT_SUCCESS);
+    if (args.finish_idx != NONE && args.finish_idx < read_graphs_count) {
+      break;
+    }
+    if (args.idxs.size() > 0 && (args.idxs.find(read_graphs_count) == args.idxs.end())) {
+      continue;
+    }
+    graph.number = read_graphs_count;
+    cerr << "g" << read_graphs_count << "\t" << endl << flush;
+    cout << "g" << read_graphs_count << "\t" << endl << flush;
 
-    // #include <functional>
+    // build cycles
+    ExpCycles::find_all_cycles(graph);
+    // FIXME: commenting out all useless prints, for now
+    // graph.print();
 
-    // void ReadGraphs(const std::function<bool()>& experiment, ...
+    run_experiments(petersen_graph, graph);
+  }
+
+  cerr << "fin" << endl;
+  return(EXIT_SUCCESS);
+}
+
+void init() {
+  cerr.precision(17);
+  srand(time(NULL));
+}
+
+bool read_graph(const Args& args, Graph& graph) {
+  if (args.filetype == "mc") {
+    return decode_multicode(stdin, graph);
+  } else if (args.filetype == "adj") {
+    return decode_adjacency(cin, graph);
+  } else if (args.filetype == "bghm") {
+    return decode_bghm(cin, graph);
+  }
+  assert(args.filetype == "g6");
+  return decode_graph6(cin, graph);
+}
+
+void process_petersen_graph(Graph& petersen_graph) {
+  build_petersen_graph(petersen_graph);
+  petersen_graph.print();
+  ExpPetersenColouring::find_all_petersen_colourings(petersen_graph);
+  ExpPetersenColouring::create_cc_mapping(petersen_graph);
+  ExpCycles::find_all_cycles(petersen_graph);
+  cerr << "petersen cycles: " << petersen_graph.all_cycles.size() << endl;
+  cerr << "petersen perfect matchings: " << petersen_graph.all_full_cycles.size() << endl;
+
+  Exp5cdc::find_all_o5cdc(petersen_graph, true);
+}
+
+void run_experiments(const Graph& petersen_graph, Graph& graph) {
+  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow
+  Exp6c4c::find_all_o6c4c(graph);
 }

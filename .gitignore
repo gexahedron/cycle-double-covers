@@ -5,6 +5,9 @@
 *out*
 *err*
 *unsorted*
+*archive*
+*NEW*
+*unused.h*
 *.DS_Store
 
 ### C++ ###

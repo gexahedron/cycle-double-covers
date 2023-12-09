@@ -4,7 +4,12 @@
 import copy
 import numpy as np
 from math import sqrt, sin, cos
-import common
+from common import same
+from e8_hopf600 import gen_e8_points
+
+def cbrt(x):
+    return x ** (1.0 / 3)
+
 
 def cyclic_permutations(points):
     new_points = []
@@ -28,7 +33,7 @@ def plus_minus(points):
     for p in points:
         mults = []
         for i in range(len(p)):
-            if common.same(p[i], 0):
+            if same(p[i], 0):
                 mults.append([1])
             else:
                 mults.append([1, -1])
@@ -37,6 +42,10 @@ def plus_minus(points):
                 for k in mults[2]:
                     new_points.append([p[0] * i, p[1] * j, p[2] * k])
     return new_points
+
+
+def conf0(points):
+    return plus_minus(points)
 
 
 def conf1(points):
@@ -49,7 +58,7 @@ def conf2(points):
 
 def rotation_matrix(axis, theta):
     """
-    Return the rotation matrix associated with counterclockwise rotation about
+    return the rotation matrix associated with counterclockwise rotation about
     the given axis by theta radians.
     """
     axis = np.asarray(axis)
@@ -74,11 +83,12 @@ def simple_rotate(points, axis, angle):
 
 
 def rotate1(points):
+    parts = 10
     new_points = copy.deepcopy(points)
     for i in range(5):
-        for k in range(1, 29, 8):
-            rotated1 = simple_rotate(points[:i], points[i], np.pi * k / 15.0)
-            rotated2 = simple_rotate(points[i+1:], points[i], np.pi * k / 15.0)
+        for k in range(1, 2 * parts):
+            rotated1 = simple_rotate(points[:i], points[i], np.pi * k / parts)
+            rotated2 = simple_rotate(points[i+1:], points[i], np.pi * k / parts)
             new_points.extend(rotated1)
             new_points.extend(rotated2)
     return new_points
@@ -92,7 +102,7 @@ def gen_points1():
 
 
 ########## spherical tetrahedron ##########
-# boring, has nz4flow
+# no triangles
 def gen_points2():
     c0 = sqrt(2)
     return conf2([[c0, 0.0, 1.0]])
@@ -108,7 +118,7 @@ def gen_points3():
 
 
 ######### cuboctahedron #########
-# boring, has nz4flow
+# has nz4flow
 def gen_points4():
     return conf1([[1.0, 1.0, 0.0]])
 
@@ -121,7 +131,7 @@ def gen_points5():
 
 
 ######### truncated cuboctahedron #########
-# no triangles, also slow
+# no triangles
 def gen_points6():
     c0 = sqrt(2)
     a = 1.0
@@ -131,17 +141,18 @@ def gen_points6():
 
 
 ######### icosidodecahedron #########
-# great! no nz4flow; has nz5flow
+# no nz4flow; has nz5flow
 def gen_points7():
     phi = (1.0 + sqrt(5)) / 2
     a, b, c = 0.5, phi / 2, (1.0 + phi) / 2
     points = conf1([[a, b, c]])
     points.extend(conf1([[0.0, 0.0, phi]]))
+    # points = rotate1(points)
     return points
 
 
 ######### smaller part of icosidodecahedron #########
-# also works! no nz4flow; has nz5flow
+# no nz4flow; has nz5flow
 def gen_points8():
     phi = (1.0 + sqrt(5)) / 2
     a, b, c = 0.5, phi / 2, (1.0 + phi) / 2
@@ -152,18 +163,19 @@ def gen_points8():
             [c, a, b], [c, -a, -b], [c, -a, b]]
 
 
-#### trying to extend example 8 ####
-# nz5flowable; has most interesting bulk of 54 points
+#### trying to extend icosidodecahedron ####
+# idea is to get something other than petersen graph
+# for now nothing interesting
 def gen_points9():
     phi = (1.0 + sqrt(5)) / 2
     a, b, c = 0.5, phi / 2, (1.0 + phi) / 2
     points = conf1(([[0.0, 0.0, phi]]))
-    points.extend(conf2([[a, b, c]])) # it's not what is in comments further, it's more points
+    points.extend(conf2([[a, b, c]]))
     return points
 
 
 ###### truncated icosahedron ######
-# probably no triangles (2/3)
+# no triangles
 def gen_points10():
     phi = (1.0 + sqrt(5)) / 2
     a, b, c = 0.0, 1.0, 3.0 * phi
@@ -189,7 +201,7 @@ def gen_points11():
 
 
 ###### rhombicosidodecahedron ######
-# haven't found anything
+# no triangles
 def gen_points12():
     c0 = (1.0 + sqrt(5)) / 4
     c1 = (3.0 + sqrt(5)) / 4
@@ -213,7 +225,7 @@ def gen_points13():
 
 
 ###### pentakis icosidodecahedron ######
-# no nz4flow! has nz5flow
+# no nz4flow, has nz5flow
 def gen_points14():
     c0 = sqrt(5 * (5 - 2 * sqrt(5))) / 5
     c1 = sqrt(10 * (5 - sqrt(5))) / 10
@@ -238,8 +250,8 @@ def gen_points15():
     return points
 
 
-###### Geodesic Icosahedron Pattern 14 [6, 0] ######
-# probably no triangles? (at least with approach 2)
+###### geodesic icosahedron pattern 14 [6, 0] ######
+# no triangles
 def gen_points16():
     c0  = 0.0909559939462343389847801364994
     c1  = 0.105092395327782055492104752016
@@ -314,8 +326,8 @@ def gen_points16():
     return points
 
 
-###### Geodesic Icosahedron Pattern 15 [4, 3] ######
-# probably no triangles? (at least with approach 2)
+###### geodesic icosahedron pattern 15 [4, 3] ######
+# no triangles
 def gen_points17():
     c0  = 0.0150124452580527908978445408401
     c1  = 0.0281991797825302780244189642284
@@ -513,7 +525,7 @@ def gen_points18():
 
 
 # more accurate 60 repelling points
-# nothing
+# no triangles
 def gen_points19():
     return [ \
             [-0.296549696061, 0.503903807606, 0.811257807633], \
@@ -575,11 +587,11 @@ def gen_points19():
             [0.187085628299, 0.0256080244569, -0.982009774273], \
             [-0.0713973516646, 0.849436455601, -0.522838527723], \
             [-0.266550195763, -0.0219925142232, 0.963570092135], \
-            [0.747624112853, 0.535613620132, -0.392652818416]] 
+            [0.747624112853, 0.535613620132, -0.392652818416]]
 
 
-###### Geodesic Icosahedron Pattern 3 [2, 1] (Pentakis Snub Dodecahedron) ######
-# nothing
+###### geodesic icosahedron pattern 3 [2, 1] (pentakis snub dodecahedron) ######
+# no triangles
 def gen_points20():
     c0  = 0.0919831947610306166536978645902
     c1  = 0.157802827551188752848878549936
@@ -608,8 +620,8 @@ def gen_points20():
 
 
 
-###### Snub Dodecahedron (laevo) ######
-# nothing
+###### snub dodecahedron (laevo) / snub icosidodecahedron ######
+# no triangles
 def gen_points21():
     c0  = 0.192893711352359022108262546061
     c1  = 0.330921024729844230963655269187
@@ -636,8 +648,8 @@ def gen_points21():
 
 
 
-###### Snub Dodecahedron (dextro) ######
-# nothing
+###### snub dodecahedron (dextro) ######
+# no triangles
 def gen_points22():
     c0  = 0.192893711352359022108262546061
     c1  = 0.330921024729844230963655269187
@@ -664,14 +676,14 @@ def gen_points22():
 
 
 ###### truncated cube ######
-# nothing
+# no triangles
 def gen_points23():
     c0 = (1.0 + sqrt(2)) / 2.0
     return conf1([[c0, c0, 0.5]])
 
 
 ###### random points, satisfying great circles triangles ######
-# boring
+# no triangles
 def gen_points24():
     a = sqrt(2.0 / 3)
     b = -a / 2
@@ -680,3 +692,1305 @@ def gen_points24():
     points.extend(conf1([[a, b, c]]))
     points.extend(conf1([[0, 0, 1]]))
     return points
+
+
+###### truncated dodecahedron ######
+# no triangles
+def gen_points25():
+    phi = (1.0 + sqrt(5)) / 2
+    a, b, c = 0.0, 1.0 / phi, 2.0 + phi
+    points = conf1([[a, b, c]])
+    a, b, c = 1.0 / phi, phi, 2.0 * phi
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = phi, 2.0, phi + 1.0
+    points.extend(conf1([[a, b, c]]))
+    return points
+
+
+###### small icosicosidodecahedron ######
+# no triangles
+def gen_points26():
+    phi = (1.0 + sqrt(5)) / 2
+    a, b, c = 0.0, phi, 2.0 - 1.0 / phi
+    points = conf1([[a, b, c]])
+    a, b, c = phi, 1.0 / phi, 2.0 / phi
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = 1.0 / (phi ** 2), 1.0 / phi, 2.0
+    points.extend(conf1([[a, b, c]]))
+    return points
+
+
+###### truncated great icosahedron ######
+# no triangles
+def gen_points27():
+    phi = (1.0 + sqrt(5)) / 2
+    a, b, c = 1.0, 0, 3.0 / phi
+    points = conf1([[a, b, c]])
+    a, b, c = 2.0, 1.0 / phi, 1.0 / (phi ** 3)
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = (1.0 + 1.0 / (phi ** 2)), 1.0, 2.0 / phi
+    points.extend(conf1([[a, b, c]]))
+    return points
+
+
+###### quasirhombicosidodecahedron ######
+# no triangles
+def gen_points28():
+    phi = (1.0 + sqrt(5)) / 2
+    a, b, c = 1.0 / (phi ** 2), 0, 2.0 - 1.0 / phi
+    points = conf1([[a, b, c]])
+    a, b, c = 1.0, 1.0 / (phi ** 3), 1
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = 1.0 / phi, 1.0 / (phi ** 2), 2.0 / phi
+    points.extend(conf1([[a, b, c]]))
+    return points
+
+
+###### truncated icosidodecahedron ######
+# no triangles
+def gen_points29():
+    phi = (1.0 + sqrt(5)) / 2
+    a, b, c = 1.0 / phi, 1.0 / phi, 3.0 + phi
+    points = conf1([[a, b, c]])
+    a, b, c = 2.0 / phi, phi, 1.0 + 2.0 * phi
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = 1.0 / phi, phi ** 2, -1.0 + 3.0 * phi
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = 2.0 * phi - 1.0, 2.0, 2.0 + phi
+    points.extend(conf1([[a, b, c]]))
+    a, b, c = phi, 3, 2.0 * phi
+    points.extend(conf1([[a, b, c]]))
+    return points
+
+
+###### rhombic triacontahedron ######
+# no triangles
+def gen_points30():
+    c0 = sqrt(5) / 4
+    c1 = (5.0 + sqrt(5)) / 8
+    c2 = (5.0 + 3 * sqrt(5)) / 8
+    points = []
+    points.extend(conf1([[c1, 0.0, c2]]))
+    points.extend(conf1([[0.0, c0, c2]]))
+    points.extend(conf0([[c1, c1, c1]]))
+    return points
+
+
+###### disdyakis triacontahedron ######
+# no nz4flow, has nz5flow
+def gen_points31():
+    c0 = 3 * (15 + sqrt(5)) / 44
+    c1 = (5 - sqrt(5)) / 2
+    c2 = 3 * (5 + 4 * sqrt(5)) / 22
+    c3 = 3 * (5 + sqrt(5)) / 10
+    c4 = sqrt(5)
+    c5 = (75 + 27 * sqrt(5)) / 44
+    c6 = (15 + 9 * sqrt(5)) / 10
+    c7 = (5 + sqrt(5)) / 2
+    c8 = 3 * (5 + 4 * sqrt(5)) / 11
+
+    points = []
+    points.extend(conf1([[0.0, 0.0, c8]]))
+    points.extend(conf1([[0.0, c1, c7]]))
+    points.extend(conf1([[0.0, c6, c3]]))
+    points.extend(conf1([[c0, c2, c5]]))
+    points.extend(conf0([[c4, c4, c4]]))
+    return points
+
+
+###### truncated icosahedron ######
+# no triangles
+def gen_points32():
+    phi = (1.0 + sqrt(5)) / 2
+    points = []
+    points.extend(conf1([[0.0, 1.0, 3.0 * phi]]))
+    points.extend(conf1([[1.0, 2.0 + phi, 2.0 * phi]]))
+    points.extend(conf1([[2.0, 1.0 + 2.0 * phi, phi]]))
+    return points
+
+
+###### great dirhombicosidodecahedron ######
+# no triangles
+def gen_points33():
+    phi = (1.0 + sqrt(5)) / 2
+    points = []
+    points.extend(conf1([[0.0, 2.0 / phi, 2.0 / sqrt(phi)]]))
+    points.extend(conf1([[-1.0 + 1.0 / sqrt(phi ** 3),
+                          1.0 / (phi ** 2) - 1.0 / sqrt(phi),
+                          1.0 / phi + sqrt(phi)]]))
+    points.extend(conf1([[-1.0 / phi + sqrt(phi),
+                          -1.0 - 1.0 / sqrt(phi ** 3),
+                          1.0 / (phi ** 2) + 1.0 / sqrt(phi)]]))
+    return points
+
+
+
+###### dodecadodecahedron ######
+# no nz4flow, has nz5flow
+def gen_points34():
+    c0 = (sqrt(5) - 1.0) / 4
+    c1 = (1.0 + sqrt(5)) / 4
+    points = []
+    points.extend(conf1([[0.0, 0.0, 1.0]]))
+    points.extend(conf1([[c0, 0.5, c1]]))
+    return points
+
+
+###### deltoidal hexecontahedron ######
+# no nz4flow, has nz5flow
+def gen_points35():
+    c0 = (5 - sqrt(5)) / 4
+    c1 = (15 + sqrt(5)) / 22
+    c2 = sqrt(5) / 2
+    c3 = (5 + sqrt(5)) / 6
+    c4 = (5 + 4 * sqrt(5)) / 11
+    c5 = (5 + sqrt(5)) / 4
+    c6 = (5 + 3 * sqrt(5)) / 6
+    c7 = (25 + 9 * sqrt(5)) / 22
+    c8 = sqrt(5)
+
+    points = []
+    points.extend(conf1([[0.0, 0.0, c8]]))
+    points.extend(conf1([[0.0, c1, c7]]))
+    points.extend(conf1([[0.0, c6, c3]]))
+    points.extend(conf1([[c0, c2, c5]]))
+    points.extend(conf0([[c4, c4, c4]]))
+    return points
+
+
+###### triakis icosahedron ######
+# no triangles
+def gen_points36():
+    c0 = 5 * (7 + sqrt(5)) / 44
+    c1 = 5 * (3 + 2 * sqrt(5)) / 22
+    c2 = (5 + sqrt(5)) / 4
+    c3 = 5 * (13 + 5 * sqrt(5)) / 44
+    c4 = (5 + 3 * sqrt(5)) / 4
+
+    points = []
+    points.extend(conf1([[0.0, c4, c2]]))
+    points.extend(conf1([[0.0, c0, c3]]))
+    points.extend(conf0([[c1, c1, c1]]))
+    return points
+
+
+
+###### snub dodecahedron ######
+# no triangles
+def gen_points37():
+    phi = (1 + sqrt(5)) / 2
+    x = cbrt((phi + sqrt(phi-5/27))/2) + cbrt((phi - sqrt(phi-5/27))/2)
+
+    c0  = phi * sqrt(3 - (x ** 2)) / 2
+    c1  = x * phi * sqrt(3 - (x ** 2)) / 2
+    c2  = phi * sqrt((x - 1 - (1/x)) * phi) / 2
+    c3  = (x ** 2) * phi * sqrt(3 - (x ** 2)) / 2
+    c4  = x * phi * sqrt((x - 1 - (1/x)) * phi) / 2
+    c5  = phi * sqrt(1 - x + (phi + 1) / x) / 2
+    c6  = phi * sqrt(x - phi + 1) / 2
+    c7  = (x ** 2) * phi * sqrt((x - 1 - (1/x)) * phi) / 2
+    c8  = x * phi * sqrt(1 - x + (phi + 1) / x) / 2
+    c9  = sqrt((x + 2) * phi + 2) / 2
+    c10 = x * sqrt(x * (phi + 1) - phi) / 2
+    c11 = sqrt((x ** 2) * (2 * phi + 1) - phi) / 2
+    c12 = phi * sqrt((x ** 2) + x) / 2
+    c13 = (phi ** 2) * sqrt(x * (x + phi) + 1) / (2 * x)
+    c14 = phi * sqrt(x * (x + phi) + 1) / 2
+
+    points = []
+    points.extend(conf1([[c2, c1, c14]]))
+    points.extend(conf1([[c0, c8, c12]]))
+    points.extend(conf1([[c7, c6, c11]]))
+    points.extend(conf1([[c3, c4, c13]]))
+    points.extend(conf1([[c9, c5, c10]]))
+    return points
+
+
+###### pentagonal hexecontahedron ######
+# no triangles
+def gen_points38():
+    phi = (1 + sqrt(5)) / 2
+    x = cbrt((phi + sqrt(phi-5/27))/2) + cbrt((phi - sqrt(phi-5/27))/2)
+    c0  = phi * sqrt(3 - (x ** 2)) / 2
+    c1  = phi * sqrt((x - 1 - (1/x)) * phi) / (2 * x)
+    c2  = phi * sqrt((x - 1 - (1/x)) * phi) / 2
+    c3  = (x ** 2) * phi * sqrt(3 - (x ** 2)) / 2
+    c4  = phi * sqrt(1 - x + (phi + 1) / x) / 2
+    c5  = sqrt(x * (x + phi) + 1) / (2 * x)
+    c6  = sqrt((x + 2) * phi + 2) / (2 * x)
+    c7  = sqrt(-(x ** 2) * (phi + 2) + x * (3 * phi + 1) + 4) / 2
+    c8  = (phi + 1) * sqrt(1 + (1/x)) / (2 * x)
+    c9  = sqrt(3 * phi + 2 - 2 * x + (3/x)) / 2
+    c10 = sqrt((x ** 2)*(225*phi + 392) + x*(670*phi + 249) + (157*phi + 470))/62
+    c11 = phi * sqrt(x * (x + phi) + 1) / (2 * x)
+    c12 = phi * sqrt((x ** 2) + x + phi + 1) / (2 * x)
+    c13 = phi * sqrt((x ** 2) + 2 * x * phi + 2) / (2 * x)
+    c14 = sqrt((x ** 2) * (2 * phi + 1) - phi) / 2
+    c15 = phi * sqrt((x ** 2) + x) / 2
+    c16 = (phi ** 3) * sqrt(x * (x + phi) + 1) / (2 * (x ** 2))
+    c17 = sqrt((x ** 2)*(842*phi + 617) + x*(1589*phi + 919) + (784*phi + 627))/62
+    c18 = (phi ** 2) * sqrt(x * (x + phi) + 1) / (2 * x)
+    c19 = phi * sqrt(x * (x + phi) + 1) / 2
+
+    points = []
+    points.extend(conf1([[c0, c1, c19]]))
+    points.extend(conf1([[0.0, c5, c18]]))
+    points.extend(conf1([[0.0, c17, c10]]))
+    points.extend(conf1([[c3, c6, c16]]))
+    points.extend(conf1([[c2, c9, c15]]))
+    points.extend(conf1([[c7, c8, c14]]))
+    points.extend(conf1([[c4, c12, c13]]))
+    points.extend(conf0([[c11, c11, c11]]))
+    return points
+
+
+###### geodesic rhombic triacontahedron pattern 2 [2, 0] ######
+# no nz4flow, has nz5flow
+def gen_points39():
+    c0  = 0.206465110080514061294782900823
+    c1  = 0.239864162531466851799568285477
+    c2  = 0.312960201719001714124643095830
+    c3  = 0.357930572720316545646748465864
+    c4  = 0.388108367658942385458315129367
+    c5  = 0.5063802435073680418460798635004
+    c6  = 0.543415410301305287194192403164
+    c7  = 0.57393172813272714186981270912453
+    c8  = 0.579143832274188081473075064760
+    c9  = 0.594573477739456446753098030189
+    c10 = 0.722175933260202675528559553014
+    c11 = 0.819340445226369755970722959331
+    c12 = 0.834437640270923298552666315667
+    c13 = 0.879264603877981692064235065612
+    c14 = 0.937074404994504627119823530624
+    c15 = 0.962040095791669527328127838491
+    c16 = 1.01276048701473608369215972700
+
+    points = []
+    points.extend(conf1([[0.0, 0.0, c16]]))
+    points.extend(conf1([[c0, c1, c15]]))
+    points.extend(conf1([[0.0, c3, c14]]))
+    points.extend(conf1([[0.0, c13, c6]]))
+    points.extend(conf1([[0.0, c7, c12]]))
+    points.extend(conf1([[c2, c5, c11]]))
+    points.extend(conf1([[c9, c4, c10]]))
+    points.extend(conf0([[c8, c8, c8]]))
+    return points
+
+
+###### geodesic rhombic triacontahedron pattern 3 [2, 1] ######
+# no triangles
+def gen_points40():
+    c0  = 0.0879563514986484517092502772434
+    c1  = 0.0916954802291273147888848233041
+    c2  = 0.117715010734370755494619511557
+    c3  = 0.138776235907714450068878791769
+    c4  = 0.178155412444887179898584958314
+    c5  = 0.185729010142072531299237994837
+    c6  = 0.205671362233019207203869788801
+    c7  = 0.287142639533186441203937601414
+    c8  = 0.316240146758582910759479109790
+    c9  = 0.324505246049786981368116786606
+    c10 = 0.357679012202675970632080983474
+    c11 = 0.368622300799157782188169346613
+    c12 = 0.372911070154927587105653096132
+    c13 = 0.405976523349954215368184599220
+    c14 = 0.472871649675258972503175596251
+    c15 = 0.478728400969854062163149475961
+    c16 = 0.493932874848602667077434876463
+    c17 = 0.510938667050403727973021253606
+    c18 = 0.539978288995836500928139393993
+    c19 = 0.578736798806418113595289133446
+    c20 = 0.616755997865330203030517633436
+    c21 = 0.62104476722110000794800138295454
+    c22 = 0.673426921261674879376691619777
+    c23 = 0.684399763202873269367019264762
+    c24 = 0.697416316204714568473769882738
+    c25 = 0.738759777955470763442620894512
+    c26 = 0.789111796433841883262654706042
+    c27 = 0.812203157169389329445570411546
+    c28 = 0.862555175647760449265604223076
+    c29 = 0.8737032247822767860530284193499
+    c30 = 0.9038986373985166442344552348502
+    c31 = 0.916915190400357943341205852826
+    c32 = 0.936415811009094084227370116920
+    c33 = 0.989667068020257790136170729567
+
+    points = []
+    points.extend(conf1([[c1, c33, c5]]))
+    points.extend(conf1([[c0, c4, c33]]))
+    points.extend(conf1([[0.0, c10, c32]]))
+    points.extend(conf1([[c6, c11, c31]]))
+    points.extend(conf1([[c8, c30, c9]]))
+    points.extend(conf1([[0.0, c29, c18]]))
+    points.extend(conf1([[c2, c17, c28]]))
+    points.extend(conf1([[c12, c27, c14]]))
+    points.extend(conf1([[c3, c20, c26]]))
+    points.extend(conf1([[c15, c25, c16]]))
+    points.extend(conf1([[c7, c22, c24]]))
+    points.extend(conf1([[c13, c21, c23]]))
+    points.extend(conf0([[c19, c19, c19]]))
+    return points
+
+###### geodesic rhombic triacontahedron pattern 4 [2, 2] ######
+# no nz4flow, has nz5flow
+def gen_points41():
+    c0  = 0.130856316980679041715062406093
+    c1  = 0.183364691682889243997667190771
+    c2  = 0.210044322875480944728375403331
+    c3  = 0.213388436344685665213445153890
+    c4  = 0.235196494982565109085403039376
+    c5  = 0.238480078400087554643115993977
+    c6  = 0.296690303479559952463471603014
+    c7  = 0.311029944924819059200454212862
+    c8  = 0.357282985798322523716806842711
+    c9  = 0.380555922916634453826311243879
+    c10 = 0.421844770082976798640783184747
+    c11 = 0.425118404862054371986523547061
+    c12 = 0.476126059792573820288118136867
+    c13 = 0.503257022407365095872997213099
+    c14 = 0.535328369965939697384435193703
+    c15 = 0.5569997113292634853461341239446
+    c16 = 0.575055348539050325121207879057
+    c17 = 0.578096014623731827161044180953
+    c18 = 0.590600245792115398554686647210
+    c19 = 0.682559175970641260243492115769
+    c20 = 0.687856028309942527061196530037
+    c21 = 0.718535073562536751104254787761
+    c22 = 0.720414776473119669862116083560
+    c23 = 0.814286967332184155073451425961
+    c24 = 0.825796740774680507640089686586
+    c25 = 0.865923867653530504241159306540
+    c26 = 0.866179497746968819461668096700
+    c27 = 0.901244464654628192274641683928
+    c28 = 0.935379000422054350877851023664
+    c29 = 0.955611271455684778947519122936
+    c30 = 0.979249479450201212706963718784
+    c31 = 0.982118116191317857332657671006
+    c32 = 1.00651404481473019174599442620
+
+    points = []
+    points.extend(conf1([[0.0, 0.0, c32]]))
+    points.extend(conf1([[ 0.0,   c3,  c31]]))
+    points.extend(conf1([[  c5,  0.0,  c30]]))
+    points.extend(conf1([[  c2,   c4,  c29]]))
+    points.extend(conf1([[ 0.0,   c8,  c28]]))
+    points.extend(conf1([[  c0,  c11,  c27]]))
+    points.extend(conf1([[ c14,  0.0,  c26]]))
+    points.extend(conf1([[ c10,   c6,  c25]]))
+    points.extend(conf1([[ 0.0,  c16,  c24]]))
+    points.extend(conf1([[  c7,  c13,  c23]]))
+    points.extend(conf1([[ c18,   c9,  c22]]))
+    points.extend(conf1([[  c1,  c19,  c21]]))
+    points.extend(conf1([[ c12,  c15,  c20]]))
+    points.extend(conf0([[ c17,  c17,  c17]]))
+    return points
+
+
+###### great disdyakis triacontahedron ######
+# no nz4flow, has nz5flow
+def gen_points42():
+    c0 = 3 * (25 - 9 * sqrt(5)) / 44
+    c1 = 3 * (3 * sqrt(5) - 5) / 10
+    c2 = 3 * (4 * sqrt(5) - 5) / 22
+    c3 = 3 * (5 - sqrt(5)) / 10
+    c4 = 3 * (15 - sqrt(5)) / 44
+    c5 = 3 * (4 * sqrt(5) - 5) / 11
+    c6 = (5 - sqrt(5)) / 2
+    c7 = sqrt(5)
+    c8 = (5 + sqrt(5)) / 2
+
+    points = []
+    points.extend(conf1([[0.0, 0.0, c5]]))
+    points.extend(conf1([[0.0, c6, c8]]))
+    points.extend(conf1([[0.0, c3, c1]]))
+    points.extend(conf1([[c0, c2, c4]]))
+    points.extend(conf0([[c7, c7, c7]]))
+    return points
+
+
+###### rhombidodecadodecahedron ######
+# no triangles
+def gen_points43():
+    phi = (1.0 + sqrt(5)) / 2
+    points = []
+    points.extend(conf1([[1.0 / (phi ** 2), 0, phi ** 2]]))
+    points.extend(conf1([[1.0, 1.0, 2.0 * phi - 1]]))
+    points.extend(conf1([[2.0, 1.0 / phi, phi]]))
+    return points
+
+
+###### great stellated truncated dodecahedron ######
+# no triangles
+def gen_points44():
+    phi = (1.0 + sqrt(5)) / 2
+    points = []
+    points.extend(conf1([[0.0, phi, 2 - 1.0 / phi]]))
+    points.extend(conf1([[phi, 1.0 / phi, 2.0 / phi]]))
+    points.extend(conf1([[1.0 / phi ** 2, 1.0 / phi, 2]]))
+    return points
+
+
+###### snub icosidodecadodecahedron ######
+# no triangles
+def gen_points45():
+    c0  = 0.105398765906697216676314189282
+    c1  = 0.139623637868037118589881535187
+    c2  = 0.184961940339626297836961737414
+    c3  = 0.245022403774734335266195724469
+    c4  = 0.410877732043017261285800591418
+    c5  = 0.438898343962682737883306417824
+    c6  = 0.525190497798036582742263736641
+    c7  = 0.544297109869379954559620607106
+    c8  = 0.581416517652346986253630835588
+    c9  = 0.695729283407366307710093980810
+    c10 = 0.770212901572770918008459461110
+    c11 = 0.835352921275403426299975515997
+    c12 = 0.955174841912397215845421198524
+    c13 = 1.02031486161502972413693725341
+    c14 = 1.10660701545038356899589457223
+
+    points = []
+    points.extend(conf1([[c0, c2, c14]]))
+    points.extend(conf1([[c3, c4, c13]]))
+    points.extend(conf1([[c1, c8, c12]]))
+    points.extend(conf1([[c7, c6, c11]]))
+    points.extend(conf1([[c5, c9, c10]]))
+    return points
+
+def gen_points46():
+  phi = (1.0 + sqrt(5)) / 2
+  vals = [0.0, phi - 1.0, phi - 0.5, phi, phi + 0.5, phi + 1.0, 1.0]
+  points = []
+  for i0 in range(len(vals)):
+    for i1 in range(i0, len(vals)):
+      for i2 in range(i1, len(vals)):
+        if (i0 == i1 and i1 == i2) and (i0 != 1):
+          continue
+        maxm0 = 3
+        if i0 == 0:
+          maxm0 = 2
+        maxm1 = 3
+        if i1 == 0:
+          maxm1 = 2
+        for m0 in range(1, maxm0):
+          for m1 in range(1, maxm1):
+            for m2 in range(1, 3):
+              points.extend(conf2([[vals[i0] / m0, vals[i1] / m1, vals[i2] / m2]]))
+  return points
+
+def gen_points47():
+  phi = (1.0 + sqrt(5)) / 2
+  points = []
+  w = 2
+  for a1 in range(-w, w + 1):
+    for b1 in range(-w, w + 1):
+      for a2 in range(a1, w + 1):
+        for b2 in range(-w, w + 1):
+          if a2 == a1 and b2 < b1:
+            continue
+          for a3 in range(a2, w + 1):
+            for b3 in range(-w, w + 1):
+              if a3 == a2 and b3 < b2:
+                continue
+              s1 = a1 ** 2 + b1 ** 2 + a2 ** 2 + b2 ** 2 + a3 ** 2 + b3 ** 2
+              s2 = b1 * (2 * a1 + b1) + b2 * (2 * a2 + b2) + b3 * (2 * a3 + b3)
+              if s1 != s2:
+                continue
+              root = round(sqrt(s1))
+              if root == 0 or root ** 2 != s1:
+                continue
+              p1 = (a1 + b1 * phi) / root
+              p2 = (a2 + b2 * phi) / root
+              p3 = (a3 + b3 * phi) / root
+              points.extend(conf2([[p1, p2, p3]]))
+  return points
+
+
+########## snub cube  / snub cuboctahedron ##########
+# no triangles
+def gen_points48():
+    # tribonacci constant
+    t = (1 + (19 + 3 * 33 ** 0.5) ** (1/3) + (19 - 3 * 33 ** 0.5) ** (1/3)) / 3
+    return conf2([[1, 1/t, t]])
+
+
+########## pentagonal icositetrahedron ##########
+# no triangles
+def gen_points49():
+    # tribonacci constant
+    t = (1 + (19 + 3 * 33 ** 0.5) ** (1/3) + (19 - 3 * 33 ** 0.5) ** (1/3)) / 3
+    points = []
+    points.extend(conf2([[1, (2*t+1), t**2]]))
+    points.extend(conf2([[0, 0, t**3]]))
+    points.extend(conf2([[t**2, t**2, t**2]]))
+    return points
+
+
+########## truncated octahedron ##########
+# no triangles
+def gen_points50():
+    points = []
+    points.extend(conf2([[0, 1, 2]]))
+    # add dual - tetrakis hexahedron
+    points.extend(conf2([[3/2, 0, 0]]))
+    points.extend(conf2([[1, 1, 1]]))
+    return points
+
+
+###### geodesic rhombic triacontahedron pattern 11 [4, 2] ######
+# no nz4flow, has nz5flow
+def gen_points51():
+    c0   = 0.001035506274421455732176023464646
+    c1   = 0.0342646261950882405171563147398
+    c2   = 0.0435931431578205176839678244326
+    c3   = 0.0471997933336310258974188438407
+    c4   = 0.0472231205131520188226410882286
+    c5   = 0.0547063385387988790410933107928
+    c6   = 0.05516249427707492524676958384549
+    c7   = 0.0720608827286855211189589232431
+    c8   = 0.07539565740312431949476693456347
+    c9   = 0.0798754931836847488434626862271
+    c10  = 0.0814877467082402593397974029684
+    c11  = 0.0844073368039313992560238587612
+    c12  = 0.0951155193473940930024670990063
+    c13  = 0.104344421379754940613862519479
+    c14  = 0.117371651608357921160003430762
+    c15  = 0.130101995941923198535860245356
+    c16  = 0.133087660269778847477366232788
+    c17  = 0.135553822171060670426305372958
+    c18  = 0.137840112561014167318787483959
+    c19  = 0.169130283828213537387788651126
+    c20  = 0.177238742643272371598524833704
+    c21  = 0.178111782567350526214998263177
+    c22  = 0.181665851025952673019971345129
+    c23  = 0.184403757116437396788981686878
+    c24  = 0.199474617340474266123883658888
+    c25  = 0.201778988412289320416027289524
+    c26  = 0.204252553984084455930067072960
+    c27  = 0.2052880602585059116622430964247
+    c28  = 0.218496053483891260086538067932
+    c29  = 0.220831885801092889282492658136
+    c30  = 0.220941378894088381063146010440
+    c31  = 0.236347264224036983560025222800
+    c32  = 0.238022748571614674791595628749
+    c33  = 0.240893703057570214174676840041
+    c34  = 0.254733314775061471934725815822
+    c35  = 0.275845487216259971334426657449
+    c36  = 0.279162600594950994464600984117
+    c37  = 0.285429777843218133505001407760
+    c38  = 0.286738159793163744598830144528
+    c39  = 0.289453965332742530077644642572
+    c40  = 0.309812249441414602278303905690
+    c41  = 0.314446210925129320662814740531
+    c42  = 0.317219673197013343446276718087
+    c43  = 0.334862180788533688699083960904
+    c44  = 0.337314729901488433442671142847
+    c45  = 0.343250029930896316353896965487
+    c46  = 0.351223483323636515583559907360
+    c47  = 0.356955144748091884819367518242
+    c48  = 0.363146773838276086853636213098
+    c49  = 0.368023104185384904387279413812
+    c50  = 0.369956504083397544416422617021
+    c51  = 0.373230834739417087311686911139
+    c52  = 0.383453412936965337530147662424
+    c53  = 0.384093391010121573029542044908
+    c54  = 0.392579100442973546856280890008
+    c55  = 0.399127580625552223729546771740
+    c56  = 0.405562569599162079837347314321
+    c57  = 0.413685599777274138653214141407
+    c58  = 0.414737673972218437542546647131
+    c59  = 0.418588103633738845328866433329
+    c60  = 0.419865969989888924275593870989
+    c61  = 0.436172243600794064540248714440
+    c62  = 0.465242766213294097749401798915046
+    c63  = 0.466873499911774115836683757419
+    c64  = 0.471119816358695203097615987702
+    c65  = 0.478102239608838536849625034193
+    c66  = 0.489969906403093479093371173082
+    c67  = 0.490401157295682443363103493898
+    c68  = 0.500683876528810081214761596291
+    c69  = 0.501286749727269451052589149841
+    c70  = 0.502118667519811252055983694506
+    c71  = 0.503992464616747226086872612030
+    c72  = 0.504597044034005827423861503308
+    c73  = 0.511175208930089476445456777214
+    c74  = 0.520056303652521208639277824158
+    c75  = 0.530377843041903092933077804157
+    c76  = 0.5403607024620497998776217575547
+    c77  = 0.542269157314898435331450691982
+    c78  = 0.545439835125177716962613091953
+    c79  = 0.568510323206836073514226494848
+    c80  = 0.5726538548256047711434933174146
+    c81  = 0.577565556661551191871434570510
+    c82  = 0.587705966921049793460214735384
+    c83  = 0.589381451268627484691785141333
+    c84  = 0.592986491220229781173184479020
+    c85  = 0.595802032257512558352851977786
+    c86  = 0.608387732480295701467642844900
+    c87  = 0.614676179457459459886207123689
+    c88  = 0.621848449170290059217419160523
+    c89  = 0.622157567762384460486308633739
+    c90  = 0.622676612811207862610266429719
+    c91  = 0.630785872470733279750621841647
+    c92  = 0.633233727456109697629084715063
+    c93  = 0.636653261166854649088561315120
+    c94  = 0.643025152770664577175493066014
+    c95  = 0.667172356294583468116515015508
+    c96  = 0.672635955044530707298818743890
+    c97  = 0.677382951350006741651359740512
+    c98  = 0.679881228021127857265652323717
+    c99  = 0.688396221733184622875854298909
+    c100 = 0.690450507936430430757963629226
+    c101 = 0.714580965645342971752172911007
+    c102 = 0.715616471919764427484348934472
+    c103 = 0.722950553320904141338476352642
+    c104 = 0.726222147179196970018985424233
+    c105 = 0.732047831065817381046210554452
+    c106 = 0.736442310527040657172217914588
+    c107 = 0.737124353993660459740674141210
+    c108 = 0.740997682546609589702423834598
+    c109 = 0.749892597468877142742018151118
+    c110 = 0.760314443546650833316541805287
+    c111 = 0.783642103860671683069636758428
+    c112 = 0.785566027283824523760430728233
+    c113 = 0.802726178465644138542820388466
+    c114 = 0.809185236722345980859633064453
+    c115 = 0.811098999168684053330893055530
+    c116 = 0.821632185102858726610192292628
+    c117 = 0.825728715492664468251810364133
+    c118 = 0.840189936730335582160004491514
+    c119 = 0.856038213590682988815842585430
+    c120 = 0.857993010588478383480650586893
+    c121 = 0.8581693769216561246670265980052
+    c122 = 0.868831978436489752507611136468
+    c123 = 0.882980257738655990219384383906
+    c124 = 0.885519187245794751685347657470
+    c125 = 0.895352431007410507406774075359
+    c126 = 0.897841697813038231545287487472
+    c127 = 0.908586608963453803816249305052
+    c128 = 0.910159613633167907261208817628
+    c129 = 0.913529658102100921473495583931
+    c130 = 0.929763312563828321774323210543
+    c131 = 0.932116266125068213586085556334
+    c132 = 0.934520701409643076690802088752
+    c133 = 0.94471820066308823010552349216496
+    c134 = 0.951963736143801411044374157271
+    c135 = 0.952603714216957646543768539756
+    c136 = 0.9580657328877488408038201516496
+    c137 = 0.958948806095788645206488190884
+    c138 = 0.965926642742104178964163395206
+    c139 = 0.981618567219712788779329756039
+    c140 = 0.982699283642844364273486537501
+    c141 = 0.992114071845782004902731250760
+    c142 = 0.992519824815493695419087188404
+    c143 = 1.00257349945453890210517829968
+
+    points = []
+
+    points.append([  0.0,   0.0,  c143])
+    points.append([  0.0,   0.0, -c143])
+    points.append([ c143,   0.0,   0.0])
+    points.append([-c143,   0.0,   0.0])
+    points.append([  0.0,  c143,   0.0])
+    points.append([  0.0, -c143,   0.0])
+    points.append([   c2,  -c16,  c142])
+    points.append([   c2,   c16, -c142])
+    points.append([  -c2,   c16,  c142])
+    points.append([  -c2,  -c16, -c142])
+    points.append([ c142,   -c2,   c16])
+    points.append([ c142,    c2,  -c16])
+    points.append([-c142,    c2,   c16])
+    points.append([-c142,   -c2,  -c16])
+    points.append([  c16, -c142,    c2])
+    points.append([  c16,  c142,   -c2])
+    points.append([ -c16,  c142,    c2])
+    points.append([ -c16, -c142,   -c2])
+    points.append([  c18,    c3,  c141])
+    points.append([  c18,   -c3, -c141])
+    points.append([ -c18,   -c3,  c141])
+    points.append([ -c18,    c3, -c141])
+    points.append([ c141,   c18,    c3])
+    points.append([ c141,  -c18,   -c3])
+    points.append([-c141,  -c18,    c3])
+    points.append([-c141,   c18,   -c3])
+    points.append([   c3,  c141,   c18])
+    points.append([   c3, -c141,  -c18])
+    points.append([  -c3, -c141,   c18])
+    points.append([  -c3,  c141,  -c18])
+    points.append([  c11,   c21,  c140])
+    points.append([  c11,  -c21, -c140])
+    points.append([ -c11,  -c21,  c140])
+    points.append([ -c11,   c21, -c140])
+    points.append([ c140,   c11,   c21])
+    points.append([ c140,  -c11,  -c21])
+    points.append([-c140,  -c11,   c21])
+    points.append([-c140,   c11,  -c21])
+    points.append([  c21,  c140,   c11])
+    points.append([  c21, -c140,  -c11])
+    points.append([ -c21, -c140,   c11])
+    points.append([ -c21,  c140,  -c11])
+    points.append([  c22,  -c12,  c139])
+    points.append([  c22,   c12, -c139])
+    points.append([ -c22,   c12,  c139])
+    points.append([ -c22,  -c12, -c139])
+    points.append([ c139,  -c22,   c12])
+    points.append([ c139,   c22,  -c12])
+    points.append([-c139,   c22,   c12])
+    points.append([-c139,  -c22,  -c12])
+    points.append([  c12, -c139,   c22])
+    points.append([  c12,  c139,  -c22])
+    points.append([ -c12,  c139,   c22])
+    points.append([ -c12, -c139,  -c22])
+    points.append([   c8,  -c34,  c138])
+    points.append([   c8,   c34, -c138])
+    points.append([  -c8,   c34,  c138])
+    points.append([  -c8,  -c34, -c138])
+    points.append([ c138,   -c8,   c34])
+    points.append([ c138,    c8,  -c34])
+    points.append([-c138,    c8,   c34])
+    points.append([-c138,   -c8,  -c34])
+    points.append([  c34, -c138,    c8])
+    points.append([  c34,  c138,   -c8])
+    points.append([ -c34,  c138,    c8])
+    points.append([ -c34, -c138,   -c8])
+    points.append([   c1,   c38,  c137])
+    points.append([   c1,  -c38, -c137])
+    points.append([  -c1,  -c38,  c137])
+    points.append([  -c1,   c38, -c137])
+    points.append([ c137,    c1,   c38])
+    points.append([ c137,   -c1,  -c38])
+    points.append([-c137,   -c1,   c38])
+    points.append([-c137,    c1,  -c38])
+    points.append([  c38,  c137,    c1])
+    points.append([  c38, -c137,   -c1])
+    points.append([ -c38, -c137,    c1])
+    points.append([ -c38,  c137,   -c1])
+    points.append([  c36,   c13,  c136])
+    points.append([  c36,  -c13, -c136])
+    points.append([ -c36,  -c13,  c136])
+    points.append([ -c36,   c13, -c136])
+    points.append([ c136,   c36,   c13])
+    points.append([ c136,  -c36,  -c13])
+    points.append([-c136,  -c36,   c13])
+    points.append([-c136,   c36,  -c13])
+    points.append([  c13,  c136,   c36])
+    points.append([  c13, -c136,  -c36])
+    points.append([ -c13, -c136,   c36])
+    points.append([ -c13,  c136,  -c36])
+    points.append([  c26,  -c31,  c135])
+    points.append([  c26,   c31, -c135])
+    points.append([ -c26,   c31,  c135])
+    points.append([ -c26,  -c31, -c135])
+    points.append([ c135,  -c26,   c31])
+    points.append([ c135,   c26,  -c31])
+    points.append([-c135,   c26,   c31])
+    points.append([-c135,  -c26,  -c31])
+    points.append([  c31, -c135,   c26])
+    points.append([  c31,  c135,  -c26])
+    points.append([ -c31,  c135,   c26])
+    points.append([ -c31, -c135,  -c26])
+    points.append([  c27,   c32,  c134])
+    points.append([  c27,  -c32, -c134])
+    points.append([ -c27,  -c32,  c134])
+    points.append([ -c27,   c32, -c134])
+    points.append([ c134,   c27,   c32])
+    points.append([ c134,  -c27,  -c32])
+    points.append([-c134,  -c27,   c32])
+    points.append([-c134,   c27,  -c32])
+    points.append([  c32,  c134,   c27])
+    points.append([  c32, -c134,  -c27])
+    points.append([ -c32, -c134,   c27])
+    points.append([ -c32,  c134,  -c27])
+    points.append([  c43,   -c6,  c133])
+    points.append([  c43,    c6, -c133])
+    points.append([ -c43,    c6,  c133])
+    points.append([ -c43,   -c6, -c133])
+    points.append([ c133,  -c43,    c6])
+    points.append([ c133,   c43,   -c6])
+    points.append([-c133,   c43,    c6])
+    points.append([-c133,  -c43,   -c6])
+    points.append([   c6, -c133,   c43])
+    points.append([   c6,  c133,  -c43])
+    points.append([  -c6,  c133,   c43])
+    points.append([  -c6, -c133,  -c43])
+    points.append([  0.0,   c47,  c132])
+    points.append([  0.0,   c47, -c132])
+    points.append([  0.0,  -c47,  c132])
+    points.append([  0.0,  -c47, -c132])
+    points.append([ c132,   0.0,   c47])
+    points.append([ c132,   0.0,  -c47])
+    points.append([-c132,   0.0,   c47])
+    points.append([-c132,   0.0,  -c47])
+    points.append([  c47,  c132,   0.0])
+    points.append([  c47, -c132,   0.0])
+    points.append([ -c47,  c132,   0.0])
+    points.append([ -c47, -c132,   0.0])
+    points.append([  c15,   c45,  c131])
+    points.append([  c15,  -c45, -c131])
+    points.append([ -c15,  -c45,  c131])
+    points.append([ -c15,   c45, -c131])
+    points.append([ c131,   c15,   c45])
+    points.append([ c131,  -c15,  -c45])
+    points.append([-c131,  -c15,   c45])
+    points.append([-c131,   c15,  -c45])
+    points.append([  c45,  c131,   c15])
+    points.append([  c45, -c131,  -c15])
+    points.append([ -c45, -c131,   c15])
+    points.append([ -c45,  c131,  -c15])
+    points.append([  c10,  -c48,  c130])
+    points.append([  c10,   c48, -c130])
+    points.append([ -c10,   c48,  c130])
+    points.append([ -c10,  -c48, -c130])
+    points.append([ c130,  -c10,   c48])
+    points.append([ c130,   c10,  -c48])
+    points.append([-c130,   c10,   c48])
+    points.append([-c130,  -c10,  -c48])
+    points.append([  c48, -c130,   c10])
+    points.append([  c48,  c130,  -c10])
+    points.append([ -c48,  c130,   c10])
+    points.append([ -c48, -c130,  -c10])
+    points.append([  c46,  -c30,  c129])
+    points.append([  c46,   c30, -c129])
+    points.append([ -c46,   c30,  c129])
+    points.append([ -c46,  -c30, -c129])
+    points.append([ c129,  -c46,   c30])
+    points.append([ c129,   c46,  -c30])
+    points.append([-c129,   c46,   c30])
+    points.append([-c129,  -c46,  -c30])
+    points.append([  c30, -c129,   c46])
+    points.append([  c30,  c129,  -c46])
+    points.append([ -c30,  c129,   c46])
+    points.append([ -c30, -c129,  -c46])
+    points.append([  c25,  -c49,  c128])
+    points.append([  c25,   c49, -c128])
+    points.append([ -c25,   c49,  c128])
+    points.append([ -c25,  -c49, -c128])
+    points.append([ c128,  -c25,   c49])
+    points.append([ c128,   c25,  -c49])
+    points.append([-c128,   c25,   c49])
+    points.append([-c128,  -c25,  -c49])
+    points.append([  c49, -c128,   c25])
+    points.append([  c49,  c128,  -c25])
+    points.append([ -c49,  c128,   c25])
+    points.append([ -c49, -c128,  -c25])
+    points.append([   c4,   c59,  c127])
+    points.append([   c4,  -c59, -c127])
+    points.append([  -c4,  -c59,  c127])
+    points.append([  -c4,   c59, -c127])
+    points.append([ c127,    c4,   c59])
+    points.append([ c127,   -c4,  -c59])
+    points.append([-c127,   -c4,   c59])
+    points.append([-c127,    c4,  -c59])
+    points.append([  c59,  c127,    c4])
+    points.append([  c59, -c127,   -c4])
+    points.append([ -c59, -c127,    c4])
+    points.append([ -c59,  c127,   -c4])
+    points.append([  c42,   c41,  c126])
+    points.append([  c42,  -c41, -c126])
+    points.append([ -c42,  -c41,  c126])
+    points.append([ -c42,   c41, -c126])
+    points.append([ c126,   c42,   c41])
+    points.append([ c126,  -c42,  -c41])
+    points.append([-c126,  -c42,   c41])
+    points.append([-c126,   c42,  -c41])
+    points.append([  c41,  c126,   c42])
+    points.append([  c41, -c126,  -c42])
+    points.append([ -c41, -c126,   c42])
+    points.append([ -c41,  c126,  -c42])
+    points.append([  c58,   c23,  c125])
+    points.append([  c58,  -c23, -c125])
+    points.append([ -c58,  -c23,  c125])
+    points.append([ -c58,   c23, -c125])
+    points.append([ c125,   c58,   c23])
+    points.append([ c125,  -c58,  -c23])
+    points.append([-c125,  -c58,   c23])
+    points.append([-c125,   c58,  -c23])
+    points.append([  c23,  c125,   c58])
+    points.append([  c23, -c125,  -c58])
+    points.append([ -c23, -c125,   c58])
+    points.append([ -c23,  c125,  -c58])
+    points.append([   c5,  -c62,  c124])
+    points.append([   c5,   c62, -c124])
+    points.append([  -c5,   c62,  c124])
+    points.append([  -c5,  -c62, -c124])
+    points.append([ c124,   -c5,   c62])
+    points.append([ c124,    c5,  -c62])
+    points.append([-c124,    c5,   c62])
+    points.append([-c124,   -c5,  -c62])
+    points.append([  c62, -c124,    c5])
+    points.append([  c62,  c124,   -c5])
+    points.append([ -c62,  c124,    c5])
+    points.append([ -c62, -c124,   -c5])
+    points.append([  c29,   c60,  c123])
+    points.append([  c29,  -c60, -c123])
+    points.append([ -c29,  -c60,  c123])
+    points.append([ -c29,   c60, -c123])
+    points.append([ c123,   c29,   c60])
+    points.append([ c123,  -c29,  -c60])
+    points.append([-c123,  -c29,   c60])
+    points.append([-c123,   c29,  -c60])
+    points.append([  c60,  c123,   c29])
+    points.append([  c60, -c123,  -c29])
+    points.append([ -c60, -c123,   c29])
+    points.append([ -c60,  c123,  -c29])
+    points.append([  c44,  -c50,  c122])
+    points.append([  c44,   c50, -c122])
+    points.append([ -c44,   c50,  c122])
+    points.append([ -c44,  -c50, -c122])
+    points.append([ c122,  -c44,   c50])
+    points.append([ c122,   c44,  -c50])
+    points.append([-c122,   c44,   c50])
+    points.append([-c122,  -c44,  -c50])
+    points.append([  c50, -c122,   c44])
+    points.append([  c50,  c122,  -c44])
+    points.append([ -c50,  c122,   c44])
+    points.append([ -c50, -c122,  -c44])
+    points.append([  c75,   0.0,  c121])
+    points.append([  c75,   0.0, -c121])
+    points.append([ -c75,   0.0,  c121])
+    points.append([ -c75,   0.0, -c121])
+    points.append([ c121,   c75,   0.0])
+    points.append([ c121,  -c75,   0.0])
+    points.append([-c121,   c75,   0.0])
+    points.append([-c121,  -c75,   0.0])
+    points.append([  0.0,  c121,   c75])
+    points.append([  0.0,  c121,  -c75])
+    points.append([  0.0, -c121,   c75])
+    points.append([  0.0, -c121,  -c75])
+    points.append([  c14,   c72,  c120])
+    points.append([  c14,  -c72, -c120])
+    points.append([ -c14,  -c72,  c120])
+    points.append([ -c14,   c72, -c120])
+    points.append([ c120,   c14,   c72])
+    points.append([ c120,  -c14,  -c72])
+    points.append([-c120,  -c14,   c72])
+    points.append([-c120,   c14,  -c72])
+    points.append([  c72,  c120,   c14])
+    points.append([  c72, -c120,  -c14])
+    points.append([ -c72, -c120,   c14])
+    points.append([ -c72,  c120,  -c14])
+    points.append([  c20,  -c67,  c119])
+    points.append([  c20,   c67, -c119])
+    points.append([ -c20,   c67,  c119])
+    points.append([ -c20,  -c67, -c119])
+    points.append([ c119,  -c20,   c67])
+    points.append([ c119,   c20,  -c67])
+    points.append([-c119,   c20,   c67])
+    points.append([-c119,  -c20,  -c67])
+    points.append([  c67, -c119,   c20])
+    points.append([  c67,  c119,  -c20])
+    points.append([ -c67,  c119,   c20])
+    points.append([ -c67, -c119,  -c20])
+    points.append([  c71,  -c28,  c118])
+    points.append([  c71,   c28, -c118])
+    points.append([ -c71,   c28,  c118])
+    points.append([ -c71,  -c28, -c118])
+    points.append([ c118,  -c71,   c28])
+    points.append([ c118,   c71,  -c28])
+    points.append([-c118,   c71,   c28])
+    points.append([-c118,  -c71,  -c28])
+    points.append([  c28, -c118,   c71])
+    points.append([  c28,  c118,  -c71])
+    points.append([ -c28,  c118,   c71])
+    points.append([ -c28, -c118,  -c71])
+    points.append([   c0,  -c79,  c117])
+    points.append([   c0,   c79, -c117])
+    points.append([  -c0,   c79,  c117])
+    points.append([  -c0,  -c79, -c117])
+    points.append([ c117,   -c0,   c79])
+    points.append([ c117,    c0,  -c79])
+    points.append([-c117,    c0,   c79])
+    points.append([-c117,   -c0,  -c79])
+    points.append([  c79, -c117,    c0])
+    points.append([  c79,  c117,   -c0])
+    points.append([ -c79,  c117,    c0])
+    points.append([ -c79, -c117,   -c0])
+    points.append([  c57,   c55,  c116])
+    points.append([  c57,  -c55, -c116])
+    points.append([ -c57,  -c55,  c116])
+    points.append([ -c57,   c55, -c116])
+    points.append([ c116,   c57,   c55])
+    points.append([ c116,  -c57,  -c55])
+    points.append([-c116,  -c57,   c55])
+    points.append([-c116,   c57,  -c55])
+    points.append([  c55,  c116,   c57])
+    points.append([  c55, -c116,  -c57])
+    points.append([ -c55, -c116,   c57])
+    points.append([ -c55,  c116,  -c57])
+    points.append([  c40,   c69,  c115])
+    points.append([  c40,   c69, -c115])
+    points.append([  c40,  -c69,  c115])
+    points.append([  c40,  -c69, -c115])
+    points.append([ -c40,   c69,  c115])
+    points.append([ -c40,   c69, -c115])
+    points.append([ -c40,  -c69,  c115])
+    points.append([ -c40,  -c69, -c115])
+    points.append([ c115,   c40,   c69])
+    points.append([ c115,   c40,  -c69])
+    points.append([ c115,  -c40,   c69])
+    points.append([ c115,  -c40,  -c69])
+    points.append([-c115,   c40,   c69])
+    points.append([-c115,   c40,  -c69])
+    points.append([-c115,  -c40,   c69])
+    points.append([-c115,  -c40,  -c69])
+    points.append([  c69,  c115,   c40])
+    points.append([  c69,  c115,  -c40])
+    points.append([  c69, -c115,   c40])
+    points.append([  c69, -c115,  -c40])
+    points.append([ -c69,  c115,   c40])
+    points.append([ -c69,  c115,  -c40])
+    points.append([ -c69, -c115,   c40])
+    points.append([ -c69, -c115,  -c40])
+    points.append([  c74,   c37,  c114])
+    points.append([  c74,  -c37, -c114])
+    points.append([ -c74,  -c37,  c114])
+    points.append([ -c74,   c37, -c114])
+    points.append([ c114,   c74,   c37])
+    points.append([ c114,  -c74,  -c37])
+    points.append([-c114,  -c74,   c37])
+    points.append([-c114,   c74,  -c37])
+    points.append([  c37,  c114,   c74])
+    points.append([  c37, -c114,  -c74])
+    points.append([ -c37, -c114,   c74])
+    points.append([ -c37,  c114,  -c74])
+    points.append([  c64,  -c51,  c113])
+    points.append([  c64,   c51, -c113])
+    points.append([ -c64,   c51,  c113])
+    points.append([ -c64,  -c51, -c113])
+    points.append([ c113,  -c64,   c51])
+    points.append([ c113,   c64,  -c51])
+    points.append([-c113,   c64,   c51])
+    points.append([-c113,  -c64,  -c51])
+    points.append([  c51, -c113,   c64])
+    points.append([  c51,  c113,  -c64])
+    points.append([ -c51,  c113,   c64])
+    points.append([ -c51, -c113,  -c64])
+    points.append([  c17,  -c86,  c112])
+    points.append([  c17,   c86, -c112])
+    points.append([ -c17,   c86,  c112])
+    points.append([ -c17,  -c86, -c112])
+    points.append([ c112,  -c17,   c86])
+    points.append([ c112,   c17,  -c86])
+    points.append([-c112,   c17,   c86])
+    points.append([-c112,  -c17,  -c86])
+    points.append([  c86, -c112,   c17])
+    points.append([  c86,  c112,  -c17])
+    points.append([ -c86,  c112,   c17])
+    points.append([ -c86, -c112,  -c17])
+    points.append([  c24,   c84,  c111])
+    points.append([  c24,  -c84, -c111])
+    points.append([ -c24,  -c84,  c111])
+    points.append([ -c24,   c84, -c111])
+    points.append([ c111,   c24,   c84])
+    points.append([ c111,  -c24,  -c84])
+    points.append([-c111,  -c24,   c84])
+    points.append([-c111,   c24,  -c84])
+    points.append([  c84,  c111,   c24])
+    points.append([  c84, -c111,  -c24])
+    points.append([ -c84, -c111,   c24])
+    points.append([ -c84,  c111,  -c24])
+    points.append([  c92,   c19,  c110])
+    points.append([  c92,  -c19, -c110])
+    points.append([ -c92,  -c19,  c110])
+    points.append([ -c92,   c19, -c110])
+    points.append([ c110,   c92,   c19])
+    points.append([ c110,  -c92,  -c19])
+    points.append([-c110,  -c92,   c19])
+    points.append([-c110,   c92,  -c19])
+    points.append([  c19,  c110,   c92])
+    points.append([  c19, -c110,  -c92])
+    points.append([ -c19, -c110,   c92])
+    points.append([ -c19,  c110,  -c92])
+    points.append([  c61,  -c70,  c109])
+    points.append([  c61,   c70, -c109])
+    points.append([ -c61,   c70,  c109])
+    points.append([ -c61,  -c70, -c109])
+    points.append([ c109,  -c61,   c70])
+    points.append([ c109,   c61,  -c70])
+    points.append([-c109,   c61,   c70])
+    points.append([-c109,  -c61,  -c70])
+    points.append([  c70, -c109,   c61])
+    points.append([  c70,  c109,  -c61])
+    points.append([ -c70,  c109,   c61])
+    points.append([ -c70, -c109,  -c61])
+    points.append([   c7,   c96,  c108])
+    points.append([   c7,  -c96, -c108])
+    points.append([  -c7,  -c96,  c108])
+    points.append([  -c7,   c96, -c108])
+    points.append([ c108,    c7,   c96])
+    points.append([ c108,   -c7,  -c96])
+    points.append([-c108,   -c7,   c96])
+    points.append([-c108,    c7,  -c96])
+    points.append([  c96,  c108,    c7])
+    points.append([  c96, -c108,   -c7])
+    points.append([ -c96, -c108,    c7])
+    points.append([ -c96,  c108,   -c7])
+    points.append([  c93,  -c33,  c107])
+    points.append([  c93,   c33, -c107])
+    points.append([ -c93,   c33,  c107])
+    points.append([ -c93,  -c33, -c107])
+    points.append([ c107,  -c93,   c33])
+    points.append([ c107,   c93,  -c33])
+    points.append([-c107,   c93,   c33])
+    points.append([-c107,  -c93,  -c33])
+    points.append([  c33, -c107,   c93])
+    points.append([  c33,  c107,  -c93])
+    points.append([ -c33,  c107,   c93])
+    points.append([ -c33, -c107,  -c93])
+    points.append([  c35,  -c89,  c106])
+    points.append([  c35,   c89, -c106])
+    points.append([ -c35,   c89,  c106])
+    points.append([ -c35,  -c89, -c106])
+    points.append([ c106,  -c35,   c89])
+    points.append([ c106,   c35,  -c89])
+    points.append([-c106,   c35,   c89])
+    points.append([-c106,  -c35,  -c89])
+    points.append([  c89, -c106,   c35])
+    points.append([  c89,  c106,  -c35])
+    points.append([ -c89,  c106,   c35])
+    points.append([ -c89, -c106,  -c35])
+    points.append([  c66,   c65,  c105])
+    points.append([  c66,  -c65, -c105])
+    points.append([ -c66,  -c65,  c105])
+    points.append([ -c66,   c65, -c105])
+    points.append([ c105,   c66,   c65])
+    points.append([ c105,  -c66,  -c65])
+    points.append([-c105,  -c66,   c65])
+    points.append([-c105,   c66,  -c65])
+    points.append([  c65,  c105,   c66])
+    points.append([  c65, -c105,  -c66])
+    points.append([ -c65, -c105,   c66])
+    points.append([ -c65,  c105,  -c66])
+    points.append([  c99,   -c9,  c104])
+    points.append([  c99,    c9, -c104])
+    points.append([ -c99,    c9,  c104])
+    points.append([ -c99,   -c9, -c104])
+    points.append([ c104,  -c99,    c9])
+    points.append([ c104,   c99,   -c9])
+    points.append([-c104,   c99,    c9])
+    points.append([-c104,  -c99,   -c9])
+    points.append([   c9, -c104,   c99])
+    points.append([   c9,  c104,  -c99])
+    points.append([  -c9,  c104,   c99])
+    points.append([  -c9, -c104,  -c99])
+    points.append([  c54,   c80,  c103])
+    points.append([  c54,  -c80, -c103])
+    points.append([ -c54,  -c80,  c103])
+    points.append([ -c54,   c80, -c103])
+    points.append([ c103,   c54,   c80])
+    points.append([ c103,  -c54,  -c80])
+    points.append([-c103,  -c54,   c80])
+    points.append([-c103,   c54,  -c80])
+    points.append([  c80,  c103,   c54])
+    points.append([  c80, -c103,  -c54])
+    points.append([ -c80, -c103,   c54])
+    points.append([ -c80,  c103,  -c54])
+    points.append([  c82,  -c53,  c102])
+    points.append([  c82,   c53, -c102])
+    points.append([ -c82,   c53,  c102])
+    points.append([ -c82,  -c53, -c102])
+    points.append([ c102,  -c82,   c53])
+    points.append([ c102,   c82,  -c53])
+    points.append([-c102,   c82,   c53])
+    points.append([-c102,  -c82,  -c53])
+    points.append([  c53, -c102,   c82])
+    points.append([  c53,  c102,  -c82])
+    points.append([ -c53,  c102,   c82])
+    points.append([ -c53, -c102,  -c82])
+    points.append([  c83,   c52,  c101])
+    points.append([  c83,  -c52, -c101])
+    points.append([ -c83,  -c52,  c101])
+    points.append([ -c83,   c52, -c101])
+    points.append([ c101,   c83,   c52])
+    points.append([ c101,  -c83,  -c52])
+    points.append([-c101,  -c83,   c52])
+    points.append([-c101,   c83,  -c52])
+    points.append([  c52,  c101,   c83])
+    points.append([  c52, -c101,  -c83])
+    points.append([ -c52, -c101,   c83])
+    points.append([ -c52,  c101,  -c83])
+    points.append([  c39,   c95,  c100])
+    points.append([  c39,  -c95, -c100])
+    points.append([ -c39,  -c95,  c100])
+    points.append([ -c39,   c95, -c100])
+    points.append([ c100,   c39,   c95])
+    points.append([ c100,  -c39,  -c95])
+    points.append([-c100,  -c39,   c95])
+    points.append([-c100,   c39,  -c95])
+    points.append([  c95,  c100,   c39])
+    points.append([  c95, -c100,  -c39])
+    points.append([ -c95, -c100,   c39])
+    points.append([ -c95,  c100,  -c39])
+    points.append([  c56,  -c87,   c98])
+    points.append([  c56,   c87,  -c98])
+    points.append([ -c56,   c87,   c98])
+    points.append([ -c56,  -c87,  -c98])
+    points.append([  c98,  -c56,   c87])
+    points.append([  c98,   c56,  -c87])
+    points.append([ -c98,   c56,   c87])
+    points.append([ -c98,  -c56,  -c87])
+    points.append([  c87,  -c98,   c56])
+    points.append([  c87,   c98,  -c56])
+    points.append([ -c87,   c98,   c56])
+    points.append([ -c87,  -c98,  -c56])
+    points.append([  c77,  -c68,   c97])
+    points.append([  c77,   c68,  -c97])
+    points.append([ -c77,   c68,   c97])
+    points.append([ -c77,  -c68,  -c97])
+    points.append([  c97,  -c77,   c68])
+    points.append([  c97,   c77,  -c68])
+    points.append([ -c97,   c77,   c68])
+    points.append([ -c97,  -c77,  -c68])
+    points.append([  c68,  -c97,   c77])
+    points.append([  c68,   c97,  -c77])
+    points.append([ -c68,   c97,   c77])
+    points.append([ -c68,  -c97,  -c77])
+    points.append([  c78,   c76,   c94])
+    points.append([  c78,  -c76,  -c94])
+    points.append([ -c78,  -c76,   c94])
+    points.append([ -c78,   c76,  -c94])
+    points.append([  c94,   c78,   c76])
+    points.append([  c94,  -c78,  -c76])
+    points.append([ -c94,  -c78,   c76])
+    points.append([ -c94,   c78,  -c76])
+    points.append([  c76,   c94,   c78])
+    points.append([  c76,  -c94,  -c78])
+    points.append([ -c76,  -c94,   c78])
+    points.append([ -c76,   c94,  -c78])
+    points.append([  c63,   c90,   c91])
+    points.append([  c63,  -c90,  -c91])
+    points.append([ -c63,  -c90,   c91])
+    points.append([ -c63,   c90,  -c91])
+    points.append([  c91,   c63,   c90])
+    points.append([  c91,  -c63,  -c90])
+    points.append([ -c91,  -c63,   c90])
+    points.append([ -c91,   c63,  -c90])
+    points.append([  c90,   c91,   c63])
+    points.append([  c90,  -c91,  -c63])
+    points.append([ -c90,  -c91,   c63])
+    points.append([ -c90,   c91,  -c63])
+    points.append([  c73,  -c85,   c88])
+    points.append([  c73,   c85,  -c88])
+    points.append([ -c73,   c85,   c88])
+    points.append([ -c73,  -c85,  -c88])
+    points.append([  c88,  -c73,   c85])
+    points.append([  c88,   c73,  -c85])
+    points.append([ -c88,   c73,   c85])
+    points.append([ -c88,  -c73,  -c85])
+    points.append([  c85,  -c88,   c73])
+    points.append([  c85,   c88,  -c73])
+    points.append([ -c85,   c88,   c73])
+    points.append([ -c85,  -c88,  -c73])
+    points.append([  c81,   c81,   c81])
+    points.append([  c81,   c81,  -c81])
+    points.append([  c81,  -c81,   c81])
+    points.append([  c81,  -c81,  -c81])
+    points.append([ -c81,   c81,   c81])
+    points.append([ -c81,   c81,  -c81])
+    points.append([ -c81,  -c81,   c81])
+    points.append([ -c81,  -c81,  -c81])
+
+    return points
+
+def gen_points0():
+  return gen_e8_points()

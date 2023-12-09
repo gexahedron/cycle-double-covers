@@ -8,35 +8,37 @@ import cross
 import numpy as np
 from math import sqrt
 import points_generators
-import common
+from common import distance, same_points, same
 
-def distance(a, b):
-    return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
 
+def set_dist_threshold(radius, k):
+  return radius * sqrt(3) / 5 / (k + 1) ** 2
 
 def gen_initial_points():
     points = []
 
-    # no nz4flow examples
-    points.extend(points_generators.gen_points7())
-    #points.extend(points_generators.gen_points8())
+    points.extend(points_generators.gen_points51())
 
-    # boring examples
-    #points.extend(points_generators.gen_points1())
-    #points.extend(points_generators.gen_points3())
-    #points.extend(points_generators.gen_points5())
-    #points.extend(points_generators.gen_points6())
+    # points.extend(points_generators.gen_points47())
+    # points.extend(points_generators.gen_points0())
+    # points.extend(points_generators.gen_points46())
 
-    #points.extend(points_generators.gen_points2())
-    #points.extend(points_generators.gen_points4())
-    #points.extend(points_generators.gen_points24())
+    # # no nz4flow, has nz5flow, 30 points, Petersen graph
+    # points.extend(points_generators.gen_points7())
+    # points.extend(points_generators.gen_points8())
+    # points.extend(points_generators.gen_points14())
+    # points.extend(points_generators.gen_points31())
+    # points.extend(points_generators.gen_points34())
+    # points.extend(points_generators.gen_points35())
+    # points.extend(points_generators.gen_points39())
+    # points.extend(points_generators.gen_points41())
+    # points.extend(points_generators.gen_points42())
+    # # artificial example
+    # points.extend(points_generators.gen_points9())
 
-
-    #points.extend(points_generators.gen_points9())
-    ###points.extend(points_generators.gen_points14()) - is it a subset of 9?
-
-    # further experiments; nothing interesting here
-    # gen_points 10-13, 15-23
+    # # no nz3flow, has nz4flow, 12 points, K4 graph
+    # points.extend(points_generators.gen_points4())
+    # points.extend(points_generators.gen_point15())
     return points
 
 ######################################################################################
@@ -57,7 +59,7 @@ def uniq_points(points):
     for i in range(len(points)):
         if i not in for_remove:
             for j in range(i + 1, len(points)):
-                if j not in for_remove and common.same_points(points[i], points[j]):
+                if j not in for_remove and same_points(points[i], points[j]):
                     for_remove.add(j)
     filtered_points = []
     for i in range(len(points)):
@@ -72,9 +74,11 @@ def add_middle_points(points, radius):
     new_points = []
     for i in range(len(points)):
         for j in range(i, len(points)):
+            if np.random.random() < 0.3:
+              continue
             if (distance(points[i], points[j]) < dist):
                 p3 = [points[i][0] + points[j][0], points[i][1] + points[j][1], points[i][2] + points[j][2]]
-                if not common.same_points(p3, [0.0, 0.0, 0.0]):
+                if not same_points(p3, [0.0, 0.0, 0.0]):
                     new_points.append(p3)
     return new_points
 
@@ -85,7 +89,7 @@ def add_opposite_points(points):
     while i < len(points):
         if i not in opposite_points:
             for j in range(i + 1, len(points)):
-                if common.same_points(points[i], [-x for x in points[j]]):
+                if same_points(points[i], [-x for x in points[j]]):
                     opposite_points[i] = j
                     opposite_points[j] = i
                     break
@@ -99,12 +103,15 @@ def add_opposite_points(points):
 
 
 # setup initial great circles
-def gen_initial_great_circles(points, opposite_points, radius):
-    dist = radius * sqrt(3) / 16
+def gen_initial_great_circles(points, opposite_points, radius, k):
+    dist = set_dist_threshold(radius, k)
     edges = set()
     for i in range(len(points)):
-        print(i, file=sys.stderr)
+        #print(i, file=sys.stderr)
         for j in range(i + 1, len(points)):
+            if np.random.random() < 0.3:
+              continue
+
             if (opposite_points[i], opposite_points[j]) not in edges and (opposite_points[j], opposite_points[i]) not in edges \
                     and distance(points[i], points[j]) < dist:
                 if opposite_points[i] != j:
@@ -114,7 +121,7 @@ def gen_initial_great_circles(points, opposite_points, radius):
                     for e in edges:
                         prev_normal = np.cross(points[e[0]], points[e[1]])
                         prev_normal /= distance(prev_normal, [0.0, 0.0, 0.0])
-                        if common.same_points(cur_normal, prev_normal) or common.same_points(cur_normal, [-x for x in prev_normal]):
+                        if same_points(cur_normal, prev_normal) or same_points(cur_normal, [-x for x in prev_normal]):
                             found_same_edge = True
                             break
                     if not found_same_edge:
@@ -137,7 +144,7 @@ def intersect_great_circles(points, opposite_points, edges):
                 found = False
                 idx_found = -1
                 for idx in range(len(all_points)):
-                    if common.same_points(points_in_cross[0], all_points[idx]):
+                    if same_points(points_in_cross[0], all_points[idx]):
                         found = True
                         idx_found = idx
                         break
@@ -167,12 +174,12 @@ def find_great_triangles(all_points, radius, edges, circles_to_points):
         for i in range(len(circle)):
             for j in range(i + 1, len(circle)):
                 d1 = distance(all_points[circle[i]], all_points[circle[j]])
-                if triangle_distance > 0 and not common.same(d1, triangle_distance):
+                if triangle_distance > 0 and not same(d1, triangle_distance):
                     continue
                 for k in range(j + 1, len(circle)):
                     d2 = distance(all_points[circle[i]], all_points[circle[k]])
                     d3 = distance(all_points[circle[j]], all_points[circle[k]])
-                    if common.same(d1, d2) and common.same(d1, d3) and common.same(d2, d3):
+                    if same(d1, d2) and same(d1, d3) and same(d2, d3):
                         numbers = [circle[i], circle[j], circle[k]]
                         numbers.sort()
                         trinities.add(tuple(numbers))
@@ -189,7 +196,7 @@ def find_trinities_from_points(points, opposite_points, radius):
         for j in range(i + 1, len(points)):
             if  opposite_points[j] not in pairs[opposite_points[i]] and opposite_points[i] not in pairs[opposite_points[j]]:
                 d = distance(points[i], points[j])
-                if common.same(d, triangle_distance):
+                if same(d, triangle_distance):
                     pairs[i].add(j)
                     opp = [opposite_points[i], opposite_points[j]]
                     opp.sort()
@@ -314,7 +321,7 @@ def main():
     #points = points_generators.rotate1(points)
     #points = uniq_points(points)
 
-    for k in range(1):
+    for k in range(2):
         if k:
             points = add_middle_points(points, radius)
             points = set_radius(points, radius)
@@ -325,9 +332,11 @@ def main():
         approach = 2
 
         if approach == 1:
-            edges = gen_initial_great_circles(points, opposite_points, radius)
+            edges = gen_initial_great_circles(points, opposite_points, radius, k)
             all_points, all_opposite_points, circles_to_points = intersect_great_circles(points, opposite_points, edges)
-            trinities = find_great_triangles(all_points, radius, edges, circles_to_points)
+            print('all points', len(all_points))
+            trinities = find_trinities_from_points(all_points, all_opposite_points, radius)
+            #trinities = find_great_triangles(all_points, radius, edges, circles_to_points)
         elif approach == 2:
             all_points = points
             all_opposite_points = opposite_points
@@ -335,8 +344,11 @@ def main():
 
         trinities = filter_trinities(trinities)
         points, opposite_points, trinities = map_to_smaller_indices(all_points, all_opposite_points, trinities)
+        if approach == 2:
+          break
 
     print_points(points, opposite_points, radius, trinities)
+    print("len(trinities)", len(trinities))
 
 if __name__ == "__main__":
     main()

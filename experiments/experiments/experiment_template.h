@@ -4,20 +4,18 @@
  *
  * Created on ...
  *
- * TODO:
  *
  */
 
 #pragma once
 
 #include "graph.h"
-#include "common.h"
-
-namespace NExpTemplate {
 
 using namespace std;
 
-void entry_point(TGraph& graph) {
-}
 
-} // NExpTemplate
+namespace ExpTemplate {
+
+void entry_point(Graph& graph);
+
+} // ExpTemplate

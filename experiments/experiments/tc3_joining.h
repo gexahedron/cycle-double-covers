@@ -15,43 +15,38 @@
 
 // TODO: remove unused includes
 #include <cassert>
-#include <unordered_set>
-#include <unordered_map>
 #include <set>
-#include <map>
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <algorithm>
-#include <string>
 #include <tuple>
 
-namespace NExpTC3Joining {
+namespace ExpTC3Joining {
 
 using namespace std;
 
 constexpr int MAX_GRAPH_COUNT = MAX_VERTEX / 2;
 
-struct TMaskedTreeMatching {
-  TMask tree_mask;
-  TMask matching_mask;
+struct MaskedTreeMatching {
+  Mask tree_mask;
+  Mask matching_mask;
 
-  TMaskedTreeMatching()
+  MaskedTreeMatching()
     : tree_mask(0)
     , matching_mask(0)
   {}
 
-  TMaskedTreeMatching(const TMask& t, const TMask& m)
+  MaskedTreeMatching(const Mask& t, const Mask& m)
     : tree_mask(t)
     , matching_mask(m)
   {}
 };
 
-bool operator<(const TMaskedTreeMatching& x, const TMaskedTreeMatching& y) {
+bool operator<(const MaskedTreeMatching& x, const MaskedTreeMatching& y) {
     return tie(x.tree_mask, x.matching_mask) < tie(y.tree_mask, y.matching_mask);
 }
 
-bool operator==(const TMaskedTreeMatching& x, const TMaskedTreeMatching& y) {
+bool operator==(const MaskedTreeMatching& x, const MaskedTreeMatching& y) {
     return (x.tree_mask == y.tree_mask) && (x.matching_mask == y.matching_mask);
 }
 
@@ -93,7 +88,7 @@ struct TTreeMatching {
     init(number_of_vertices, number_of_edges);
   }
 
-  TTreeMatching(const TGraph& graph, const TMaskedTreeMatching& m)
+  TTreeMatching(const Graph& graph, const MaskedTreeMatching& m)
   {
     init(graph.number_of_vertices, graph.number_of_edges);
     for (int e = 0; e < number_of_edges_; ++e) {
@@ -115,7 +110,7 @@ struct TTreeMatching {
     verify();
   }
 
-  TTreeMatching(const TGraph& graph, const vector<int>& vertices)
+  TTreeMatching(const Graph& graph, const vector<int>& vertices)
   {
     assert(vertices.size() == graph.number_of_vertices);
     init(graph.number_of_vertices, graph.number_of_edges);
@@ -135,9 +130,9 @@ struct TTreeMatching {
     assert(matching_size == number_of_vertices_ / 2);
   }
 
-  TMaskedTreeMatching GenerateMask() const {
-    TMask t = 0;
-    TMask m = 0;
+  MaskedTreeMatching GenerateMask() const {
+    Mask t = 0;
+    Mask m = 0;
     int matching_size = 0;
     for (int e = 0; e < number_of_edges_; ++e) {
       if (in_tree[e]) {
@@ -149,21 +144,21 @@ struct TTreeMatching {
       }
     }
     assert(matching_size == number_of_vertices_ / 2);
-    return TMaskedTreeMatching{t, m};
+    return MaskedTreeMatching{t, m};
   }
 };
 
-struct TGraphTC3 {
-  TGraph g;
-  TGraph tc3;
+struct GraphTC3 {
+  Graph g;
+  Graph tc3;
   int special_vertex;
   int cur2more[MAX_VERTEX];
   int more2cur[MAX_VERTEX];
 
-  TGraphTC3()
+  GraphTC3()
   {}
 
-  TGraphTC3(int n)
+  GraphTC3(int n)
     : g(n)
     , tc3(n)
     , special_vertex(NONE)
@@ -188,10 +183,10 @@ struct TGraphTC3 {
 };
 
 struct TExtra {
-  vector<TGraphTC3> tc3s;
+  vector<GraphTC3> tc3s;
 };
 
-void compare_edges(const TGraphTC3& cur_tc3, const TGraphTC3& more_tc3,
+void compare_edges(const GraphTC3& cur_tc3, const GraphTC3& more_tc3,
     vector<int>& cur_edges_also_in_more, vector<int>& more_not_cur_edges,
     int cur2more_edges[MAX_EDGE]) {
   for (int e = 0; e < cur_tc3.g.number_of_edges; ++e) {
@@ -234,7 +229,7 @@ void init_triangle_tree_matchings(const TExtra& extra, vector<TTreeMatching>& tm
 }
 
 void init_triangle_tree_double_covers(const TExtra& extra, const vector<TTreeMatching>& tms,
-    set<multiset<TMaskedTreeMatching>>& triples) {
+    set<multiset<MaskedTreeMatching>>& triples) {
   for (int sol1 = 0; sol1 < tms.size(); ++sol1) {
     for (int sol2 = sol1 + 1; sol2 < tms.size(); ++sol2) {
       for (int sol3 = sol2 + 1; sol3 < tms.size(); ++sol3) {
@@ -256,7 +251,7 @@ void init_triangle_tree_double_covers(const TExtra& extra, const vector<TTreeMat
           }
         }
         if (has_tree_double_cover) {
-          multiset<TMaskedTreeMatching> triple;
+          multiset<MaskedTreeMatching> triple;
           triple.insert(tms[sol1].GenerateMask());
           triple.insert(tms[sol2].GenerateMask());
           triple.insert(tms[sol3].GenerateMask());
@@ -268,7 +263,7 @@ void init_triangle_tree_double_covers(const TExtra& extra, const vector<TTreeMat
 }
 
 void init_triangle_tree_6c4cs(const TExtra& extra, const vector<TTreeMatching>& tms,
-    set<multiset<TMaskedTreeMatching>>& tree_6c4cs) {
+    set<multiset<MaskedTreeMatching>>& tree_6c4cs) {
   for (int sol1 = 0; sol1 < tms.size(); ++sol1) {
     for (int sol2 = sol1; sol2 < tms.size(); ++sol2) {
       for (int sol3 = sol2 + 1; sol3 < tms.size(); ++sol3) {
@@ -310,7 +305,7 @@ void init_triangle_tree_6c4cs(const TExtra& extra, const vector<TTreeMatching>& 
               }
 
               if (has_tree_6c4c) {
-                multiset<TMaskedTreeMatching> tree_6c4c;
+                multiset<MaskedTreeMatching> tree_6c4c;
                 tree_6c4c.insert(tms[sol1].GenerateMask());
                 tree_6c4c.insert(tms[sol2].GenerateMask());
                 tree_6c4c.insert(tms[sol3].GenerateMask());
@@ -329,7 +324,7 @@ void init_triangle_tree_6c4cs(const TExtra& extra, const vector<TTreeMatching>& 
 
 
 void expand_tree_matching(const TTreeMatching& sol,
-      const TGraphTC3& cur_tc3, const TGraphTC3& more_tc3,
+      const GraphTC3& cur_tc3, const GraphTC3& more_tc3,
       const vector<int>& cur_edges_also_in_more, const vector<int>& more_not_cur_edges,
       const int cur2more_edges[MAX_EDGE],
       vector<TTreeMatching>& more_tms) {
@@ -366,7 +361,7 @@ void expand_tree_matching(const TTreeMatching& sol,
     in_tree_seed[e] = more_tm.in_tree[e];
   }
   bool found = false;
-  for (TMask mask = 0; mask < BIT(more_not_cur_edges.size()); ++mask) {
+  for (Mask mask = 0; mask < BIT(more_not_cur_edges.size()); ++mask) {
     // 2.2.2.0.0 return to pre-mask state
     tree_edges_left = tree_edges_left_seed;
     for (int v = 0; v < more_tc3.g.number_of_vertices; ++v) {
@@ -419,7 +414,7 @@ void expand_tree_matching(const TTreeMatching& sol,
     while (head < queue.size()) {
       const int v = queue[head];
       ++head;
-      for (int j = 0; j < REG; ++j) {
+      for (int j = 0; j < MAX_DEG; ++j) {
         const int e = more_tc3.g.v2e[v][j];
         if (more_tm.in_tree[e]) {
           const int u = more_tc3.g.v2v[v][j];
@@ -480,7 +475,7 @@ void expand_tree_matching(const TTreeMatching& sol,
       assert(tree_deg[v] == 1);
       assert(!in_matching[v]);
       int e = NONE;
-      for (int j = 0; j < REG; ++j) {
+      for (int j = 0; j < MAX_DEG; ++j) {
         e = more_tc3.g.v2e[v][j];
         if (in_tree[e]) {
           break;
@@ -496,7 +491,7 @@ void expand_tree_matching(const TTreeMatching& sol,
       ++matching_size;
       more_tm.in_matching[e] = true;
 
-      for (int j = 0; j < REG; ++j) {
+      for (int j = 0; j < MAX_DEG; ++j) {
         const int ee = more_tc3.g.v2e[u][j];
         if (in_tree[ee]) {
           in_tree[ee] = false;
@@ -529,7 +524,7 @@ void expand_tree_matching(const TTreeMatching& sol,
       }
       has_tree_double_cover = true;
       vector<int> special_edges;
-      TMask mask = 0;
+      Mask mask = 0;
       for (int e = 0; e < cur_tc3.g.number_of_edges; ++e) {
         int edge_cover_count = tms[sol].in_tree[e];
         edge_cover_count += tms[sol1].in_tree[e];
@@ -559,7 +554,7 @@ void expand_tree_matching(const TTreeMatching& sol,
       has_tree_double_cover = false;
       if (special_edges.size() == 1) {
         for (const auto& e : special_edges) {
-          const TMask full_mask = mask + BIT(e);
+          const Mask full_mask = mask + BIT(e);
           if (tree_masks.find(full_mask) != tree_masks.end()) {
             has_tree_double_cover = true;
             break;
@@ -605,13 +600,13 @@ void expand_tree_matching(const TTreeMatching& sol,
   }
 }
 
-void expand_triple(const multiset<TMaskedTreeMatching>& triple,
-    const TGraphTC3& cur_tc3, const TGraphTC3& more_tc3,
+void expand_triple(const multiset<MaskedTreeMatching>& triple,
+    const GraphTC3& cur_tc3, const GraphTC3& more_tc3,
     vector<int>& cur_edges_also_in_more, vector<int>& more_not_cur_edges,
-    int cur2more_edges[MAX_EDGE], set<multiset<TMaskedTreeMatching>>& more_triples) {
-  TMaskedTreeMatching m1;
-  TMaskedTreeMatching m2;
-  TMaskedTreeMatching m3;
+    int cur2more_edges[MAX_EDGE], set<multiset<MaskedTreeMatching>>& more_triples) {
+  MaskedTreeMatching m1;
+  MaskedTreeMatching m2;
+  MaskedTreeMatching m3;
   for (const auto& sol : triple) {
     if (!m1.tree_mask) {
       m1 = sol;
@@ -666,7 +661,7 @@ void expand_triple(const multiset<TMaskedTreeMatching>& triple,
         }
 
         if (has_tree_double_cover) {
-          multiset<TMaskedTreeMatching> more_triple;
+          multiset<MaskedTreeMatching> more_triple;
           more_triple.insert(more_tm1.GenerateMask());
           more_triple.insert(more_tm2.GenerateMask());
           more_triple.insert(more_tm3.GenerateMask());
@@ -677,17 +672,17 @@ void expand_triple(const multiset<TMaskedTreeMatching>& triple,
   }
 }
 
-size_t expand_tree_6c4c(const multiset<TMaskedTreeMatching>& tree_6c4c,
-    const TGraphTC3& cur_tc3, const TGraphTC3& more_tc3,
+size_t expand_tree_6c4c(const multiset<MaskedTreeMatching>& tree_6c4c,
+    const GraphTC3& cur_tc3, const GraphTC3& more_tc3,
     vector<int>& cur_edges_also_in_more, vector<int>& more_not_cur_edges,
-    int cur2more_edges[MAX_EDGE], set<multiset<TMaskedTreeMatching>>& more_tree_6c4cs) {
+    int cur2more_edges[MAX_EDGE], set<multiset<MaskedTreeMatching>>& more_tree_6c4cs) {
   size_t sol_count = 0;
-  TMaskedTreeMatching m1;
-  TMaskedTreeMatching m2;
-  TMaskedTreeMatching m3;
-  TMaskedTreeMatching m4;
-  TMaskedTreeMatching m5;
-  TMaskedTreeMatching m6;
+  MaskedTreeMatching m1;
+  MaskedTreeMatching m2;
+  MaskedTreeMatching m3;
+  MaskedTreeMatching m4;
+  MaskedTreeMatching m5;
+  MaskedTreeMatching m6;
 
   for (const auto& sol : tree_6c4c) {
     if (!m1.tree_mask) {
@@ -775,7 +770,7 @@ size_t expand_tree_6c4c(const multiset<TMaskedTreeMatching>& tree_6c4c,
 
               if (has_tree_6c4c) {
                 ++sol_count;
-                multiset<TMaskedTreeMatching> more_tree_6c4c;
+                multiset<MaskedTreeMatching> more_tree_6c4c;
                 more_tree_6c4c.insert(more_tm1.GenerateMask());
                 more_tree_6c4c.insert(more_tm2.GenerateMask());
                 more_tree_6c4c.insert(more_tm3.GenerateMask());
@@ -797,24 +792,24 @@ int build_tree_alternative_6c4c(const TExtra& extra, bool print=true) {
   vector<TTreeMatching> tms;
   init_triangle_tree_matchings(extra, tms);
 
-  set<multiset<TMaskedTreeMatching>> tree_6c4cs;
+  set<multiset<MaskedTreeMatching>> tree_6c4cs;
   init_triangle_tree_6c4cs(extra, tms, tree_6c4cs);
 
   const int number_of_graphs = extra.tc3s.size();
   for (int ii = 0; ii < number_of_graphs - 1; ++ii) {
-    const TGraphTC3& cur_tc3 = extra.tc3s[ii];
+    const GraphTC3& cur_tc3 = extra.tc3s[ii];
     if (print) {
       cerr << "ii: " << ii << "; number of solutions: " << tree_6c4cs.size() << endl;
       cur_tc3.g.print();
     }
-    const TGraphTC3& more_tc3 = extra.tc3s[ii + 1];
+    const GraphTC3& more_tc3 = extra.tc3s[ii + 1];
     vector<int> cur_edges_also_in_more;
     int cur2more_edges[MAX_EDGE];
     vector<int> more_not_cur_edges;
     compare_edges(cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges, cur2more_edges);
 
 
-    set<multiset<TMaskedTreeMatching>> more_tree_6c4cs;
+    set<multiset<MaskedTreeMatching>> more_tree_6c4cs;
     for (const auto& tree_6c4c : tree_6c4cs) {
       int sol_count = expand_tree_6c4c(tree_6c4c, cur_tc3, more_tc3, cur_edges_also_in_more,
           more_not_cur_edges, cur2more_edges, more_tree_6c4cs);
@@ -936,10 +931,10 @@ int build_tree_second_alternative_6c4c(const TExtra& extra, bool print=true) {
   vector<TTreeMatching> tms;
   init_triangle_tree_matchings(extra, tms);
 
-  set<multiset<TMaskedTreeMatching>> triples;
+  set<multiset<MaskedTreeMatching>> triples;
   init_triangle_tree_double_covers(extra, tms, triples);
 
-  set<pair<multiset<TMaskedTreeMatching>, multiset<TMaskedTreeMatching>>> triple_pairs;
+  set<pair<multiset<MaskedTreeMatching>, multiset<MaskedTreeMatching>>> triple_pairs;
   for (auto it1 = triples.begin(); it1 != triples.end(); ++it1) {
     for (auto it2 = it1; it2 != triples.end(); ++it2) {
       if (it1 == it2) {
@@ -978,22 +973,22 @@ int build_tree_second_alternative_6c4c(const TExtra& extra, bool print=true) {
 
   const int number_of_graphs = extra.tc3s.size();
   for (int ii = 0; ii < number_of_graphs - 1; ++ii) {
-    const TGraphTC3& cur_tc3 = extra.tc3s[ii];
+    const GraphTC3& cur_tc3 = extra.tc3s[ii];
     if (print) {
       cerr << "ii: " << ii << "; number of solutions: " << triple_pairs.size() << endl;
       cur_tc3.g.print();
     }
-    const TGraphTC3& more_tc3 = extra.tc3s[ii + 1];
+    const GraphTC3& more_tc3 = extra.tc3s[ii + 1];
     vector<int> cur_edges_also_in_more;
     int cur2more_edges[MAX_EDGE];
     vector<int> more_not_cur_edges;
     compare_edges(cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges, cur2more_edges);
 
-    set<pair<multiset<TMaskedTreeMatching>, multiset<TMaskedTreeMatching>>> more_triple_pairs;
+    set<pair<multiset<MaskedTreeMatching>, multiset<MaskedTreeMatching>>> more_triple_pairs;
     for (const auto& tp : triple_pairs) {
       bool expanded = false;
 
-      vector<TMaskedTreeMatching> mtms;
+      vector<MaskedTreeMatching> mtms;
 
       for (const auto& sol : tp.first) {
         mtms.push_back(sol);
@@ -1003,17 +998,17 @@ int build_tree_second_alternative_6c4c(const TExtra& extra, bool print=true) {
       }
 
       for (int jj = 0; jj < 10; ++jj) {
-        multiset<TMaskedTreeMatching> first_triple;
+        multiset<MaskedTreeMatching> first_triple;
         for (int k = 0; k < 3; ++k) {
           first_triple.insert(mtms[tree_shuffles[jj][k]]);
         }
-        multiset<TMaskedTreeMatching> second_triple;
+        multiset<MaskedTreeMatching> second_triple;
         for (int k = 3; k < 6; ++k) {
           second_triple.insert(mtms[tree_shuffles[jj][k]]);
         }
 
-        set<multiset<TMaskedTreeMatching>> more_triples1;
-        set<multiset<TMaskedTreeMatching>> more_triples2;
+        set<multiset<MaskedTreeMatching>> more_triples1;
+        set<multiset<MaskedTreeMatching>> more_triples2;
         expand_triple(first_triple, cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges,
             cur2more_edges, more_triples1);
         expand_triple(second_triple, cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges,
@@ -1161,10 +1156,10 @@ int build_tree_6c4c(const TExtra& extra, bool print=true) {
   vector<TTreeMatching> tms;
   init_triangle_tree_matchings(extra, tms);
 
-  set<multiset<TMaskedTreeMatching>> triples;
+  set<multiset<MaskedTreeMatching>> triples;
   init_triangle_tree_double_covers(extra, tms, triples);
 
-  set<pair<multiset<TMaskedTreeMatching>, multiset<TMaskedTreeMatching>>> triple_pairs;
+  set<pair<multiset<MaskedTreeMatching>, multiset<MaskedTreeMatching>>> triple_pairs;
   for (auto it1 = triples.begin(); it1 != triples.end(); ++it1) {
     for (auto it2 = it1; it2 != triples.end(); ++it2) {
       if (it1 == it2) {
@@ -1203,21 +1198,21 @@ int build_tree_6c4c(const TExtra& extra, bool print=true) {
 
   const int number_of_graphs = extra.tc3s.size();
   for (int ii = 0; ii < number_of_graphs - 1; ++ii) {
-    const TGraphTC3& cur_tc3 = extra.tc3s[ii];
+    const GraphTC3& cur_tc3 = extra.tc3s[ii];
     if (print) {
       //cerr << "ii: " << ii << "; number of solutions: " << triple_pairs.size() << endl;
       //cur_tc3.g.print();
     }
-    const TGraphTC3& more_tc3 = extra.tc3s[ii + 1];
+    const GraphTC3& more_tc3 = extra.tc3s[ii + 1];
     vector<int> cur_edges_also_in_more;
     int cur2more_edges[MAX_EDGE];
     vector<int> more_not_cur_edges;
     compare_edges(cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges, cur2more_edges);
 
-    set<pair<multiset<TMaskedTreeMatching>, multiset<TMaskedTreeMatching>>> more_triple_pairs;
+    set<pair<multiset<MaskedTreeMatching>, multiset<MaskedTreeMatching>>> more_triple_pairs;
     for (const auto& tp : triple_pairs) {
-      set<multiset<TMaskedTreeMatching>> more_triples1;
-      set<multiset<TMaskedTreeMatching>> more_triples2;
+      set<multiset<MaskedTreeMatching>> more_triples1;
+      set<multiset<MaskedTreeMatching>> more_triples2;
       expand_triple(tp.first, cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges,
           cur2more_edges, more_triples1);
       expand_triple(tp.second, cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges,
@@ -1363,23 +1358,23 @@ void build_tree_double_covers(const TExtra& extra, bool print=true) {
   vector<TTreeMatching> tms;
   init_triangle_tree_matchings(extra, tms);
 
-  set<multiset<TMaskedTreeMatching>> triples;
+  set<multiset<MaskedTreeMatching>> triples;
   init_triangle_tree_double_covers(extra, tms, triples);
 
   const int number_of_graphs = extra.tc3s.size();
   for (int ii = 0; ii < number_of_graphs - 1; ++ii) {
-    const TGraphTC3& cur_tc3 = extra.tc3s[ii];
+    const GraphTC3& cur_tc3 = extra.tc3s[ii];
     if (print) {
       cerr << "ii: " << ii << "; number of solutions: " << triples.size() << endl;
       cur_tc3.g.print();
     }
-    const TGraphTC3& more_tc3 = extra.tc3s[ii + 1];
+    const GraphTC3& more_tc3 = extra.tc3s[ii + 1];
     vector<int> cur_edges_also_in_more;
     int cur2more_edges[MAX_EDGE];
     vector<int> more_not_cur_edges;
     compare_edges(cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges, cur2more_edges);
 
-    set<multiset<TMaskedTreeMatching>> more_triples;
+    set<multiset<MaskedTreeMatching>> more_triples;
     for (const auto& triple : triples) {
       expand_triple(triple, cur_tc3, more_tc3, cur_edges_also_in_more, more_not_cur_edges,
           cur2more_edges, more_triples);
@@ -1410,12 +1405,12 @@ void build_tree_matchings(const TExtra& extra, bool print=true) {
   // 2. transfer structure further
   for (int ii = 0; ii < number_of_graphs - 1; ++ii) {
     // 2.1 find edges which are common, and edges which are added
-    const TGraphTC3& cur_tc3 = extra.tc3s[ii];
+    const GraphTC3& cur_tc3 = extra.tc3s[ii];
     if (print) {
       cerr << "ii: " << ii << "; number of solutions: " << tms.size() << endl;
       cur_tc3.g.print();
     }
-    const TGraphTC3& more_tc3 = extra.tc3s[ii + 1];
+    const GraphTC3& more_tc3 = extra.tc3s[ii + 1];
     vector<int> cur_edges_also_in_more;
     int cur2more_edges[MAX_EDGE];
     vector<int> more_not_cur_edges;
@@ -1429,9 +1424,9 @@ void build_tree_matchings(const TExtra& extra, bool print=true) {
     // TODO: maybe convert this code into constructor
 
     /*int not_found_count = 0;
-    set<TMask> tree_masks;
+    set<Mask> tree_masks;
     for (int sol = 0; sol < tms.size(); ++sol) {
-      TMask mask = 0;
+      Mask mask = 0;
       for (int e = 0; e < cur_tc3.g.number_of_edges; ++e) {
         if (tms[sol].in_tree[e]) {
           mask += BIT(e);
@@ -1464,16 +1459,16 @@ bool is_joinable(TExtra& extra, int more_graph_number) {
     return true;//number_of_solutions > 0;//false;// true;
   }
 
-  const TGraphTC3& more_tc3 = extra.tc3s[more_graph_number];
+  const GraphTC3& more_tc3 = extra.tc3s[more_graph_number];
   const int more_special_vertex = more_tc3.special_vertex;
-  for (int jj = 0; jj < REG; ++jj) {
+  for (int jj = 0; jj < MAX_DEG; ++jj) {
     const int v = more_tc3.g.v2v[more_special_vertex][jj];
     // check whether i can off this vertex
     bool can_off = true;
     vector<int> neibs;
-    for (int j = 0; j < REG - 1; ++j) {
+    for (int j = 0; j < MAX_DEG - 1; ++j) {
       const int neib = more_tc3.tc3.v2v[v][j];
-      if (more_tc3.tc3.deg[neib] != REG) {
+      if (more_tc3.tc3.deg[neib] != MAX_DEG) {
         can_off = false;
         break;
       } else {
@@ -1490,7 +1485,7 @@ bool is_joinable(TExtra& extra, int more_graph_number) {
       // let's check neighbours of neib, whether they are not connected to each other
       // if so, we can off the neib vertex, add a new edge and recurse
       vector<int> neib_neibs;
-      for (int j = 0; j < REG; ++j) {
+      for (int j = 0; j < MAX_DEG; ++j) {
         int n = more_tc3.g.v2v[neib][j];
         if (n != v) {
           neib_neibs.push_back(n);
@@ -1505,8 +1500,8 @@ bool is_joinable(TExtra& extra, int more_graph_number) {
 
       // create new graph
       const int graph_number = more_graph_number - 1;
-      TGraphTC3& cur_tc3 = extra.tc3s[graph_number];
-      cur_tc3 = TGraphTC3(more_tc3.g.number_of_vertices - 2);
+      GraphTC3& cur_tc3 = extra.tc3s[graph_number];
+      cur_tc3 = GraphTC3(more_tc3.g.number_of_vertices - 2);
 
       int vertex_count = 0;
       for (int w = 0; w < more_tc3.g.number_of_vertices; ++w) {
@@ -1533,7 +1528,7 @@ bool is_joinable(TExtra& extra, int more_graph_number) {
       }
       cur_tc3.add_edge_from_more(n1, n2);
       for (int v = 0; v < cur_tc3.g.number_of_vertices; ++v) {
-        if (cur_tc3.g.deg[v] == REG - 1) {
+        if (cur_tc3.g.deg[v] == MAX_DEG - 1) {
           cur_tc3.add_edge(v, cur_tc3.special_vertex);
         }
       }
@@ -1552,16 +1547,16 @@ bool is_joinable(TExtra& extra, int more_graph_number) {
   return false;
 }
 
-void check_tc3_joinability(TGraph& graph) {
+void check_tc3_joinability(Graph& graph) {
   TExtra extra;
 
   int graph_count = graph.number_of_vertices / 2 - 1;
   for (int i = 0; i < graph_count; ++i) {
-    extra.tc3s.push_back(TGraphTC3(2 * i + 4));
+    extra.tc3s.push_back(GraphTC3(2 * i + 4));
   }
 
   for (int v = 0; v < graph.number_of_vertices; ++v) {
-    extra.tc3s.back() = TGraphTC3(graph.number_of_vertices);
+    extra.tc3s.back() = GraphTC3(graph.number_of_vertices);
     extra.tc3s.back().special_vertex = v;
     for (int e = 0; e < graph.number_of_edges; ++e) {
       extra.tc3s.back().add_edge(graph.e2v[e][0], graph.e2v[e][1]);
@@ -1577,4 +1572,4 @@ void check_tc3_joinability(TGraph& graph) {
   cerr << "graph is not joinable" << endl;
 }
 
-} // NExpTC3Joining
+} // ExpTC3Joining

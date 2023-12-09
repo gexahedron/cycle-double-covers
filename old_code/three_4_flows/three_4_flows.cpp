@@ -39,14 +39,14 @@ const int number_of_profiles = 6;
 const int number_of_partitions = 3;
 int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {3, 3, 3}, {2, 3, 4}, {3, 3, 4}, {2, 3, 5}, {2, 4, 4}};
 
-int vertices[REG * MAXN / 2][2];
+int vertices[MAXN * REG / 2][2];
 int default_trackback_to = REG * MAXN;
 int trackback_to;
 int vertex_last_edge_index[MAXN];
-int partition_num[REG * MAXN / 2][2];
+int partition_num[MAXN * REG / 2][2];
 int partition_degs[MAXN][number_of_partitions];
 int number_of_flowed_edges_at_vertex[MAXN];
-int edge_flows[REG * MAXN / 2];
+int edge_flows[MAXN * REG / 2];
 int vertex_flows[MAXN];
 int max_flow_values[number_of_partitions];
 

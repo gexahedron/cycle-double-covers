@@ -22,14 +22,14 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <algorithm>
 #include <string>
 
-namespace NExp6c4c::NExpMNKFlows {
-
-using namespace NUtilFlows;
-
 using namespace std;
+
+
+namespace Exp6c4c::ExpMNKFlows {
+
+using namespace UtilFlows;
 
 int u6by3_shuffles[10][6] = {
     {0, 1, 2, 3, 4, 5},
@@ -49,15 +49,15 @@ set<string> all_333flows_combinations_str;
 bool has_all_3flows = true;
 
 bool has_o244_flows = false; // FIXME: rewrite this flag
-int partition_num[REG * MAXN / 2];
-int partition_degs[MAXN][REG];
-int number_of_flowed_edges_at_vertex[MAXN][REG];
-int edge_flows[REG * MAXN / 2][REG];
-int vertex_flows[MAXN][REG];
+int partition_num[MAX_EDGE];
+int partition_degs[MAX_VERTEX][MAX_DEG];
+int number_of_flowed_edges_at_vertex[MAX_VERTEX][MAX_DEG];
+int edge_flows[MAX_EDGE][MAX_DEG];
+int vertex_flows[MAX_VERTEX][MAX_DEG];
 
-bool is_oriented_edge_covered[REG * MAXN / 2][2];
+bool is_oriented_edge_covered[MAX_EDGE][2];
 
-bool check_nowhere_zeroness(TGraph& graph, int partition);
+bool check_nowhere_zeroness(Graph& graph, int partition);
 
 set<vector<int>> o244_triples;
 
@@ -126,7 +126,7 @@ void gen_333flows_combinations() {
     cerr << "combinations for 333-flows: " << all_333flows_combinations.size() << endl;
 }
 
-bool find_333flows_from_6c4c(const set<vector<int>>& common_triples, TGraph& graph) {
+bool find_333flows_from_6c4c(const set<vector<int>>& common_triples, Graph& graph) {
     for (const auto& comb : all_333flows_combinations) {
         // check that we have compatible common triple
         bool has_compat_triple = false;
@@ -168,7 +168,7 @@ bool find_333flows_from_6c4c(const set<vector<int>>& common_triples, TGraph& gra
         }
         has_all_3flows = true;
         for (int i = 0; i < 6; i += 2) {
-            TMask c = 0;
+            Mask c = 0;
 
             set<pair<int, int>> cur_edges;
             for (int j = 0; j < 2; ++j) {
@@ -202,7 +202,7 @@ bool find_333flows_from_6c4c(const set<vector<int>>& common_triples, TGraph& gra
     return has_all_3flows;
 }
 
-bool build_4flow(TGraph& graph, int partition, int edge_index) {
+bool build_4flow(Graph& graph, int partition, int edge_index) {
     if (edge_index >= graph.number_of_edges) {
         return check_nowhere_zeroness(graph, partition + 1);
     }
@@ -261,7 +261,7 @@ bool build_4flow(TGraph& graph, int partition, int edge_index) {
     return false;
 }
 
-bool check_nowhere_zeroness(TGraph& graph, int partition) {
+bool check_nowhere_zeroness(Graph& graph, int partition) {
     if (partition == 3) {
         return true;
     }
@@ -275,10 +275,10 @@ bool check_nowhere_zeroness(TGraph& graph, int partition) {
     return build_4flow(graph, partition, 0);
 }
 
-bool find_o244_flows_from_3pm(TGraph& graph) {
+bool find_o244_flows_from_3pm(Graph& graph) {
     for (int v = 0; v < graph.number_of_vertices; ++v) {
-        partition_degs[v][1] = REG;
-        partition_degs[v][2] = REG;
+        partition_degs[v][1] = MAX_DEG;
+        partition_degs[v][2] = MAX_DEG;
     }
     for (int e = 0; e < graph.number_of_edges; ++e) {
         int edge_count = 0;
@@ -311,7 +311,7 @@ bool find_o244_flows_from_3pm(TGraph& graph) {
     return false;
 }
 
-bool find_o244_flows_from_6c4c(const set<vector<int>>& all_33pp_triples, TGraph& graph) {
+bool find_o244_flows_from_6c4c(const set<vector<int>>& all_33pp_triples, Graph& graph) {
     has_o244_flows = false;
     for (int i = 0; i < 6; ++i) {
         u3_inv_pm[0] = u6c4c_cycles[i];
@@ -326,7 +326,7 @@ bool find_o244_flows_from_6c4c(const set<vector<int>>& all_33pp_triples, TGraph&
                 find_o244_flows_from_3pm(graph);
                 if (has_o244_flows) {
                     o244_triples.insert(triple);
-                    return true;
+                    //return true;
                     has_o244_flows = false;
                     //return true;
                 }
@@ -336,5 +336,4 @@ bool find_o244_flows_from_6c4c(const set<vector<int>>& all_33pp_triples, TGraph&
     return false;
 }
 
-} // NExpMNKFlows
-
+} // Exp6c4c::ExpMNKFlows

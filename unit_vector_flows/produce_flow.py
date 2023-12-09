@@ -4,6 +4,8 @@
 from __future__ import print_function
 import sys
 import numpy as np
+from collections import Counter
+
 
 # uses from outside: max_idx, flooded, color_order, opposite_points, trinities_by_idx, colors, flow_upper_bound
 def find_colors(cur_idx):
@@ -96,6 +98,7 @@ for t in trinities:
 #print(trinities_by_idx, file=sys.stderr)
 
 found4, found5 = True, True
+
 for seed_vertex in opposite_points:
     if not colors[seed_vertex]:
         flooded = []
@@ -123,8 +126,8 @@ for seed_vertex in opposite_points:
 
         flow_upper_bound = 4
         max_cur = 0
-        cur_found4 = find_colors(0) # FIXME
-        #cur_found4 = False
+        #cur_found4 = find_colors(0) # FIXME
+        cur_found4 = False
         found4 = found4 and cur_found4
         print("seed:", seed_vertex, "flooded:", len(flooded), sep='\t', file=sys.stdout)
         if not cur_found4:
@@ -138,7 +141,7 @@ for seed_vertex in opposite_points:
             flows4 = dict()
             for v in flooded:
                 flows4[v] = colors[v]
-            print("flow values:", flows4, file=sys.stdout)
+            #print("flow values:", flows4, file=sys.stdout)
             print("flow_values", flows4, sep='\t', file=sys.stderr)
 
         if not cur_found4:
@@ -158,13 +161,64 @@ for seed_vertex in opposite_points:
                     flows5[v] = colors[v]
                     print("color", colors[v], sep='\t', file=sys.stderr)
                 if len(flooded) == len(points):
+                    graph_triples = set()
+                    graph_vertices = list()
                     for t in trinities:
                         print("trinity", t[0], t[1], t[2], sep='\t', file=sys.stderr)
-                print("flow values:", flows5, file=sys.stdout)
+                        v0 = min(opposite_points[t[0]], t[0])
+                        v1 = min(opposite_points[t[1]], t[1])
+                        v2 = min(opposite_points[t[2]], t[2])
+                        graph_vertices.append(v0)
+                        graph_vertices.append(v1)
+                        graph_vertices.append(v2)
+                        graph_triples.add(tuple(sorted([v0, v1, v2])))
+                    for t in graph_triples:
+                      print('graph triple', t)
+
+                    cnt = Counter(graph_vertices)
+                    cnt2 = {}
+                    is_it_a_graph = True
+                    for k in cnt:
+                      cnt2[k] = cnt[k] // 2
+                      if cnt2[k] != 2:
+                        is_it_a_graph = False
+                    print('graph multiplicities', cnt2)
+                    print('is it a graph:', is_it_a_graph)
+                    graph_vertices = set(graph_vertices)
+                    print('graph edges', len(graph_vertices), 'idx:', graph_vertices)
+                    print('graph "vertices"', len(graph_triples))
+                    print('should be vertices:')
+                    diffs = dict()
+                    for t in graph_triples:
+                      all_graph = True
+                      multiples = []
+                      for g in t:
+                        if cnt2[g] != 2:
+                          all_graph = False
+                        multiples.append(cnt2[g])
+                      if multiples == [4, 4, 4]:
+                        for g in t:
+                          if g not in diffs:
+                            diffs[g] = 0
+                          diffs[g] += 1
+                      print(t, all_graph, multiples)
+                      cnt3 = {}
+                    is_it_a_graph2 = True
+                    for g in cnt2:
+                      if g not in diffs:
+                        diffs[g] = 0
+                      cnt3[g] = cnt2[g] - diffs[g]
+                      if cnt3[g] != 2:
+                        is_it_a_graph2 = False
+                    print('graph multiplicities2', cnt3)
+                    print('is it a graph2:', is_it_a_graph2)
+                    if is_it_a_graph2:
+                      pass
+                #print("flow values:", flows5, file=sys.stdout)
                 print("flow_values", flows5, sep='\t', file=sys.stderr)
 
 
-print("Found flow:", found5, file=sys.stdout)
+print("Have found 5 flow:", found5, file=sys.stdout)
 
 # double check
 for t in trinities:
@@ -177,6 +231,9 @@ for d in opposite_points:
         print("WTF opposite", (d, opposite_points[d]), colors[d], colors[opposite_points[d]], file=sys.stdout)
         print("WTF opposite", (d, opposite_points[d]), colors[d], colors[opposite_points[d]], file=sys.stderr)
 
+if not found4:
+    print("\033[94mno 4-flow!\033[0m", file=sys.stdout)
 if not found5:
     print("\033[91mNO 5-FLOW!\033[0m", file=sys.stdout)
     print("\033[91mNO 5-FLOW!\033[0m", file=sys.stderr)
+print('opposite points', opposite_points)

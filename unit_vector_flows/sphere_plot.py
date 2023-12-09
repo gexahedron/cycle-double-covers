@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import time
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.set_aspect('equal')
+
+# FIXME: unocomment, when new matplotlib (3.3.0) is released
+# ax.set_box_aspect((1, 1, 1))
+try:
+  ax.set_aspect('equal')
+except NotImplementedError:
+  pass
 
 radius = -1
 points = []

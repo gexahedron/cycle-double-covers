@@ -32,7 +32,7 @@ void AddEdge(GRAPH graph, unsigned int adj[], unsigned int v, unsigned int w);
 /**
  * Decodes the code (which is in multicode format) of a graph
  */
-bool DecodeNextGraph(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph);
+bool DecodeNextGraphInMulticode(FILE* input, int& number_of_vertices, int& number_of_edges, GRAPH graph);
 
 /**
  * Decodes the code (which is in graph6 format) of a graph

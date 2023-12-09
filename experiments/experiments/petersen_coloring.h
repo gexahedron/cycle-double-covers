@@ -19,43 +19,45 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <algorithm>
 #include <string>
-
-namespace NExpPetersenColouring {
 
 using namespace std;
 
-bool edge_is_poor[REG * MAXN / 2];
+
+namespace ExpPetersenColouring {
+
+bool edge_is_poor[MAX_EDGE];
 bool petersen_vertex_is_poor[10]; // vertex is poor when at least one of images of petersen vertices is connected to itself
-int edge_colour[REG * MAXN / 2];
-int not_coloured_edges_count_near_vertex[MAXN];
+int edge_colour[MAX_EDGE];
+int not_coloured_edges_count_near_vertex[MAX_VERTEX];
 bool had_four = false;
 
 // cc-mapping
 unordered_map<int, int> ve_to_petersen_edge;
 unordered_map<int, int> mask_to_petersen_vertex;
 
-bool petersen_always_poor[REG * MAXN / 2];
-bool petersen_always_rich[REG * MAXN / 2];
+bool petersen_always_poor[MAX_EDGE];
+bool petersen_always_rich[MAX_EDGE];
 int petersen_min_poor;
 int petersen_max_poor;
+
+int strong_vertex_partition[MAX_VERTEX];
 
 
 /*********************************Methods*********************************/
 
-bool petersen_colouring_check_edge(int e, const TGraph& graph) {
+bool petersen_colouring_check_edge(int e, const Graph& graph) {
     int v1 = graph.e2v[e][0];
     int v2 = graph.e2v[e][1];
     if (not_coloured_edges_count_near_vertex[v1] != 0 || not_coloured_edges_count_near_vertex[v2] != 0) {
         return true;
     }
     unordered_set<int> colours;
-    for (int j = 0; j < REG; ++j) {
+    for (int j = 0; j < MAX_DEG; ++j) {
         int e2 = graph.v2e[v1][j];
         colours.insert(edge_colour[e2]);
     }
-    for (int j = 0; j < REG; ++j) {
+    for (int j = 0; j < MAX_DEG; ++j) {
         int e2 = graph.v2e[v2][j];
         colours.insert(edge_colour[e2]);
     }
@@ -69,13 +71,13 @@ bool petersen_colouring_check_edge(int e, const TGraph& graph) {
     return false;
 }
 
-bool normal_colour_edges(int cur_edge_idx, TGraph& graph) {
+bool normal_colour_edges(int cur_edge_idx, Graph& graph) {
     if (cur_edge_idx == graph.number_of_edges) {
         vector<int> colours;
         for (int e = 0; e < graph.number_of_edges; ++e) {
             colours.push_back(edge_colour[e]);
         }
-        graph.normal5_colourings.push_back(colours);
+
         string prof;
         int poor_count = 0;
         unordered_map<int, pair<int, int>> poor_masks;
@@ -99,13 +101,13 @@ bool normal_colour_edges(int cur_edge_idx, TGraph& graph) {
 
             //cerr << graph.e2v[e][0] << " (";
             int mask1 = 0;
-            for (int j = 0; j < REG; ++j) {
+            for (int j = 0; j < MAX_DEG; ++j) {
                 //cerr << edge_colour[graph.v2e[graph.e2v[e][0]][j]];
                 mask1 += BIT(edge_colour[graph.v2e[graph.e2v[e][0]][j]]);
             }
             //cerr << ") -" << edge_colour[e] << "> " << graph.e2v[e][1] << " (";
             int mask2 = 0;
-            for (int j = 0; j < REG; ++j) {
+            for (int j = 0; j < MAX_DEG; ++j) {
                 //cerr << edge_colour[graph.v2e[graph.e2v[e][1]][j]];
                 mask2 += BIT(edge_colour[graph.v2e[graph.e2v[e][1]][j]]);
             }
@@ -135,8 +137,45 @@ bool normal_colour_edges(int cur_edge_idx, TGraph& graph) {
         if (!dominating) {
             //cerr << "no domination!" << endl;
         }
+
+        // check that colouring is strong
+        // aka, poor edges form a cutset
+        bool is_strong = true;
+        for (int v = 0; v < graph.number_of_vertices; ++v) {
+          strong_vertex_partition[v] = 0;
+        }
+        {
+          int e = graph.faster_edge_order[0];
+          int v = min(graph.e2v[e][0], graph.e2v[e][1]);
+          strong_vertex_partition[v] = 1;
+        }
+        for (int i = 0; i < graph.number_of_edges; ++i) {
+          int e = graph.faster_edge_order[i];
+          int v1 = graph.e2v[e][0];
+          int v2 = graph.e2v[e][1];
+          if (strong_vertex_partition[v1] == 0) {
+            swap(v1, v2);
+          }
+          assert(strong_vertex_partition[v1] != 0);
+          int v2_partition = edge_is_poor[e] ? (3 - strong_vertex_partition[v1]) : strong_vertex_partition[v1];
+          if ((strong_vertex_partition[v2] != 0) && (strong_vertex_partition[v2] != v2_partition)) {
+            is_strong = false;
+            break;
+          }
+          strong_vertex_partition[v2] = v2_partition;
+        }
+
+        graph.normal5_colourings.push_back(colours);
         graph.petersen_colourings.push_back(petersen_edges);
+        graph.petersen_profiles.push_back(prof);
+        graph.petersen_poor_counts.push_back(poor_count);
+        graph.petersen_is_strong.push_back(is_strong);
         ++graph.profiles[prof];
+        graph.petersen_colourings_by_profiles[prof].push_back(graph.petersen_colourings.size() - 1);
+        if (is_strong) {
+          graph.has_strong_petersen_colouring = true;
+          cerr << "strong petersen colouring poor count: " << poor_count << endl;
+        }
         //cerr << endl;
         //cerr << "#poor: " << poor_count << "; " << "unique poor: " << poor_masks.size() << endl;
         for (const auto& pm_pair : poor_masks) {
@@ -178,17 +217,19 @@ bool normal_colour_edges(int cur_edge_idx, TGraph& graph) {
 
         // conditions
         bool checks_passed = true;
-        for (int j = 0; j < REG; ++j) {
+        for (int j = 0; j < MAX_DEG; ++j) {
             int ei = graph.v2e[v1][j];
-            if ((ei != cur_edge && edge_colour[ei] == edge_colour[cur_edge]) || (not_coloured_edges_count_near_vertex[v1] == 0 && !petersen_colouring_check_edge(ei, graph))) {
+            if ((ei != cur_edge && edge_colour[ei] == edge_colour[cur_edge]) ||
+                    (not_coloured_edges_count_near_vertex[v1] == 0 && !petersen_colouring_check_edge(ei, graph))) {
                 checks_passed = false;
                 break;
             }
         }
         if (checks_passed) {
-            for (int j = 0; j < REG; ++j) {
+            for (int j = 0; j < MAX_DEG; ++j) {
                 int ei = graph.v2e[v2][j];
-                if (ei != cur_edge && (edge_colour[ei] == edge_colour[cur_edge] || (not_coloured_edges_count_near_vertex[v2] == 0 && !petersen_colouring_check_edge(ei, graph)))) {
+                if (ei != cur_edge && (edge_colour[ei] == edge_colour[cur_edge] ||
+                        (not_coloured_edges_count_near_vertex[v2] == 0 && !petersen_colouring_check_edge(ei, graph)))) {
                     checks_passed = false;
                     break;
                 }
@@ -199,7 +240,7 @@ bool normal_colour_edges(int cur_edge_idx, TGraph& graph) {
         if (checks_passed && normal_colour_edges(cur_edge_idx + 1, graph)) {
             return true;
         }
-        
+
         // undo
         had_four = had_four_backup;
         if (!had_four_backup && i == 4) {
@@ -215,8 +256,9 @@ bool normal_colour_edges(int cur_edge_idx, TGraph& graph) {
     return false;
 }
 
-void find_all_petersen_colourings(TGraph& graph) {
+void find_all_petersen_colourings(Graph& graph) {
     graph.profiles.clear();
+    graph.has_strong_petersen_colouring = false;
 
     for (int e = 0; e < graph.number_of_edges; ++e) {
         edge_colour[e] = 0;
@@ -228,11 +270,11 @@ void find_all_petersen_colourings(TGraph& graph) {
     petersen_max_poor = 0;
 
     for (int v = 0; v < graph.number_of_vertices; ++v) {
-        not_coloured_edges_count_near_vertex[v] = REG;
+        not_coloured_edges_count_near_vertex[v] = MAX_DEG;
     }
 
     // colour edges around vertex 0
-    for (int j = 0; j < REG; ++j) {
+    for (int j = 0; j < MAX_DEG; ++j) {
         edge_colour[graph.v2e[0][j]] = j + 1;
         --not_coloured_edges_count_near_vertex[0];
         --not_coloured_edges_count_near_vertex[graph.v2v[0][j]];
@@ -240,20 +282,28 @@ void find_all_petersen_colourings(TGraph& graph) {
     had_four = false;
     normal_colour_edges(0, graph);
     cerr << "number of petersen colourings: " << graph.petersen_colourings.size() << "; number of profiles: " << graph.profiles.size() << endl;
+    cerr << "colourings grouped by profiles:" << endl;
+    for (const auto& prof : graph.petersen_colourings_by_profiles) {
+      cerr << prof.first << ": ";
+      for (const auto& colouring_idx : prof.second) {
+        cerr << colouring_idx << " ";
+      }
+      cerr << endl;
+    }
 }
 
 // FIXME: fix number of stars here
 /********************************cc-mapping********************************/
 
-void create_cc_mapping(const TGraph& petersen_graph) {
+void create_cc_mapping(const Graph& petersen_graph) {
     for (int v = 0; v < petersen_graph.number_of_vertices; ++v) {
         int mask = 0;
-        for (int j = 0; j < REG; ++j) {
+        for (int j = 0; j < MAX_DEG; ++j) {
             int e = petersen_graph.v2e[v][j];
             mask += BIT(petersen_graph.normal5_colourings[0][e]);
         }
         mask_to_petersen_vertex[mask] = v;
-        for (int j = 0; j < REG; ++j) {
+        for (int j = 0; j < MAX_DEG; ++j) {
             int e = petersen_graph.v2e[v][j];
             ve_to_petersen_edge[combine_hash_from_mask_and_edge_colour(mask, petersen_graph.normal5_colourings[0][e])] = e;
         }
@@ -261,4 +311,4 @@ void create_cc_mapping(const TGraph& petersen_graph) {
     cerr << "number of mask/edge_colour pairs: " << ve_to_petersen_edge.size() << endl;
 }
 
-} // NExpPetersenColouring
+} // ExpPetersenColouring

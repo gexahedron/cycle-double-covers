@@ -7,6 +7,34 @@
 	- o14c8c (и вообще ockc, где k >= 12)
 
 
+## One of 10-cycle 6-covers for Petersen graph
+
+```
+0 : 4 6 8
+1 : 5 6 9
+2 : 4 7 9
+3 : 5 7 8
+4 : 0 2 5
+5 : 1 3 4
+6 : 0 1 7
+7 : 2 3 6
+8 : 0 3 9
+9 : 1 2 8
+
+circuit 0 (colour 0): 0 4 2 7 3 5 1 6
+circuit 1 (colour 1): 0 4 2 7 3 5 1 9 8
+circuit 2 (colour 2): 0 4 2 7 3 8 9 1 6
+circuit 3 (colour 3): 0 4 5 1 6 7 2 9 8
+circuit 4 (colour 4): 0 4 5 3 7 6 1 9 8
+circuit 5 (colour 5): 0 4 5 3 8 9 2 7 6
+circuit 6 (colour 6): 0 6 7 3 8
+circuit 7 (colour 6): 1 5 4 2 9
+circuit 8 (colour 7): 0 6 1 9 2 4 5 3 8
+circuit 9 (colour 8): 0 6 7 2 9 1 5 3 8
+circuit 10 (colour 9): 1 5 4 2 9 8 3 7 6
+```
+
+
 на текущий момент есть следующие сильные не следующие друг из друга гипотезы:
 	- 2bm с dominating circuit => nz5, 5cdc
 	- 3bm => nz5, o7c4c

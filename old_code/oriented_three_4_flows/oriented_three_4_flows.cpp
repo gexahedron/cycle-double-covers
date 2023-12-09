@@ -49,20 +49,20 @@ int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}};
 //const int number_of_partitions = 3;
 //int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {3, 3, 3}, {2, 3, 4}, {3, 3, 4}, {2, 4, 4}};
 
-int vertices[REG * MAXN / 2][2];
+int vertices[MAXN * REG / 2][2];
 int default_trackback_to = REG * MAXN;
 int trackback_to;
 int vertex_last_edge_index[MAXN];
-int partition_num[REG * MAXN / 2][2];
+int partition_num[MAXN * REG / 2][2];
 int partition_degs[MAXN][number_of_partitions];
 int number_of_flowed_edges_at_vertex[MAXN][number_of_partitions];
-int edge_flows[REG * MAXN / 2][number_of_partitions];
+int edge_flows[MAXN * REG / 2][number_of_partitions];
 int vertex_flows[MAXN][number_of_partitions];
 int max_flow_values[number_of_partitions];
 
 bool has_profile[number_of_profiles];
 
-bool is_oriented_edge_covered[REG * MAXN / 2][2];
+bool is_oriented_edge_covered[MAXN * REG / 2][2];
 
 /********************************** Functions *************************************/
 

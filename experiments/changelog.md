@@ -1,5 +1,5 @@
 Milestones:
-* added TGraph struct
+* added Graph struct
 * added fast Petersen colouring
 * added cc-mapping
 * added cycles
@@ -41,7 +41,6 @@ TODO:
 * fix bug in 5cdc
 * refactor code
 * combine code for 5cdc and 6c4c and add support for 9c6c
-* add graph6 format support
 * check code on some graphs from graph6 files
 * print various statistics by cycles, by 5cdc, by 6c4c, by nz5, by nz-mod5
 * generalize code not only for cubic graphs? won't be easy for some of the constructions

@@ -21,16 +21,16 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <algorithm>
 #include <string>
-
-namespace NExp5cdcVs6c4c {
 
 using namespace std;
 
+
+namespace Exp5cdcVs6c4c {
+
 /*********************************Methods*********************************/
 
-void compare_6c4c_5cdc_pairs(TGraph& graph) {
+void compare_6c4c_5cdc_pairs(Graph& graph) {
     //cerr << "all 6c4c: " << all_6c4c_solutions << endl;
     cerr << "all 6c4c (in 6c4c-5cdc pairs): " << graph.u244_6c4c_5cdc_pairs.size() << endl;
     cerr << "pet 6c4c: " << graph.petersen_6c4c_5cdc_pairs.size() << endl;
@@ -58,4 +58,4 @@ void compare_6c4c_5cdc_pairs(TGraph& graph) {
     }
 }
 
-} // namespace NExp5cdcVs6c4c
+} // namespace Exp5cdcVs6c4c
