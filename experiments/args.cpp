@@ -25,8 +25,10 @@ Args::Args(int argc, char** argv)
 {
   if (argc < 2 || argc > 4) {
     cerr << "Error: invalid number of arguments" << endl;
-    cerr << "Usage: " << argv[0] << " <filetype: mc, g6, adj, bghm> " <<
-        "<index_of_start_graph|file> <index_of_finish_graph>" << endl;
+    cerr << "Usage: " << argv[0] << " <file-extension: mc, g6, adj, bghm> " <<
+        "<index_of_start_graph> <index_of_finish_graph>" << endl;
+    cerr << "Example:" << endl;
+    cerr << "./run_experiments mc < ../../multicode/girth5/Generated_graphs.18.05.sn.cyc4 2> out" << endl;
     exit(1);
   } else {
     filetype = argv[1];
