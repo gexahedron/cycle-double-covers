@@ -1,8 +1,8 @@
 /*
  * File:   oriented_three_4_flows.cpp
  * Main result:
- * Program checks existence of oriented 233-, 333-, 234-, 334- and 244- flows for snarks
- * and also 2233-flows
+ * Program checks existence of
+ * oriented 233-, 333-, 334-, 244- and 2233- flows for snarks.
  *
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
@@ -30,24 +30,17 @@ int number_of_edges;
 int number_of_graphs_to_skip = 0;
 unsigned int edge_index[MAXN][MAXN];
 
-//const int number_of_profiles = 1;
-//const int number_of_partitions = 4;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
+// const int number_of_profiles = 1;
+// const int number_of_partitions = 4;
+// int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
 
 const int number_of_profiles = 1;
 const int number_of_partitions = 3;
 int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}};
-//const int number_of_profiles = 4;
-//const int number_of_partitions = 3;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {2, 3, 4}, {2, 3, 5}, {2, 3, 6}};
 
-
-//const int number_of_profiles = 6;
-//const int number_of_partitions = 4;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 2, 3}, {2, 2, 3, 3}, {2, 2, 2, 4}, {2, 2, 3, 4}, {2, 3, 3, 3}, {3, 3, 3, 3}};
-//const int number_of_profiles = 5;
-//const int number_of_partitions = 3;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 3, 3}, {3, 3, 3}, {2, 3, 4}, {3, 3, 4}, {2, 4, 4}};
+// const int number_of_profiles = 2;
+// const int number_of_partitions = 3;
+// int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}, {2, 4, 4}};
 
 int vertices[MAXN * REG / 2][2];
 int default_trackback_to = REG * MAXN;
@@ -75,7 +68,6 @@ bool BuildFlow(int partition, int edge_index) {
     if (partition_num[edge_index][0] == partition) {
         return BuildFlow(partition, edge_index + 1);
     }
-
     if (number_of_partitions == 4) {
         if (partition_num[edge_index][1] == partition) {
             return BuildFlow(partition, edge_index + 1);
@@ -98,6 +90,9 @@ bool BuildFlow(int partition, int edge_index) {
     for (int flow = left_bound; flow <= right_bound; ++flow) {
         if (flow == 0)
             continue;
+        if (abs(flow) >= max_flow_values[partition]) {
+            continue;
+        }
         int orientation = 0;
         if (flow < 0) {
             orientation = 1;
@@ -187,11 +182,8 @@ bool CheckPartitions() {
         return false;
     }
 
-    // check o433-, o343-, o344- flows
     for (int partition = 0; partition < number_of_partitions; ++partition) {
-        ++max_flow_values[partition];
         bool res = CheckNowhereZeroness(0);
-        --max_flow_values[partition];
         if (!res) {
             return false;
         }
@@ -309,7 +301,22 @@ bool HasPartitionedFlows() {
         cerr << ": ";
         if (has_profile[profile]) {
             cerr << "YES!; ";
-            // TODO: print solution
+
+            // print solution
+            // cerr << endl;
+            // for (int e = 0; e < number_of_edges; ++e) {
+            //     cerr << e << ": " << vertices[e][0] << " " <<
+            //         vertices[e][1] << "; ";
+            //     cerr << "parts: " << partition_num[e][0] << " ";
+            //     if (number_of_partitions == 4) {
+            //         cerr << partition_num[e][1] << " ";
+            //     }
+            //     cerr << "flows: ";
+            //     for (int partition = 0; partition < number_of_partitions; ++partition) {
+            //         cerr << edge_flows[e][partition] << " ";
+            //     }
+            //     cerr << endl;
+            // }
         } else {
             cerr << "nope; ";
         }
