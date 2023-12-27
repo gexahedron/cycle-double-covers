@@ -3,7 +3,7 @@
 ##How to run the code
 To compile the code just print "make" in your console (you need g++ compiler).
 
-To run this code you need to specify the number of vertices in the snarks and provide the file with snarks in multicode format.
+To run this code you need to provide the file with snarks in multicode format.
 
 ##How to generate the file with snarks
 Download the code of snarkhunter [2] from [here](http://caagt.ugent.be/cubic/) (and for this you would also need to follow the installation instructions, which include downloading [nauty](http://pallini.di.uniroma1.it/) (you can also find older versions here: http://cs.anu.edu.au/~bdm/nauty/) and copying files from nauty [1]).
@@ -26,7 +26,7 @@ You'll get a file named something like "Generated_graphs.22.05.sn.cyc4".
 
 Use this file as an input to the program:
 
-`./three_4_flows 22 < Generated_graphs.22.05.sn.cyc4`
+`./three_4_flows < Generated_graphs.22.05.sn.cyc4`
 
 ##Main result here (May 20, 2016)
 The conjecture about 233-flows, stated in the last section in [openproblemgarden](http://www.openproblemgarden.org/op/three_4_flows_conjecture) text is already false for Petersen graph (234-flows and 235-flow also don't exist for Petersen graph).
