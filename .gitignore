@@ -11,6 +11,7 @@
 experiments/run_experiments
 *vscode*
 *.DS_Store
+*.dot
 
 ### C++ ###
 # Compiled Object files
