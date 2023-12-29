@@ -68,6 +68,8 @@ set<set<int>> selected_triples;
 map<set<int>, vector<bool>> vertex_in_244_cycle;
 map<set<int>, vector<bool>> edge_in_244_cycle;
 
+vector<int> rich_244_counts;
+
 multiset<Mask> cur_6c4c;
 
 unordered_set<Mask> v_minus_4_6c4c;
@@ -274,6 +276,90 @@ bool find_nz_mod_from_o6c4c(Graph& graph, int mod, int cur_layer, bool both) {
   }
   for (int e = 0; e < graph.number_of_edges; ++e) {
     cur_flow[e] -= layer_flow[cur_layer][e] * (mod - 1);
+  }
+  return false;
+}
+
+bool find_int_nz_from_o6c4c_cleaner(Graph& graph, int mod, int cur_layer) {
+  if (cur_layer == 6) {
+    for (int e = 0; e < graph.number_of_edges; ++e) {
+      if ((cur_flow[e] == 0) || (abs(cur_flow[e]) >= mod)) {
+        return false;
+      }
+    }
+    if (mod == 5) {
+      has_int_nz5_flow = true;
+      vector<int> cur_flow_vec;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        cur_flow_vec.push_back(cur_flow[e]);
+      }
+      cur_flows.push_back(cur_flow_vec);
+      graph.oriented_vertices_by_nz5[cur_flow_vec].insert(oriented_vertices_mask);
+      return true;
+
+      // int or_sum = 0;
+      // int unor_sum = 0;
+      // vector<int> types;
+      // for (int v = 0; v < graph.number_of_vertices; ++v) {
+      //   int max_f = 0;
+      //   multiset<int> abses;
+      //   for (int j = 0; j < MAX_DEG; ++j) {
+      //     int v2 = graph.v2v[v][j];
+      //     int f = cur_flow_vec[graph.v2e[v][j]];
+      //     if (v2 < v) {
+      //       f = -f;
+      //     }
+      //     if (abs(f) > abs(max_f)) {
+      //       max_f = f;
+      //     }
+      //     abses.insert(abs(f));
+      //   }
+      //   int type = 0;
+      //   for (const auto& t : abses) {
+      //     type = type * 10 + t;
+      //   }
+      //   if (max_f < 0) {
+      //     type = -type;
+      //   }
+      //   types.push_back(type);
+      //   if ((oriented_vertices_mask & BIT(v)) == 0) {
+      //     unor_sum += type;
+      //   } else {
+      //     or_sum += type;
+      //   }
+      // }
+      // if (nz5_flow_types.find(types) != nz5_flow_types.end()) {
+      //   return false;
+      // }
+
+      // oriented_nz5_sums.insert(or_sum);
+      // unoriented_nz5_sums.insert(unor_sum);
+    } else {
+      assert(mod == 6);
+      has_int_nz6_flow = true;
+    }
+    return true;
+  }
+
+  int threshold = (mod - 1);
+  for (int e = 0; e < graph.number_of_edges; ++e) {
+    cur_flow[e] += layer_flow[cur_layer][e] * (-(threshold + 1));
+  }
+  for (int w = -threshold; w <= threshold; ++w) {
+    layer_weights[cur_layer] = w;
+    bool no_problems_with_flow = true;
+    for (int e = 0; e < graph.number_of_edges; ++e) {
+      cur_flow[e] += layer_flow[cur_layer][e];
+      if (no_problems_with_flow && (max_layer[e] == cur_layer) && ((cur_flow[e] == 0) || (abs(cur_flow[e]) >= mod))) {
+        no_problems_with_flow = false;
+      }
+    }
+    if (no_problems_with_flow && find_int_nz_from_o6c4c_cleaner(graph, mod, cur_layer + 1)) {
+      return true;
+    }
+  }
+  for (int e = 0; e < graph.number_of_edges; ++e) {
+    cur_flow[e] -= layer_flow[cur_layer][e] * threshold;
   }
   return false;
 }
@@ -1226,7 +1312,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
         for (int v = 0; v < graph.number_of_vertices; ++v) {
           int e1 = graph.v2e[v][0];
           int e2 = graph.v2e[v][1];
-          if (edge_pairs[make_pair(e1, e2)] != 1) {
+          if (edge_pairs[make_pair(e1, e2)] != 1) { // so, it's 0 or 2
             oriented_vertices.insert(v);
             oriented_vertices_mask += BIT(v);
           }
@@ -1942,19 +2028,20 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
         }
         find_nz_mod_from_o6c4c(graph, 6, 1, false);
 
-        // both flows with same weights (probably it's same as having nz5 flow)
+        // both flows with same weights (and it's not same as having nz5 flow)
         has_nz_modb_flow = false;
         for (int e = 0; e < graph.number_of_edges; ++e) {
           cur_flow[e] = 0;
         }
         find_nz_mod_from_o6c4c(graph, 5, 1, true);
-        // TODO: compare with has_nz5; probably they are equal to each other
 
 
         vertex_in_244_cycle.clear();
         edge_in_244_cycle.clear();
+        rich_244_counts.clear();
         Mask ms[3];
-        for (int i = 0; i < 6; ++i) {
+        // for (int i = 0; i < 6; ++i) { // FIXME?
+        for (int i = 0; i < 1; ++i) {
           ms[0] = u6c4c_cycles[i];
           for (int j = i + 1; j < 6; ++j) {
             ms[1] = u6c4c_cycles[j];
@@ -1963,6 +2050,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
               set<int> triple = {i, j, k};
               vector<bool> vertex_in_cycle;
               vector<bool> edge_in_cycle;
+              int rich_count = 0;
               for (int v = 0; v < graph.number_of_vertices; ++v) {
                 vertex_in_cycle.push_back(false);
               }
@@ -1978,6 +2066,9 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
                 }
                 if (edge_count != 2) {
                   edge_in_cycle[e] = true;
+                  if (!u6c4c_edge_is_poor[e]) {
+                    rich_count++;
+                  }
                   for (int ii = 0; ii < 2; ++ii) {
                     vertex_in_cycle[graph.e2v[e][ii]] = true;
                   }
@@ -1985,6 +2076,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
               }
               vertex_in_244_cycle[triple] = vertex_in_cycle;
               edge_in_244_cycle[triple] = edge_in_cycle;
+              rich_244_counts.push_back(rich_count);
             }
           }
         }
@@ -2042,7 +2134,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
         cur_flows.clear();
 
         // FIXMEFIXMEFIXME
-        // find_int_nz_from_o6c4c(graph, 5, 0);
+        find_int_nz_from_o6c4c_cleaner(graph, 5, 0);
 
         // FIXMEFIXMEFIXME
         if (false) {
@@ -2740,6 +2832,24 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           assert(npar == old_parity); // todo?
           cerr << "npar: " << npar << "; ";
 
+          // cerr << "pairings: ";
+          // for (const auto& v : oriented_vertices) {
+          //   for (const auto& pair : layer_pairings[v]) {
+          //     for (const auto& v2 : pair) {
+          //       cerr << v2 << "_";
+          //     }
+          //     cerr << "|";
+          //   }
+          //   cerr << "/";
+          // }
+          // cerr << "; ";
+
+          set<set<set<int>>> or_pairings;
+          for (const auto& v : oriented_vertices) {
+            or_pairings.insert(layer_pairings[v]);
+          }
+          cerr << "or_type_count: " << or_pairings.size() << "; ";
+
           cerr << "rich_type_count: " << rich_edge_layer_types.size() << "; ";
           cerr << "less: " << (t1 + t3 <= oriented_vertices.size() * 2 + 2) << "; ";
 
@@ -2748,6 +2858,22 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
             cerr << "_" << c;
           }
           cerr << "; ";
+
+          cerr << "rich244:";
+          bool rich_244_all_even = true;
+          bool rich_244_all_odd = true;
+          for (const auto& c : rich_244_counts) {
+            cerr << "_" << c;
+            if (c % 2 != 0) {
+              rich_244_all_even = false;
+            } else {
+              rich_244_all_odd = false;
+            }
+          }
+          cerr << "; ";
+
+          cerr << "r244even: " << rich_244_all_even << "; ";
+          cerr << "r244odd: " << rich_244_all_odd << "; ";
 
           cerr << "reors: " << same_cycles_different_orientations << "; ";
           // FIXME
@@ -2835,6 +2961,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           // }
           // cerr << "; ";
 
+          cerr << "has_nz5: " << has_int_nz5_flow << "; ";
           cerr << "mismatch: " << is_mismatch << "; ";
           cerr << "has_nzmod5: " << has_nz_mod5_flow << "; ";
           cerr << "has_nzmod6: " << has_nz_mod6_flow << "; ";
@@ -5481,6 +5608,101 @@ bool gen_o6c4c(Graph& graph, int cur_cycle_layer, int min_cycle_idx, bool only_f
             cerr << "dom!" << endl;
           }*/
         }
+
+        // TODO2024: uncomment and research
+
+        // for (int i = 0; i < 6; ++i) {
+        //     for (int j = i + 1; j < 6; ++j) {
+        //         for (int k = j + 1; k < 6; ++k) {
+        //             set<Mask> triple;
+        //             triple.insert(u6c4c_cycles[i]);
+        //             triple.insert(u6c4c_cycles[j]);
+        //             triple.insert(u6c4c_cycles[k]);
+        //             all_6c4c_triples.insert(triple);
+        //             if (has_o6c4c) {
+        //                 all_o6c4c_triples.insert(triple);
+        //             }
+        //         }
+        //     }
+        // }
+
+        // all_33pp_triples.clear();
+        // find_33pp_from_6c4c(graph);
+        // has_33pp_from_3pm = all_33pp_triples.size() > 0;
+        // if (!has_33pp_from_3pm) {
+        //     return false;
+        // }
+        
+        // if (!has_o6c4c) {
+        //     return false;
+        // }
+        
+        // poor_mask = 0;
+        // for (int e = 0; e < graph.number_of_edges; ++e) {
+        //     if (u6c4c_edge_is_poor[e]) {
+        //         poor_mask += BIT(e);
+        //     }
+        // }
+        // //return false;
+        
+        // o244_triples.clear();
+        // find_o244_flows_from_6c4c(all_33pp_triples, graph);
+        // has_o244_flows = o244_triples.size() > 0;
+        // if (!has_o244_flows) {
+        //     return false;
+        // }
+        
+        // bool have_same_triple = false;
+        // common_triples.clear();
+        // for (const auto& triple : all_33pp_triples) {
+        //     if (o244_triples.find(triple) != o244_triples.end()) {
+        //         have_same_triple = true;
+        //         common_triples.insert(triple);
+        //     }
+        // }
+        // if (!have_same_triple) {
+        //     return false;
+        // }
+        // //has_o244_flows = true;
+        // //bool have_same_triple = true;
+        
+        // find_333flows_from_6c4c(common_triples, graph);
+        // if (!has_all_3flows) {
+        //     return false;
+        // }
+        
+        // if (has_o6c4c && has_33pp_from_3pm && has_all_3flows && has_o244_flows && have_same_triple) {// && has_dominating_circuit) {
+        //     has_or_comb = true;
+        // }
+        // if (has_or_comb) {
+        //     cerr << "has oriented combination" << endl;
+        //     return true;
+        // }
+        // /*
+        // if (has_33pp_from_3pm && has_333pp_from_3pm && has_all_3flows && has_o244_flows && have_same_triple) {
+        //     has_un_comb = true;
+        // }*/
+        
+        // /*if (has_or_comb && has_un_comb) {
+        //     cerr << "has both" << endl;
+        //     return true;
+        // }*/
+        
+        // //if ((same_cycles_different_orientations > 0) && has_33pp_from_3pm && has_all_3flows) {
+        // //cerr << "6c4c:\t" << (same_cycles_different_orientations > 0) << "\t" << has_33pp_from_3pm << "\t" <<
+        // //        has_333pp_from_3pm << "\t" << has_all_3flows << "\t" << has_o244_flows << "\t" << have_same_triple << endl;
+        //     //return true;
+        // //}
+        
+        // if (same_cycles_different_orientations > 0) {
+        //     all_33pp_solutions += u33pp_solutions;
+        //     if (all_33pp_solutions > 0)
+        //         return true;
+        // }
+        // return false;
+
+
+
 
         return false;
 
