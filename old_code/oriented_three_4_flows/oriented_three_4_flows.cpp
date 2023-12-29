@@ -30,13 +30,13 @@ int number_of_edges;
 int number_of_graphs_to_skip = 0;
 unsigned int edge_index[MAXN][MAXN];
 
-// const int number_of_profiles = 1;
-// const int number_of_partitions = 4;
-// int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
-
 const int number_of_profiles = 1;
-const int number_of_partitions = 3;
-int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}};
+const int number_of_partitions = 4;
+int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
+
+// const int number_of_profiles = 1;
+// const int number_of_partitions = 3;
+// int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}};
 
 // const int number_of_profiles = 2;
 // const int number_of_partitions = 3;
