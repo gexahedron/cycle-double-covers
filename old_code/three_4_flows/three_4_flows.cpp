@@ -31,9 +31,9 @@ int number_of_graphs_to_skip = 0;
 unsigned int edge_index[MAXN][MAXN];
 
 /* The code is too slow to find any solutions here, but still, here are the main candidates for decompositions into abcd- flows */
-//const int number_of_profiles = 4;
-//const int number_of_partitions = 4;
-//int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}, {2, 2, 3, 4}};
+// const int number_of_profiles = 1;
+// const int number_of_partitions = 4;
+// int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
 
 const int number_of_profiles = 6;
 const int number_of_partitions = 3;
