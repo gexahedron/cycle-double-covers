@@ -2821,16 +2821,19 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           // circuits_even_poor is forbidden (== s0 (mod 2))
           // and probably other circuits_even/odd_poor/rich counts also
           int parity     = (old_parity) % 2;
-          cerr << "PAR: " << parity << " (" << old_parity << "); ";
+          cerr << "PAR: " << parity << "; ";// << " (" << old_parity << "); ";
 
           // int s0s1orsum = NONE;
           // if (even_t4_matchings == 3) {
           //   s0s1orsum = (s0 + s1 + oriented_vertices.size()) % 2;
           //   cerr << "s0s1orsum: " << s0s1orsum << "; ";
           // }
+
           int npar = (s0 + s1 + oriented_vertices.size() + even_t4_matchings) % 2;
           assert(npar == old_parity); // todo?
-          cerr << "npar: " << npar << "; ";
+          // cerr << "npar: " << npar << "; ";
+
+          cerr << "o244: " << o244_triples.size() << "; ";
 
           // cerr << "pairings: ";
           // for (const auto& v : oriented_vertices) {
@@ -2860,20 +2863,23 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           cerr << "; ";
 
           cerr << "rich244:";
-          bool rich_244_all_even = true;
-          bool rich_244_all_odd = true;
+          // bool rich_244_all_even = true;
+          // bool rich_244_all_odd = true;
+          int rich_244_odd_count = 0;
           for (const auto& c : rich_244_counts) {
             cerr << "_" << c;
             if (c % 2 != 0) {
-              rich_244_all_even = false;
+              // rich_244_all_even = false;
+              rich_244_odd_count += 1;
             } else {
-              rich_244_all_odd = false;
+              // rich_244_all_odd = false;
             }
           }
           cerr << "; ";
 
-          cerr << "r244even: " << rich_244_all_even << "; ";
-          cerr << "r244odd: " << rich_244_all_odd << "; ";
+          // cerr << "r244even: " << rich_244_all_even << "; ";
+          // cerr << "r244odd: " << rich_244_all_odd << "; ";
+          cerr << "r244odd: " << rich_244_odd_count << "; ";
 
           cerr << "reors: " << same_cycles_different_orientations << "; ";
           // FIXME
@@ -5587,13 +5593,18 @@ bool gen_o6c4c(Graph& graph, int cur_cycle_layer, int min_cycle_idx, bool only_f
 
         o244_triples.clear();
         // TODO: slow
-        //find_o244_flows_from_6c4c(cur_6c4c_triples, graph);
+        find_o244_flows_from_6c4c(cur_6c4c_triples, graph);
+        // FIXME2024
+        // if (o244_triples.size() != 9) {
+        //   return false;
+        // }
 
         if (check_orientability_6c4c(graph)) {
             // FIXME: commented out cerr
             // cerr << "found o6c4c" << endl;
             return true;
         }
+
         bool has_o6c4c = (same_cycles_different_orientations > 0);
 
         // FIXME: commented out cerr

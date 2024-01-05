@@ -30,13 +30,13 @@ int number_of_edges;
 int number_of_graphs_to_skip = 0;
 unsigned int edge_index[MAXN][MAXN];
 
-const int number_of_profiles = 1;
-const int number_of_partitions = 4;
-int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
-
 // const int number_of_profiles = 1;
-// const int number_of_partitions = 3;
-// int profiles[number_of_profiles][number_of_partitions] = {{3, 3, 3}};
+// const int number_of_partitions = 4;
+// int profiles[number_of_profiles][number_of_partitions] = {{2, 2, 3, 3}};
+
+const int number_of_profiles = 1;
+const int number_of_partitions = 3;
+int profiles[number_of_profiles][number_of_partitions] = {{2, 4, 4}};
 
 // const int number_of_profiles = 2;
 // const int number_of_partitions = 3;
@@ -303,20 +303,20 @@ bool HasPartitionedFlows() {
             cerr << "YES!; ";
 
             // print solution
-            // cerr << endl;
-            // for (int e = 0; e < number_of_edges; ++e) {
-            //     cerr << e << ": " << vertices[e][0] << " " <<
-            //         vertices[e][1] << "; ";
-            //     cerr << "parts: " << partition_num[e][0] << " ";
-            //     if (number_of_partitions == 4) {
-            //         cerr << partition_num[e][1] << " ";
-            //     }
-            //     cerr << "flows: ";
-            //     for (int partition = 0; partition < number_of_partitions; ++partition) {
-            //         cerr << edge_flows[e][partition] << " ";
-            //     }
-            //     cerr << endl;
-            // }
+            cerr << endl;
+            for (int e = 0; e < number_of_edges; ++e) {
+                cerr << e << ": " << vertices[e][0] << " " <<
+                    vertices[e][1] << "; ";
+                cerr << "parts: " << partition_num[e][0] << " ";
+                if (number_of_partitions == 4) {
+                    cerr << partition_num[e][1] << " ";
+                }
+                cerr << "flows: ";
+                for (int partition = 0; partition < number_of_partitions; ++partition) {
+                    cerr << edge_flows[e][partition] << " ";
+                }
+                cerr << endl;
+            }
         } else {
             cerr << "nope; ";
         }

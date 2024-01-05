@@ -313,6 +313,7 @@ bool find_o244_flows_from_3pm(Graph& graph) {
 
 bool find_o244_flows_from_6c4c(const set<vector<int>>& all_33pp_triples, Graph& graph) {
     has_o244_flows = false;
+    // int orientation_fail_count = 0;
     for (int i = 0; i < 6; ++i) {
         u3_inv_pm[0] = u6c4c_cycles[i];
         for (int j = i + 1; j < 6; ++j) {
@@ -329,6 +330,12 @@ bool find_o244_flows_from_6c4c(const set<vector<int>>& all_33pp_triples, Graph& 
                     //return true;
                     has_o244_flows = false;
                     //return true;
+                // } else {
+                //     // FIXME2024
+                //     orientation_fail_count += 1;
+                //     if (orientation_fail_count > 1) {
+                //         return false;
+                //     }
                 }
             }
         }
