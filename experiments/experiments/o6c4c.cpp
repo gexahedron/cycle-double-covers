@@ -2833,7 +2833,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           assert(npar == old_parity); // todo?
           // cerr << "npar: " << npar << "; ";
 
-          cerr << "o244: " << o244_triples.size() << "; ";
+          // cerr << "o244: " << o244_triples.size() << "; ";
 
           // cerr << "pairings: ";
           // for (const auto& v : oriented_vertices) {
@@ -2847,13 +2847,24 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           // }
           // cerr << "; ";
 
-          set<set<set<int>>> or_pairings;
+          map<set<set<int>>, int> or_pairings;
           for (const auto& v : oriented_vertices) {
-            or_pairings.insert(layer_pairings[v]);
+            or_pairings[layer_pairings[v]] += 1;
           }
           cerr << "or_type_count: " << or_pairings.size() << "; ";
+          cerr << "or_type_decomp:";
+          vector<int> or_type_counts;
+          for (const auto& p : or_pairings) {
+            or_type_counts.push_back(p.second);
+          }
+          sort(or_type_counts.begin(), or_type_counts.end());
+          for (const auto& c : or_type_counts) {
+            cerr << "_" << c;
+          }
+          cerr << "; ";
 
           cerr << "rich_type_count: " << rich_edge_layer_types.size() << "; ";
+
           cerr << "less: " << (t1 + t3 <= oriented_vertices.size() * 2 + 2) << "; ";
 
           cerr << "or_counts:";
@@ -3050,7 +3061,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
 
           // FIXMEFIXME
           // if (oriented_vertices.size() == 0) {
-          cerr << "or0: ";
+          // cerr << "or0: ";
           // cerr << "sum: " << s1 - s0 - (rich_unoriented_vertices_frequency[0] + rich_unoriented_vertices_frequency[2]) << "; ";
           // cerr << "sum: " << s1 - s0 - rich_unoriented_vertices_frequency[3] << "; ";
           // cerr << "sum: " << (rich_unoriented_vertices_frequency[3]+rich_unoriented_vertices_frequency[1]) - s1 + s0 << "; ";
@@ -3063,21 +3074,22 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           // int g4 = 1 - ((rich_unoriented_vertices_frequency[3]+rich_unoriented_vertices_frequency[1]) - s1 + circuits_even_len)/2;
           // cerr << "g4: " << g4 << "; ";
 
+          cerr << "rrn024: " << rich_rich_neibs[0] + rich_rich_neibs[2] + rich_rich_neibs[4] << "; ";
+          cerr << "s1s0diff: " << s1-s0 << "; ";
+          
           // s0 has same parity as following variables:
           // circuits_even_rich, circuits_even_poor, circuits_even_len
-          cerr << "sames: ";
+          // cerr << "sames: ";
           // cerr << "cer: " << circuits_even_rich << "; ";
           // cerr << "cep: " << circuits_even_poor << "; ";
           // cerr << "cel: " << circuits_even_len << "; ";
           // cerr << "ceo: " << circuits_even_or << "; ";
-          cerr << "rrn024: " << rich_rich_neibs[0] + rich_rich_neibs[2] + rich_rich_neibs[4] << "; ";
+          // cerr << "cop: " << s0-circuits_even_poor << "; ";
+          cerr << "ruv13: " << rich_unoriented_vertices_frequency[1] + rich_unoriented_vertices_frequency[3] << "; ";
 
           cerr << "evens: ";
-          cerr << "s1s0diff: " << s1-s0 << "; ";
-          // cerr << "cop: " << s0-circuits_even_poor << "; ";
           cerr << "col: " << s0-circuits_even_len << "; ";
           cerr << "rrn13: " << rich_rich_neibs[1] + rich_rich_neibs[3] << "; ";
-          cerr << "ruv13: " << rich_unoriented_vertices_frequency[1] + rich_unoriented_vertices_frequency[3] << "; ";
           cerr << "ruv02: " << rich_unoriented_vertices_frequency[0] + rich_unoriented_vertices_frequency[2] << "; ";
 
           cerr << "chord_info: (" <<
@@ -4741,6 +4753,15 @@ bool check_orientability_6c4c(Graph& graph) {
       edge_to_layers[e] = make_pair(l1, l2);
     }
     set<tuple<tuple<int, int>, vector<vector<tuple<int, int>>>>> rich_edge_layer_types;
+    // so, it's a set of tuples
+    // first in tuple is tuple<int, int> - pair of layers, where edge is from PM
+    // second is fours_of_layers - vector<vector<tuple<int, int>>>>
+    // it's a 2x2x2 construction
+    // it has 2 l1l2s: vector<tuple<int, int>>
+    // 2, because edge connects 2 vertices
+    // each l1l2 has 2 tuples, each tuple is edge_to_layers
+    // so, for each rich edge we track it's neighbour edges
+    // each neighbour edge carries 2 numbers, edge_to_layers, pair of layers, where edge is from PM
     for (int e = 0; e < graph.number_of_edges; ++e) {
       if (u6c4c_edge_is_poor[e]) {
         continue;
@@ -5593,7 +5614,8 @@ bool gen_o6c4c(Graph& graph, int cur_cycle_layer, int min_cycle_idx, bool only_f
 
         o244_triples.clear();
         // TODO: slow
-        find_o244_flows_from_6c4c(cur_6c4c_triples, graph);
+        // find_o244_flows_from_6c4c(cur_6c4c_triples, graph);
+
         // FIXME2024
         // if (o244_triples.size() != 9) {
         //   return false;
