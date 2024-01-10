@@ -4,8 +4,7 @@
  *
  * Created on 14 August 2017
  * Study of properties and relations
- * between various constructions
- * relevant to snarks:
+ * between various constructions relevant to snarks:
  * - normal (Petersen) colouring
  * - o6c4c
  * - o5cdc
@@ -13,7 +12,7 @@
  * - (3, 3)-flow parity-pair-covers (aka 33-pp)
  * - dominating circuits
  * - (m, n, k)-flow double covers
- * - TODO: unit vector flows
+ * - unit vector flows on S3
  *
  */
 
@@ -28,6 +27,7 @@
 #include "experiments/preimages.h"
 #include "experiments/o5cdc.h"
 #include "experiments/o6c4c.h"
+#include "experiments/unit_vector_flows_s3.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -111,5 +111,6 @@ void process_petersen_graph(Graph& petersen_graph) {
 
 void run_experiments(const Graph& petersen_graph, Graph& graph) {
   // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow
-  Exp6c4c::find_all_o6c4c(graph);
+  // Exp6c4c::find_all_o6c4c(graph);
+  ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
 }
