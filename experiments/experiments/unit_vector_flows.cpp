@@ -10,6 +10,7 @@
 
 #include "unit_vector_flows.h"
 
+#include <cassert>
 #include <math.h>
 #include <map>
 
