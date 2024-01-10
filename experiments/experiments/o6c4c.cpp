@@ -2366,25 +2366,23 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
 
         int odd_t1_2_factors = 0;
         int odd_t2_2_factors = 0;
-        int even_t3_matchings = 0;
-        int even_t4_matchings = 0;
+        int odd_t3_2_factors = 0;
+        int odd_t4_2_factors = 0;
         for (const auto& c : cur_6c4c) {
           int t1_count = 0;
           int t2_count = 0;
           int t3_count = 0;
           int t4_count = 0;
           for (int e = 0; e < graph.number_of_edges; ++e) {
-            if ((c & BIT(e)) == 0) { // edge is from matching
-              if (edge_type[e] == 2) {
-                ++t3_count;
-              } else if (edge_type[e] == 3) {
-                ++t4_count;
-              }
-            } else {
+            if ((c & BIT(e)) != 0) { // edge is from 2-factor
               if (edge_type[e] == 0) {
                 ++t1_count;
               } else if (edge_type[e] == 1) {
                 ++t2_count;
+              } else if (edge_type[e] == 2) {
+                ++t3_count;
+              } else {
+                ++t4_count;
               }
             }
           }
@@ -2394,6 +2392,43 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           if (t2_count % 2 != 0) {
             ++odd_t2_2_factors;
           }
+          if (t3_count % 2 != 0) {
+            ++odd_t3_2_factors;
+          }
+          if (t4_count % 2 != 0) {
+            ++odd_t4_2_factors;
+          }
+        }
+
+        int even_t1_matchings = 0;
+        int even_t2_matchings = 0;
+        int even_t3_matchings = 0;
+        int even_t4_matchings = 0;
+        for (const auto& c : cur_6c4c) {
+          int t1_count = 0;
+          int t2_count = 0;
+          int t3_count = 0;
+          int t4_count = 0;
+          for (int e = 0; e < graph.number_of_edges; ++e) {
+            if ((c & BIT(e)) == 0) { // edge is from matching
+              if (edge_type[e] == 0) {
+                ++t1_count;
+              } else if (edge_type[e] == 1) {
+                ++t2_count;
+              } else if (edge_type[e] == 2) {
+                ++t3_count;
+              } else {
+                ++t4_count;
+              }
+            } else {
+            }
+          }
+          if (t1_count % 2 == 0) {
+            ++even_t1_matchings;
+          }
+          if (t2_count % 2 == 0) {
+            ++even_t2_matchings;
+          }
           if (t3_count % 2 == 0) {
             ++even_t3_matchings;
           }
@@ -2401,6 +2436,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
             ++even_t4_matchings;
           }
         }
+
         assert(odd_t1_2_factors % 2 == 0); // true
         odd_t1_2_factors /= 2;
         assert(odd_t2_2_factors % 2 == 0); // true
@@ -2796,20 +2832,23 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           }
           cerr << oriented_vertices.size() << "; ";
 
-          cerr << "t1+t3: ";
-          if (t1 + t3 < 10) {
-            cerr << "0";
-          }
-          cerr << t1 + t3 << "; ";
-
-          if (t1 + t3 <= 8 && (t1 + t3 != 6)) {
-            assert(s2 != 0); // TODO
-          }
-
           cerr << "s0: " << s0 << "; ";
           cerr << "s1: " << s1 << "; ";
           cerr << "s2: " << s2 << "; ";
-          cerr << "s2uu: " << even_t4_matchings << "; ";
+
+          // cerr << "rich244:";
+          int rich_244_odd_count = 0;
+          for (const auto& c : rich_244_counts) {
+            // cerr << "_" << c;
+            if (c % 2 != 0) {
+              rich_244_odd_count += 1;
+            } else {
+            }
+          }
+          // cerr << "; ";
+          cerr << "r244odd: " << rich_244_odd_count << "; ";
+
+          // cerr << "s2uu: " << even_t4_matchings << "; ";
 
           int old_parity = (s0 + s1 + s2) % 2;
           // rules for creating new parity:
@@ -2832,6 +2871,22 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           int npar = (s0 + s1 + oriented_vertices.size() + even_t4_matchings) % 2;
           assert(npar == old_parity); // todo?
           // cerr << "npar: " << npar << "; ";
+
+          cerr << "reors: " << same_cycles_different_orientations << "; ";
+          cerr << "em:_" << even_t1_matchings << "_" << even_t2_matchings << "_" <<
+            even_t3_matchings << "_" << even_t4_matchings << "; ";
+          cerr << "o2:_" << odd_t1_2_factors << "_" << odd_t2_2_factors << "_" <<
+            odd_t3_2_factors << "_" << odd_t4_2_factors << "; ";
+
+          cerr << "t1+t3: ";
+          if (t1 + t3 < 10) {
+            cerr << "0";
+          }
+          cerr << t1 + t3 << "; ";
+
+          if (t1 + t3 <= 8 && (t1 + t3 != 6)) {
+            assert(s2 != 0); // TODO
+          }
 
           // cerr << "o244: " << o244_triples.size() << "; ";
 
@@ -2873,41 +2928,17 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           }
           cerr << "; ";
 
-          cerr << "rich244:";
-          // bool rich_244_all_even = true;
-          // bool rich_244_all_odd = true;
-          int rich_244_odd_count = 0;
-          for (const auto& c : rich_244_counts) {
-            cerr << "_" << c;
-            if (c % 2 != 0) {
-              // rich_244_all_even = false;
-              rich_244_odd_count += 1;
-            } else {
-              // rich_244_all_odd = false;
-            }
-          }
-          cerr << "; ";
-
-          // cerr << "r244even: " << rich_244_all_even << "; ";
-          // cerr << "r244odd: " << rich_244_all_odd << "; ";
-          cerr << "r244odd: " << rich_244_odd_count << "; ";
-
-          cerr << "reors: " << same_cycles_different_orientations << "; ";
-          // FIXME
-          cerr << "em: " << even_t3_matchings << " " << even_t4_matchings << "; ";
-          cerr << "o2: " << odd_t1_2_factors << " " << odd_t2_2_factors << "; ";
-
           cerr << "t1: " << t1 << "; ";
           cerr << "t2: " << t2 << "; ";
           cerr << "t3: " << t3 << "; ";
           cerr << "t4: " << t4 << "; ";
 
-          cerr << "u_comps: " << total_poor_comps << " " << total_rich_comps << "; ";
-          cerr << "u_morecomps_undiv: " <<
-            odd_poor_comps_2_factors << " " <<
-            odd_rich_comps_2_factors << " " <<
-            odd_poor_comps_matchings << " " <<
-            odd_rich_comps_matchings << "; ";
+          // cerr << "u_comps: " << total_poor_comps << " " << total_rich_comps << "; ";
+          // cerr << "u_morecomps_undiv: " <<
+          //   odd_poor_comps_2_factors << " " <<
+          //   odd_rich_comps_2_factors << " " <<
+          //   odd_poor_comps_matchings << " " <<
+          //   odd_rich_comps_matchings << "; ";
 
           // cerr << "apcc: " << almost_poor_circuits_count << "; ";
 
@@ -2927,11 +2958,11 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
                              rich_unoriented_vertices_frequency[2] << " " <<
                              rich_unoriented_vertices_frequency[3] << "; ";
 
-          cerr << "dup_oon: " <<
-            or_or_neibs[0] << " " <<
-            or_or_neibs[1] << " " <<
-            or_or_neibs[2] << " " <<
-            or_or_neibs[3] << "; ";
+          // cerr << "dup_oon: " <<
+          //   or_or_neibs[0] << " " <<
+          //   or_or_neibs[1] << " " <<
+          //   or_or_neibs[2] << " " <<
+          //   or_or_neibs[3] << "; ";
 
           cerr << "uon: " <<
             unor_or_neibs[0] << " " <<
@@ -3099,23 +3130,29 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
             "t3(" << t3_chords_frequency[0] << " " << t3_chords_frequency[1] << " " << t3_chords_frequency[2] << ") " <<
             "t4(" << t4_chords_frequency[0] << " " << t4_chords_frequency[1] << " " << t4_chords_frequency[2] << "); ";
 
-          vector<tuple<int, int, int>> chord_layers;
-          for (int i = 0; i < 6; ++i) {
-            chord_layers.push_back(
-              make_tuple(
-                circuit_count_by_layer[i],
-                chord_count_by_layer[i],
-                t4_chord_count_by_layer[i]));
+          cerr << "done; ";
+
+          if (s1 == graph.number_of_edges) {
+            cerr << "onlyrich; ";
           }
-          sort(chord_layers.begin(), chord_layers.end());
-          cerr << "chord_layers:";
-          for (int i = 0; i < 6; ++i) {
-            cerr << " (" <<
-              get<0>(chord_layers[i]) << " " <<
-              get<1>(chord_layers[i]) << " " <<
-              get<2>(chord_layers[i]) << ")";
-          }
-          cerr << "; ";
+
+          // vector<tuple<int, int, int>> chord_layers;
+          // for (int i = 0; i < 6; ++i) {
+          //   chord_layers.push_back(
+          //     make_tuple(
+          //       circuit_count_by_layer[i],
+          //       chord_count_by_layer[i],
+          //       t4_chord_count_by_layer[i]));
+          // }
+          // sort(chord_layers.begin(), chord_layers.end());
+          // cerr << "chord_layers:";
+          // for (int i = 0; i < 6; ++i) {
+          //   cerr << " (" <<
+          //     get<0>(chord_layers[i]) << " " <<
+          //     get<1>(chord_layers[i]) << " " <<
+          //     get<2>(chord_layers[i]) << ")";
+          // }
+          // cerr << "; ";
 
           // cerr << "circuit_info:";
           // for (int i = 0; i < circuit_info.size(); ++i) {
