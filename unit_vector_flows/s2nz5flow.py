@@ -315,7 +315,8 @@ def print_points(points, opposite_points, radius, trinities):
 
 def main():
     points = gen_initial_points()
-    radius = 3
+    # radius = 3
+    radius = (1+5**0.5)/2
     points = set_radius(points, radius)
     points = uniq_points(points)
     #points = points_generators.rotate1(points)
