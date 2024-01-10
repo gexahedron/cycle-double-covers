@@ -5,7 +5,7 @@ import copy
 import numpy as np
 from math import sqrt, sin, cos
 from common import same
-from e8_hopf600 import gen_e8_points
+# from e8_hopf600 import gen_e8_points
 
 def cbrt(x):
     return x ** (1.0 / 3)
@@ -1992,5 +1992,6 @@ def gen_points51():
 
     return points
 
-def gen_points0():
-  return gen_e8_points()
+#def gen_points0():
+#  return gen_e8_points()
+
