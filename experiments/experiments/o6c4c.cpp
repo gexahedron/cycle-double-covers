@@ -4830,18 +4830,131 @@ bool check_orientability_6c4c(Graph& graph) {
       //         get<1>(fours_of_layers[1][1]) << endl;
     }
 
+    rich_244_counts.clear();
+    Mask ms[3];
+    for (int i = 0; i < 1; ++i) {
+      ms[0] = u6c4c_cycles[i];
+      for (int j = i + 1; j < 6; ++j) {
+        ms[1] = u6c4c_cycles[j];
+        for (int k = j + 1; k < 6; ++k) {
+          ms[2] = u6c4c_cycles[k];
+          set<int> triple = {i, j, k};
+          vector<bool> vertex_in_cycle;
+          vector<bool> edge_in_cycle;
+          int rich_count = 0;
+          for (int e = 0; e < graph.number_of_edges; ++e) {
+            int edge_count = 0;
+            for (int part = 0; part < 3; ++part) {
+              if ((BIT(e) & ms[part]) > 0) {
+                ++edge_count;
+              }
+            }
+            if (edge_count != 2) {
+              if (!u6c4c_edge_is_poor[e]) {
+                rich_count++;
+              }
+            }
+          }
+          rich_244_counts.push_back(rich_count);
+        }
+      }
+    }
+
+    rich_chords_frequency = {0, 0, 0};
+    for (int e = 0; e < graph.number_of_edges; ++e) {
+      int chord_count = 0;
+      for (int i = 0; i < 6; ++i) {
+        if ((u6c4c_cycles[i] & BIT(e)) == 0) { // edge is from matching
+          const int v1 = graph.e2v[e][0];
+          const int v2 = graph.e2v[e][1];
+          if (layer_vertex_to_circuit[i][v1] == layer_vertex_to_circuit[i][v2]) {
+            ++chord_count;
+          }
+        }
+      }
+      if (!u6c4c_edge_is_poor[e]) {
+        ++rich_chords_frequency[chord_count];
+      }
+    }
+
+    int odd_poor_2_factors = 0;
+    int odd_rich_2_factors = 0;
+    for (const auto& c : cur_6c4c) {
+      int poor_count = 0;
+      int rich_count = 0;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if ((c & BIT(e)) != 0) { // edge is from 2-factor
+          if (!u6c4c_edge_is_poor[e]) {
+            ++rich_count;
+          } else {
+            ++poor_count;
+          }
+        }
+      }
+      if (poor_count % 2 != 0) {
+        ++odd_poor_2_factors;
+      }
+      if (rich_count % 2 != 0) {
+        ++odd_rich_2_factors;
+      }
+    }
+
+    int even_poor_matchings = 0;
+    int even_rich_matchings = 0;
+    for (const auto& c : cur_6c4c) {
+      int poor_count = 0;
+      int rich_count = 0;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if ((c & BIT(e)) == 0) { // edge is from matching
+          if (!u6c4c_edge_is_poor[e]) {
+            ++rich_count;
+          } else {
+            ++poor_count;
+          }
+        }
+      }
+      if (poor_count % 2 == 0) {
+        ++even_poor_matchings;
+      }
+      if (rich_count % 2 == 0) {
+        ++even_rich_matchings;
+      }
+    }
+
+    // ors.clear();
+    // all_oriented_vertices.clear();
+    // orient_6c4c(graph, 0, true);
+    // if (same_cycles_different_orientations == 0) {
+
     if (graph.number > 0) {
       // FIXME: commenting out cerrs
       // cerr << endl;
       // cerr << "g" << graph.number << ": ";
       // cerr << "another 6c4c: ";
-      // cerr << "rich_type_count: " << rich_edge_layer_types.size() << "; ";
-      // cerr << endl;
-      // cerr << "profile: " << prof << "; ";
+      // // cerr << endl;
+      // // cerr << "profile: " << prof << "; ";
       // cerr << "s0: " << s0 << "; ";
       // cerr << "s1: " << s1 << "; ";
       // cerr << "s2: " << s2 << "; ";
-      // cerr << "par: " << parity << " vs " << (parity) % 2 << "; ";
+
+      // int rich_244_odd_count = 0;
+      // for (const auto& c : rich_244_counts) {
+      //   if (c % 2 != 0) {
+      //     rich_244_odd_count += 1;
+      //   }
+      // }
+      // cerr << "r244odd: " << rich_244_odd_count << "; ";
+
+      // cerr << "par: " << parity << "; ";
+
+      // cerr << "rich_type_count: " << rich_edge_layer_types.size() << "; ";
+      // cerr << "reors: " << same_cycles_different_orientations << "; ";
+
+      // cerr << "em:_" << even_rich_matchings << "_" << even_poor_matchings << "; ";
+      // cerr << "o2:_" << odd_rich_2_factors << "_" << odd_poor_2_factors << "; ";
+
+      // cerr << "rchords: " << rich_chords_frequency[0] << " " <<
+      //   rich_chords_frequency[1] << " " << rich_chords_frequency[2] << "; ";
 
       // cerr << "rf: " << rich_edges_frequency[0] << " " <<
       //                   rich_edges_frequency[1] << " " <<
@@ -4971,6 +5084,7 @@ bool check_orientability_6c4c(Graph& graph) {
     // FIXMEFIXMEFIXME
     find_2cdcs(graph, false);
     if (has_2cdcs) {
+      // cerr << "has_2cdcs; ";
       assert(layers_c1.size() == 6); // TODO
       assert(layers_c2.size() == 6); // TODO
       assert(odd_poor_2_factors == 0); // TODO
@@ -5147,6 +5261,8 @@ bool check_orientability_6c4c(Graph& graph) {
       //mindiff2 = 0;
     }*/
 
+    // FIXME2024
+    // cerr << endl;
     all_oriented_vertices.clear();
     orient_6c4c(graph, 0, true);
     orient_6c4c(graph, 0, false);
