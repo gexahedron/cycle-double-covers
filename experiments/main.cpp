@@ -27,7 +27,8 @@
 #include "experiments/preimages.h"
 #include "experiments/o5cdc.h"
 #include "experiments/o6c4c.h"
-#include "experiments/unit_vector_flows_s3.h"
+// #include "experiments/unit_vector_flows_s3.h"
+#include "experiments/unit_vector_flows.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -110,7 +111,8 @@ void process_petersen_graph(Graph& petersen_graph) {
 }
 
 void run_experiments(const Graph& petersen_graph, Graph& graph) {
-  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow
+  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow, and BROKEN
   // Exp6c4c::find_all_o6c4c(graph);
-  ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
+  // ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
+  ExpPetersenColouring::find_all_petersen_colourings(graph);
 }

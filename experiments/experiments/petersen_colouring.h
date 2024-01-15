@@ -210,8 +210,9 @@ bool normal_colour_edges(int cur_edge_idx, Graph& graph) {
     for (int i = low_colour; i <= high_colour; ++i) {
         // more initialization
         bool had_four_backup = had_four;
-        if (i == 4)
+        if (i == 4) {
             had_four = true;
+        }
 
         edge_colour[cur_edge] = i;
 
@@ -281,6 +282,8 @@ void find_all_petersen_colourings(Graph& graph) {
     }
     had_four = false;
     normal_colour_edges(0, graph);
+
+    graph.print();
     cerr << "number of petersen colourings: " << graph.petersen_colourings.size() << "; number of profiles: " << graph.profiles.size() << endl;
     cerr << "colourings grouped by profiles:" << endl;
     for (const auto& prof : graph.petersen_colourings_by_profiles) {
@@ -289,6 +292,31 @@ void find_all_petersen_colourings(Graph& graph) {
         cerr << colouring_idx << " ";
       }
       cerr << endl;
+    }
+    for (int col_idx = 0; col_idx < graph.petersen_colourings.size(); ++col_idx) {
+        cerr << "g" << graph.number << ": ";
+        for (int e = 0; e < graph.number_of_edges; ++e) {
+            cerr << e << ": " << graph.petersen_colourings[col_idx][e] << "; ";
+        }
+        // TODO/FIXME: currently this is (almost) useless
+        // bool is_circular = true;
+        // for (int v = 0; v < graph.number_of_vertices; ++v) {
+        //     int rich_count = 0;
+        //     for (int j = 0; j < MAX_DEG; ++j) {
+        //         int e = graph.v2e[v][j];
+        //         if (graph.petersen_profiles[col_idx][e] == 'r') {
+        //             rich_count++;
+        //         }
+        //     }
+        //     if (rich_count == 2) {
+        //         is_circular = false;
+        //         break;
+        //     }
+        // }
+        // if (is_circular) {
+        //     cerr << "circular!";
+        // }
+        cerr << endl;
     }
 }
 
