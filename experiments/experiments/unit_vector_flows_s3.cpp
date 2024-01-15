@@ -243,25 +243,23 @@ bool gen_unit_vector_flows(Graph& graph, int cur_edge_idx) {
       uniq_vectors.insert(ops[edge_unit_vector_idx[e]]);
     }
     cerr << "vector count: " << uniq_vectors.size() << endl;
-    set<vector<int>> graph_triples;
-    for (int v = 0; v < graph.number_of_vertices; ++v) {
-      vector<int> v_triple;
-      for (int j = 0; j < MAX_DEG; ++j) {
-        int e_vector = edge_unit_vector_idx[graph.v2e[v][j]];
-        e_vector = min(e_vector, ops[e_vector]);
-        v_triple.push_back(e_vector);
-      }
-      sort(v_triple.begin(), v_triple.end());
-      graph_triples.insert(v_triple);
-    }
-    cerr << "graph used triple count: " << graph_triples.size() << endl;
-    // for (const auto& idx : uniq_vectors) {
-    //   cerr << idx << " ";
+
+    // set<vector<int>> graph_triples;
+    // for (int v = 0; v < graph.number_of_vertices; ++v) {
+    //   vector<int> v_triple;
+    //   for (int j = 0; j < MAX_DEG; ++j) {
+    //     int e_vector = edge_unit_vector_idx[graph.v2e[v][j]];
+    //     e_vector = min(e_vector, ops[e_vector]);
+    //     v_triple.push_back(e_vector);
+    //   }
+    //   sort(v_triple.begin(), v_triple.end());
+    //   graph_triples.insert(v_triple);
     // }
-    // cerr << endl;
+    // cerr << "graph used triple count: " << graph_triples.size() << endl;
+
     graph.unit_vector_flows.push_back(vectors);
-    // return true;
-    return false;
+    return true;
+    // return false;
   }
 
   int cur_edge = graph.faster_edge_order[cur_edge_idx];
