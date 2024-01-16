@@ -13,4 +13,5 @@ all :
 	experiments/o5cdc.cpp \
 	experiments/o6c4c.cpp \
 	experiments/unit_vector_flows.cpp \
+	experiments/petersen_colouring.cpp \
 	main.cpp -o run_experiments

@@ -2,8 +2,6 @@
  * File:   petersen_colouring_data.h
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
- * TODO:
- *
  */
 
 #pragma once
