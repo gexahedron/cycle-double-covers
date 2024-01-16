@@ -3,6 +3,8 @@
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
  * code for double covers with subgraphs with m-, n- and k- nowhere-zero flows
+ * 
+ * TODO: split into .h and .cpp files
  *
  */
 
