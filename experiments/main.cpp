@@ -13,6 +13,7 @@
  * - dominating circuits
  * - (m, n, k)-flow double covers
  * - unit vector flows on S3
+ * - unit vector flows on S2
  *
  */
 
@@ -70,8 +71,6 @@ int main(int argc, char** argv) {
 
     // build cycles
     ExpCycles::find_all_cycles(graph);
-    // FIXME: commenting out all useless prints, for now
-    // graph.print();
 
     run_experiments(petersen_graph, graph);
   }
