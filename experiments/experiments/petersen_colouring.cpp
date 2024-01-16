@@ -21,6 +21,7 @@ using namespace std;
 namespace ExpPetersenColouring {
 
 bool edge_is_poor[MAX_EDGE];
+// TODO: add edge_is_rich
 bool petersen_vertex_is_poor[10]; // vertex is poor when at least one of images of petersen vertices is connected to itself
 int edge_colour[MAX_EDGE];
 int uncoloured_edges_count_near_vertex[MAX_VERTEX];
@@ -70,6 +71,8 @@ bool normal_colour_edges_last_step(Graph& graph) {
     for (int e = 0; e < graph.number_of_edges; ++e) {
         colours.push_back(edge_colour[e]);
     }
+    // TODO: add sanity check,
+    // that poor and rich edges have exactly the properties we ask of them
 
     string prof;
     int poor_count = 0;
