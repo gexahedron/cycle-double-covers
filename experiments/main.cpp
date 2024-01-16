@@ -85,9 +85,6 @@ void init() {
   srand(time(NULL));
 }
 
-// TODO: move to graph.cpp
-
-
 void process_petersen_graph(Graph& petersen_graph) {
   build_petersen_graph(petersen_graph);
   petersen_graph.print();
@@ -104,5 +101,5 @@ void run_experiments(const Graph& petersen_graph, Graph& graph) {
   // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow, and probably BROKEN
   // Exp6c4c::find_all_o6c4c(graph);
   ExpPetersenColouring::find_all_petersen_colourings(graph);
-  ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
+  // ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
 }
