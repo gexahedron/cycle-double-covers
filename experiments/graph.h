@@ -75,6 +75,8 @@ struct Graph:
 
 /*********************************Methods*********************************/
 
+bool read_graph(const string& filetype, Graph& graph);
+
 // Decodes the code (which is in multicode format) of a graph.
 bool decode_multicode(FILE* input, Graph& graph);
 

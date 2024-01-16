@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   while (true) {
     // initialize graph, which we experiment with
     Graph graph;
-    if (!read_graph(args, graph)) {
+    if (!read_graph(args.filetype, graph)) {
       break;
     }
 
@@ -86,17 +86,7 @@ void init() {
 }
 
 // TODO: move to graph.cpp
-bool read_graph(const Args& args, Graph& graph) {
-  if (args.filetype == "mc") {
-    return decode_multicode(stdin, graph);
-  } else if (args.filetype == "adj") {
-    return decode_adjacency(cin, graph);
-  } else if (args.filetype == "bghm") {
-    return decode_bghm(cin, graph);
-  }
-  assert(args.filetype == "g6");
-  return decode_graph6(cin, graph);
-}
+
 
 void process_petersen_graph(Graph& petersen_graph) {
   build_petersen_graph(petersen_graph);
@@ -111,8 +101,8 @@ void process_petersen_graph(Graph& petersen_graph) {
 }
 
 void run_experiments(const Graph& petersen_graph, Graph& graph) {
-  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow, and BROKEN
+  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow, and probably BROKEN
   // Exp6c4c::find_all_o6c4c(graph);
-  // ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
   ExpPetersenColouring::find_all_petersen_colourings(graph);
+  ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
 }
