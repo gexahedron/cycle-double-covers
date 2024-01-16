@@ -23,7 +23,7 @@ namespace ExpPetersenColouring {
 bool edge_is_poor[MAX_EDGE];
 bool petersen_vertex_is_poor[10]; // vertex is poor when at least one of images of petersen vertices is connected to itself
 int edge_colour[MAX_EDGE];
-int not_coloured_edges_count_near_vertex[MAX_VERTEX];
+int uncoloured_edges_count_near_vertex[MAX_VERTEX];
 bool had_four = false;
 
 // cc-mapping
@@ -43,7 +43,7 @@ int strong_vertex_partition[MAX_VERTEX];
 bool petersen_colouring_check_edge(int e, const Graph& graph) {
     int v1 = graph.e2v[e][0];
     int v2 = graph.e2v[e][1];
-    if (not_coloured_edges_count_near_vertex[v1] != 0 || not_coloured_edges_count_near_vertex[v2] != 0) {
+    if (uncoloured_edges_count_near_vertex[v1] != 0 || uncoloured_edges_count_near_vertex[v2] != 0) {
         return true;
     }
     unordered_set<int> colours;
@@ -78,6 +78,7 @@ bool normal_colour_edges_last_step(Graph& graph) {
     for (int v = 0; v < 10; ++v) {
         petersen_vertex_is_poor[v] = false;
     }
+    // TODO: put under debug file, or remove cerr code
     //cerr << "petersen edges: ";
     for (int e = 0; e < graph.number_of_edges; ++e) {
         if (edge_is_poor[e]) {
@@ -119,7 +120,7 @@ bool normal_colour_edges_last_step(Graph& graph) {
     petersen_min_poor = min(petersen_min_poor, poor_count);
     petersen_max_poor = max(petersen_max_poor, poor_count);
 
-    // TODO: remove this
+    // TODO: recheck the experiment, or remove this code
     // bool dominating = false;
     // for (int v = 0; v < 10; ++v) {
     //     if (!petersen_vertex_is_poor[v]) {
@@ -203,7 +204,7 @@ bool normal_colour_edges(int cur_edge_idx, Graph& graph) {
     if (!had_colour) {
         // we add a new coloured edge, so we need to decrease uncoloured counts
         for (const auto& v : graph.e2v[cur_edge]) {
-            --not_coloured_edges_count_near_vertex[v];
+            --uncoloured_edges_count_near_vertex[v];
         }
     }
     for (int i = low_colour; i <= high_colour; ++i) {
@@ -221,7 +222,7 @@ bool normal_colour_edges(int cur_edge_idx, Graph& graph) {
             for (int j = 0; j < MAX_DEG; ++j) {
                 int ei = graph.v2e[v][j];
                 if ((ei != cur_edge && edge_colour[ei] == edge_colour[cur_edge]) ||
-                        (not_coloured_edges_count_near_vertex[v] == 0 && !petersen_colouring_check_edge(ei, graph))) {
+                        (uncoloured_edges_count_near_vertex[v] == 0 && !petersen_colouring_check_edge(ei, graph))) {
                     checks_passed = false;
                     break;
                 }
@@ -250,7 +251,7 @@ bool normal_colour_edges(int cur_edge_idx, Graph& graph) {
     // more undo after brute-forcing
     if (!had_colour) {
         for (const auto& v : graph.e2v[cur_edge]) {
-            ++not_coloured_edges_count_near_vertex[v];
+            ++uncoloured_edges_count_near_vertex[v];
         }
         edge_colour[cur_edge] = 0;
     }
@@ -271,14 +272,14 @@ void find_all_petersen_colourings(Graph& graph) {
     petersen_max_poor = 0;
 
     for (int v = 0; v < graph.number_of_vertices; ++v) {
-        not_coloured_edges_count_near_vertex[v] = MAX_DEG;
+        uncoloured_edges_count_near_vertex[v] = MAX_DEG;
     }
 
     // colour edges around vertex 0
     for (int j = 0; j < MAX_DEG; ++j) {
         edge_colour[graph.v2e[0][j]] = j + 1;
-        --not_coloured_edges_count_near_vertex[0];
-        --not_coloured_edges_count_near_vertex[graph.v2v[0][j]];
+        --uncoloured_edges_count_near_vertex[0];
+        --uncoloured_edges_count_near_vertex[graph.v2v[0][j]];
     }
     had_four = false;
     normal_colour_edges(0, graph);
