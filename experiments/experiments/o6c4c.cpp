@@ -3178,6 +3178,7 @@ bool orient_6c4c(Graph& graph, int cur_circuit, bool first_time) {
           }
 
           if (has_2cdcs) {
+            graph.o6c4c_2xcdcs_profiles.insert(prof);
             cerr << "has_2cdcs; ";
           } else {
             cerr << "no_2cdcs; ";
@@ -5263,9 +5264,11 @@ bool check_orientability_6c4c(Graph& graph) {
 
     // FIXME2024
     // cerr << endl;
-    all_oriented_vertices.clear();
-    orient_6c4c(graph, 0, true);
-    orient_6c4c(graph, 0, false);
+    if (has_2cdcs) {
+      all_oriented_vertices.clear();
+      orient_6c4c(graph, 0, true);
+      orient_6c4c(graph, 0, false);
+    }
 
     // FIXME: commented out cerr
     // if (same_cycles_different_orientations == 0) {

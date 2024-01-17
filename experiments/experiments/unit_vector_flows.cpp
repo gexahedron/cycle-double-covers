@@ -24,6 +24,7 @@ int edge_unit_vector_idx[MAX_EDGE];
 vector<int> vertex_flowed_edges[MAX_EDGE];
 
 vector<vector<double>> all_unit_vectors;
+vector<bool> is_petersen_vector;
 map<int, int> ops;
 map<vector<int>, int> triples;
 
@@ -100,9 +101,9 @@ vector<vector<double>> gen_even_plus_minus_permutations(const vector<vector<doub
 }
 
 vector<vector<double>> gen_unit_vectors() {
-  double phi = (1.0 + sqrt(5)) / 2;
-  double x = 2.0 / sqrt(sqrt(5));
-  double y = x * phi;
+  // double phi = (1.0 + sqrt(5)) / 2;
+  // double x = 2.0 / sqrt(sqrt(5));
+  // double y = x * phi;
 
   vector<vector<double>> nonunit_vectors;
   // vector<vector<double>> new_vectors;
@@ -240,8 +241,6 @@ vector<vector<double>> gen_unit_vectors() {
     {1.0, 9.030971600656904e-18, -9.549708297316796e-17}
   };
 
-
-
   // nonunit_vectors = {
   // };
 
@@ -316,6 +315,26 @@ void find_vector_relations(const vector<vector<double>>& unit_vectors) {
       all_unit_vectors.push_back(tmp_unit_vectors[i]);
     }
   }
+  is_petersen_vector.clear();
+  double phi = (1.0 + sqrt(5)) / 2;
+  vector<double> petersen_coords = {0, 0.5, 1, phi/2, (phi-1)/2};
+  for (size_t i = 0; i < all_unit_vectors.size(); ++i) {
+    bool coords_are_all_petersen = true;
+    for (const auto& x : all_unit_vectors[i]) {
+      bool is_petersen_coord = false;
+      for (const auto& candidate : petersen_coords) {
+        if (same(abs(x), candidate)) {
+          is_petersen_coord = true;
+          break;
+        }
+      }
+      if (!is_petersen_coord) {
+        coords_are_all_petersen = false;
+        break;
+      }
+    }
+    is_petersen_vector.push_back(coords_are_all_petersen);
+  }
   cerr << "unit vectors count: " << all_unit_vectors.size() << endl;
 
   ops.clear();
@@ -373,6 +392,54 @@ bool gen_unit_vector_flows(Graph& graph, int cur_edge_idx) {
       uniq_vectors.insert(ops[edge_unit_vector_idx[e]]);
       cerr << "e: " << e << "; " << edge_unit_vector_idx[e] << endl;
     }
+    cerr << "compatible Petersen profiles: ";
+    for (const auto& profile : graph.profiles) {
+      bool is_compatible = true;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (!is_petersen_vector[edge_unit_vector_idx[e]] && profile.first[e] == 'r') {
+          is_compatible = false;
+          break;
+        }
+      }
+      if (is_compatible) {
+        cerr << profile.first << " ";
+      }
+    }
+    cerr << ";" << endl;
+
+    cerr << "compatible o6c4c profiles: ";
+    for (const auto& profile : graph.o6c4c_2xcdcs_profiles) {
+      bool is_compatible = true;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (!is_petersen_vector[edge_unit_vector_idx[e]] && profile[e] == 'r') {
+          is_compatible = false;
+          break;
+        }
+      }
+      if (is_compatible) {
+        cerr << profile << " ";
+      }
+    }
+    cerr << ";" << endl;
+
+    cerr << "compatible both profiles: ";
+    for (const auto& profile : graph.o6c4c_2xcdcs_profiles) {
+      if (graph.profiles.find(profile) == graph.profiles.end()) {
+        continue;
+      }
+      bool is_compatible = true;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (!is_petersen_vector[edge_unit_vector_idx[e]] && profile[e] == 'r') {
+          is_compatible = false;
+          break;
+        }
+      }
+      if (is_compatible) {
+        cerr << profile << " ";
+      }
+    }
+    cerr << ";" << endl;
+
     graph.unit_vector_flows.push_back(vectors);
     cerr << "vector count: " << uniq_vectors.size() << endl;
 

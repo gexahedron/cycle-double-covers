@@ -291,7 +291,18 @@ void find_all_petersen_colourings(Graph& graph) {
     cerr << "number of petersen colourings: " << graph.petersen_colourings.size() << "; number of profiles: " << graph.profiles.size() << endl;
     cerr << "colourings grouped by profiles:" << endl;
     for (const auto& prof : graph.petersen_colourings_by_profiles) {
-      cerr << prof.first << ": ";
+      cerr << prof.first << "; ";
+      int rich_count = 0;
+      int poor_count = 0;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (prof.first[e] == 'r') {
+            rich_count++;
+        } else {
+            poor_count++;
+        }
+      }
+      cerr << "rich: " << rich_count << "; ";
+      cerr << "poor: " << poor_count << "; ";
       for (const auto& colouring_idx : prof.second) {
         cerr << colouring_idx << " ";
       }
