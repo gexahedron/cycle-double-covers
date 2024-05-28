@@ -10,6 +10,7 @@
 
 #include "unit_vector_flows.h"
 
+#include <cassert>
 #include <math.h>
 #include <map>
 
@@ -23,6 +24,7 @@ int edge_unit_vector_idx[MAX_EDGE];
 vector<int> vertex_flowed_edges[MAX_EDGE];
 
 vector<vector<double>> all_unit_vectors;
+vector<bool> is_petersen_vector;
 map<int, int> ops;
 map<vector<int>, int> triples;
 
@@ -94,45 +96,184 @@ vector<vector<double>> gen_all_plus_minus_permutations(const vector<vector<doubl
   return gen_plus_minus_variations(gen_all_permutations(vectors));
 }
 
+vector<vector<double>> gen_even_plus_minus_permutations(const vector<vector<double>>& vectors) {
+  return gen_plus_minus_variations(gen_even_permutations(vectors));
+}
+
 vector<vector<double>> gen_unit_vectors() {
+  // double phi = (1.0 + sqrt(5)) / 2;
+  // double x = 2.0 / sqrt(sqrt(5));
+  // double y = x * phi;
+
+  vector<vector<double>> nonunit_vectors;
+  // vector<vector<double>> new_vectors;
+
+  // new_vectors = gen_even_plus_minus_permutations({{0.0, 0.0, 1.0}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+  // new_vectors = gen_even_plus_minus_permutations({{1.0, phi, phi + 1.0}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+
+  // works for Tietze's snark, and more! e. g. 20.05: g1, g4, g5
+  nonunit_vectors = {
+    {-1.0, -9.030971600656904e-18, 9.549708297316796e-17},
+    {-0.9687598666735441, 1.8036648461847414e-17, -0.24800064661741741},
+    // {-0.9077435189160142, -0.09872652454106681, 0.4077435189160141},
+    // {-0.9077435189160142, -0.09872652454106676, -0.407743518916014},
+    // {-0.9077435189160142, 0.09872652454106672, -0.4077435189160141},
+    // {-0.9077435189160142, 0.09872652454106676, 0.407743518916014},
+    // {-0.865754201881895, -0.5, 0.02167168484089834},
+    // {-0.865754201881895, 0.4999999999999999, 0.02167168484089809},
+    {-0.8440825170409966, -0.5350655226660493, -0.03506552266604854},
+    {-0.8440825170409966, -0.5350655226660493, 0.03506552266604854},
+    {-0.8440825170409966, 0.5350655226660493, -0.03506552266604854},
+    {-0.8440825170409966, 0.5350655226660493, 0.03506552266604854},
+    {-0.8306886792158457, 0.5567372075069474, -6.223285321735374e-19},
+    {-0.8090169943749471, 0.3090169943749477, -0.5000000000000006},
+    {-0.8090169943749471, 0.3090169943749477, 0.5000000000000006},
+    {-0.8090169943749468, -0.3090169943749473, -0.5000000000000011},
+    {-0.8090169943749468, -0.3090169943749473, 0.5000000000000011},
+    {-0.6597428722985966, 0.5, 0.5610163477575298},
+    {-0.6597428722985965, -0.49999999999999983, 0.5610163477575301},
+    {-0.56101634775753, 0.6597428722985966, -0.5},
+    {-0.56101634775753, 0.6597428722985966, 0.49999999999999994},
+    {-0.5567372075069474, 6.223285321735375e-19, 0.8306886792158457},
+    {-0.5350655226660491, -0.035065522666048496, -0.8440825170409967},
+    {-0.5350655226660491, -0.035065522666048496, 0.8440825170409967},
+    {-0.5350655226660491, 0.035065522666048496, -0.8440825170409967},
+    {-0.5350655226660491, 0.035065522666048496, 0.8440825170409967},
+    // {-0.5000000000000001, -0.021671684840898278, 0.8657542018818948},
+    // {-0.5000000000000001, 0.021671684840898264, -0.8657542018818948},
+    {-0.5, -0.56101634775753, 0.6597428722985965},
+    {-0.5, 0.56101634775753, -0.6597428722985966},
+    {-0.4999999999999999, -0.8090169943749478, 0.30901699437494734},
+    {-0.4999999999999999, -0.56101634775753, -0.6597428722985966},
+    {-0.49999999999999983, 0.56101634775753, 0.6597428722985966},
+    {-0.4999999999999998, -0.8090169943749476, -0.3090169943749473},
+    {-0.49999999999999933, 0.8090169943749478, 0.30901699437494756},
+    {-0.499999999999999, 0.8090169943749479, -0.3090169943749478},
+    // {-0.4077435189160141, -0.9077435189160142, -0.09872652454106666},
+    // {-0.4077435189160141, -0.9077435189160142, 0.09872652454106666},
+    // {-0.4077435189160141, 0.9077435189160142, -0.09872652454106666},
+    // {-0.4077435189160141, 0.9077435189160142, 0.09872652454106666},
+    {-0.309016994374947, -0.4999999999999998, 0.8090169943749479},
+    {-0.30901699437494695, -0.49999999999999967, -0.8090169943749477},
+    {-0.30901699437494695, 0.49999999999999967, -0.8090169943749477},
+    {-0.30901699437494695, 0.49999999999999967, 0.8090169943749477},
+    {-0.24800064661741753, -0.9687598666735441, 7.912695146636231e-17},
+    // {-0.0987265245410667, -0.4077435189160143, -0.9077435189160141},
+    // {-0.0987265245410667, -0.4077435189160143, 0.9077435189160141},
+    // {-0.0987265245410667, 0.4077435189160143, -0.9077435189160141},
+    // {-0.0987265245410667, 0.4077435189160143, 0.9077435189160141},
+    {-0.03506552266604833, -0.844082517040997, -0.5350655226660488},
+    {-0.03506552266604833, -0.844082517040997, 0.5350655226660488},
+    {-0.03506552266604833, 0.844082517040997, -0.5350655226660488},
+    {-0.03506552266604833, 0.844082517040997, 0.5350655226660488},
+    // {-0.02167168484089829, 0.8657542018818949, 0.5},
+    // {-0.02167168484089828, 0.8657542018818949, -0.5},
+    {-2.444157480957888e-16, 0.2480006466174177, -0.9687598666735441},
+    {-2.361580023510447e-17, -0.8306886792158458, 0.5567372075069474},
+    {-2.2259851428115202e-17, 1.0, -9.030971600656901e-18},
+    {-2.1836291966026995e-18, 1.7344678888130534e-17, 1.0},
+    {-6.223285321735376e-19, -0.24800064661741755, -0.9687598666735441},
+    {6.223285321735376e-19, 0.24800064661741755, 0.9687598666735441},
+    {2.1836291966026995e-18, -1.7344678888130534e-17, -1.0},
+    {2.2259851428115202e-17, -1.0, 9.030971600656901e-18},
+    {2.361580023510447e-17, 0.8306886792158458, -0.5567372075069474},
+    {2.444157480957888e-16, -0.2480006466174177, 0.9687598666735441},
+    // {0.02167168484089828, -0.8657542018818949, 0.5},
+    // {0.02167168484089829, -0.8657542018818949, -0.5},
+    {0.03506552266604833, -0.844082517040997, -0.5350655226660488},
+    {0.03506552266604833, -0.844082517040997, 0.5350655226660488},
+    {0.03506552266604833, 0.844082517040997, -0.5350655226660488},
+    {0.03506552266604833, 0.844082517040997, 0.5350655226660488},
+    // {0.0987265245410667, -0.4077435189160143, -0.9077435189160141},
+    // {0.0987265245410667, -0.4077435189160143, 0.9077435189160141},
+    // {0.0987265245410667, 0.4077435189160143, -0.9077435189160141},
+    // {0.0987265245410667, 0.4077435189160143, 0.9077435189160141},
+    {0.24800064661741753, 0.9687598666735441, -7.912695146636231e-17},
+    {0.30901699437494695, -0.49999999999999967, -0.8090169943749477},
+    {0.30901699437494695, -0.49999999999999967, 0.8090169943749477},
+    {0.30901699437494695, 0.49999999999999967, 0.8090169943749477},
+    {0.309016994374947, 0.4999999999999998, -0.8090169943749479},
+    // {0.4077435189160141, -0.9077435189160142, -0.09872652454106666},
+    // {0.4077435189160141, -0.9077435189160142, 0.09872652454106666},
+    // {0.4077435189160141, 0.9077435189160142, -0.09872652454106666},
+    // {0.4077435189160141, 0.9077435189160142, 0.09872652454106666},
+    {0.499999999999999, -0.8090169943749479, 0.3090169943749478},
+    {0.49999999999999933, -0.8090169943749478, -0.30901699437494756},
+    {0.4999999999999998, 0.8090169943749476, 0.3090169943749473},
+    {0.49999999999999983, -0.56101634775753, -0.6597428722985966},
+    {0.4999999999999999, 0.56101634775753, 0.6597428722985966},
+    {0.4999999999999999, 0.8090169943749478, -0.30901699437494734},
+    {0.5, -0.56101634775753, 0.6597428722985966},
+    {0.5, 0.56101634775753, -0.6597428722985965},
+    // {0.5000000000000001, -0.021671684840898264, 0.8657542018818948},
+    // {0.5000000000000001, 0.021671684840898278, -0.8657542018818948},
+    {0.5350655226660491, -0.035065522666048496, -0.8440825170409967},
+    {0.5350655226660491, -0.035065522666048496, 0.8440825170409967},
+    {0.5350655226660491, 0.035065522666048496, -0.8440825170409967},
+    {0.5350655226660491, 0.035065522666048496, 0.8440825170409967},
+    {0.5567372075069474, -6.223285321735375e-19, -0.8306886792158457},
+    {0.56101634775753, -0.6597428722985966, -0.49999999999999994},
+    {0.56101634775753, -0.6597428722985966, 0.5},
+    {0.6597428722985965, 0.49999999999999983, -0.5610163477575301},
+    {0.6597428722985966, -0.5, -0.5610163477575298},
+    {0.8090169943749468, 0.3090169943749473, -0.5000000000000011},
+    {0.8090169943749468, 0.3090169943749473, 0.5000000000000011},
+    {0.8090169943749471, -0.3090169943749477, -0.5000000000000006},
+    {0.8090169943749471, -0.3090169943749477, 0.5000000000000006},
+    {0.8306886792158457, -0.5567372075069474, 6.223285321735374e-19},
+    {0.8440825170409966, -0.5350655226660493, -0.03506552266604854},
+    {0.8440825170409966, -0.5350655226660493, 0.03506552266604854},
+    {0.8440825170409966, 0.5350655226660493, -0.03506552266604854},
+    {0.8440825170409966, 0.5350655226660493, 0.03506552266604854},
+    // {0.865754201881895, -0.4999999999999999, -0.02167168484089809},
+    // {0.865754201881895, 0.5, -0.02167168484089834},
+    // {0.9077435189160142, -0.09872652454106676, -0.407743518916014},
+    // {0.9077435189160142, -0.09872652454106672, 0.4077435189160141},
+    // {0.9077435189160142, 0.09872652454106676, 0.407743518916014},
+    // {0.9077435189160142, 0.09872652454106681, -0.4077435189160141},
+    {0.9687598666735441, -1.8036648461847414e-17, 0.24800064661741741},
+    {1.0, 9.030971600656904e-18, -9.549708297316796e-17}
+  };
+
+  // nonunit_vectors = {
+  // };
+
+
+  // didn't help
+  // although could help with girth 4
+  // new_vectors = gen_even_plus_minus_permutations({{y, x, 2.0}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+  // new_vectors = gen_even_plus_minus_permutations({{y-1, x+phi, phi-1}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+  // new_vectors = gen_even_plus_minus_permutations({{y+1,     x-phi, phi-1}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+  // new_vectors = gen_even_plus_minus_permutations({{y+1/phi, x-1,   phi}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+  // new_vectors = gen_even_plus_minus_permutations({{y-1/phi, x+1,   phi}});
+  // for (const auto& v : new_vectors) {
+  //   nonunit_vectors.push_back(v);
+  // }
+
   vector<vector<double>> unit_vectors;
-  double phi = (1.0 + sqrt(5)) / 2;
-  int w = 3;
-  for (int a1 = -w; a1 <= w; ++a1) {
-    for (int b1 = -w; b1 <= w; ++b1) {
-      for (int a2 = a1; a2 <= w; ++a2) {
-        for (int b2 = -w; b2 <= w; ++b2) {
-          if (a2 == a1 && b2 < b1) {
-            continue;
-          }
-          for (int a3 = a2; a3 <= w; ++a3) {
-            for (int b3 = -w; b3 <= w; ++b3) {
-              if (a3 == a2 && b3 < b2) {
-                continue;
-              }
-              int s1 = a1 * a1 + b1 * b1 + a2 * a2 + b2 * b2 + a3 * a3 + b3 * b3;
-              int s2 = b1 * (2 * a1 + b1) + b2 * (2 * a2 + b2) + b3 * (2 * a3 + b3);
-              if (s1 != s2) {
-                continue;
-              }
-              int root = static_cast<int>(round(sqrt(s1)));
-              if (root == 0 || (root * root != s1)) {
-                continue;
-              }
-              double p1 = (static_cast<double>(a1) + b1 * phi) / root;
-              double p2 = (static_cast<double>(a2) + b2 * phi) / root;
-              double p3 = (static_cast<double>(a3) + b3 * phi) / root;
-              vector<vector<double>> new_vectors = gen_all_plus_minus_permutations({{p1, p2, p3}});
-              for (const auto& v : new_vectors) {
-                double v_norm = norm(v);
-                unit_vectors.push_back({v[0] / v_norm, v[1] / v_norm, v[2] / v_norm});
-              }
-            }
-          }
-        }
-      }
-    }
+  for (const auto& v : nonunit_vectors) {
+    double v_norm = norm(v);
+    unit_vectors.push_back({v[0] / v_norm, v[1] / v_norm, v[2] / v_norm});
   }
+
   return unit_vectors;
 }
 
@@ -174,6 +315,26 @@ void find_vector_relations(const vector<vector<double>>& unit_vectors) {
       all_unit_vectors.push_back(tmp_unit_vectors[i]);
     }
   }
+  is_petersen_vector.clear();
+  double phi = (1.0 + sqrt(5)) / 2;
+  vector<double> petersen_coords = {0, 0.5, 1, phi/2, (phi-1)/2};
+  for (size_t i = 0; i < all_unit_vectors.size(); ++i) {
+    bool coords_are_all_petersen = true;
+    for (const auto& x : all_unit_vectors[i]) {
+      bool is_petersen_coord = false;
+      for (const auto& candidate : petersen_coords) {
+        if (same(abs(x), candidate)) {
+          is_petersen_coord = true;
+          break;
+        }
+      }
+      if (!is_petersen_coord) {
+        coords_are_all_petersen = false;
+        break;
+      }
+    }
+    is_petersen_vector.push_back(coords_are_all_petersen);
+  }
   cerr << "unit vectors count: " << all_unit_vectors.size() << endl;
 
   ops.clear();
@@ -194,6 +355,7 @@ void find_vector_relations(const vector<vector<double>>& unit_vectors) {
   }
 
   triples.clear();
+  int triples_count = 0;
   for (int i = 0; i < all_unit_vectors.size(); ++i) {
     const auto v0 = all_unit_vectors[i];
     bool has_triple = false;
@@ -204,6 +366,7 @@ void find_vector_relations(const vector<vector<double>>& unit_vectors) {
         if (same(v0[0] + v1[0] + v2[0], 0) &&
             same(v0[1] + v1[1] + v2[1], 0) &&
             same(v0[2] + v1[2] + v2[2], 0)) {
+          triples_count += 1;
           triples[{i, j}] = k;
           triples[{j, i}] = k;
           triples[{i, k}] = j;
@@ -214,16 +377,99 @@ void find_vector_relations(const vector<vector<double>>& unit_vectors) {
       }
     }
   }
-  cerr << "unit vectors triples count: " << triples.size() / 6 << endl;
+  cerr << "unit vectors triples count: " << triples_count << endl;
 }
 
 bool gen_unit_vector_flows(Graph& graph, int cur_edge_idx) {
   if (cur_edge_idx == graph.number_of_edges) {
+    graph.print();
+
     vector<int> vectors;
+    set<int> uniq_vectors;
     for (int e = 0; e < graph.number_of_edges; ++e) {
       vectors.push_back(edge_unit_vector_idx[e]);
+      uniq_vectors.insert(edge_unit_vector_idx[e]);
+      uniq_vectors.insert(ops[edge_unit_vector_idx[e]]);
+      cerr << "e: " << e << "; " << edge_unit_vector_idx[e] << endl;
     }
+    cerr << "compatible Petersen profiles: ";
+    for (const auto& profile : graph.profiles) {
+      bool is_compatible = true;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (!is_petersen_vector[edge_unit_vector_idx[e]] && profile.first[e] == 'r') {
+          is_compatible = false;
+          break;
+        }
+      }
+      if (is_compatible) {
+        cerr << profile.first << " ";
+      }
+    }
+    cerr << ";" << endl;
+
+    cerr << "compatible o6c4c profiles: ";
+    for (const auto& profile : graph.o6c4c_2xcdcs_profiles) {
+      bool is_compatible = true;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (!is_petersen_vector[edge_unit_vector_idx[e]] && profile[e] == 'r') {
+          is_compatible = false;
+          break;
+        }
+      }
+      if (is_compatible) {
+        cerr << profile << " ";
+      }
+    }
+    cerr << ";" << endl;
+
+    cerr << "compatible both profiles: ";
+    for (const auto& profile : graph.o6c4c_2xcdcs_profiles) {
+      if (graph.profiles.find(profile) == graph.profiles.end()) {
+        continue;
+      }
+      bool is_compatible = true;
+      for (int e = 0; e < graph.number_of_edges; ++e) {
+        if (!is_petersen_vector[edge_unit_vector_idx[e]] && profile[e] == 'r') {
+          is_compatible = false;
+          break;
+        }
+      }
+      if (is_compatible) {
+        cerr << profile << " ";
+      }
+    }
+    cerr << ";" << endl;
+
     graph.unit_vector_flows.push_back(vectors);
+    cerr << "vector count: " << uniq_vectors.size() << endl;
+
+    set<vector<int>> graph_triples;
+    for (int v = 0; v < graph.number_of_vertices; ++v) {
+      cerr << "v: " << v << "; ";
+      for (int j = 0; j < MAX_DEG; ++j) {
+        cerr << graph.v2v[v][j] << " ";
+      }
+      cerr << "; triple: ";
+      vector<int> v_triple;
+      for (int j = 0; j < MAX_DEG; ++j) {
+        int e_vector = edge_unit_vector_idx[graph.v2e[v][j]];
+        cerr << e_vector << " ";
+        // e_vector = min(e_vector, ops[e_vector]);
+        v_triple.push_back(e_vector);
+      }
+      cerr << endl;
+      sort(v_triple.begin(), v_triple.end());
+      graph_triples.insert(v_triple);
+    }
+    cerr << "graph used triple count: " << graph_triples.size() << endl;
+
+    for (const auto& v : uniq_vectors) {
+      cerr << "vector v: " << v << "; ";
+      for (const auto& x : all_unit_vectors[v]) {
+        cerr << x << " ";
+      }
+      cerr << endl;
+    }
     return true;
   }
 

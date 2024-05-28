@@ -37,6 +37,8 @@ struct Data {
 
   map<vector<int>, set<Mask>> oriented_vertices_by_nz5;
   map<vector<int>, set<Mask>> oriented_vertices_by_nzmod5; // TODO: remove
+
+  set<string> o6c4c_2xcdcs_profiles;  
 };
 
 } // Exp6c4c

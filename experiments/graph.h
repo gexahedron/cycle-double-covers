@@ -14,6 +14,7 @@
 #include "experiments/preimages_data.h"
 #include "experiments/o5cdc_data.h"
 #include "experiments/o6c4c_data.h"
+#include "experiments/unit_vector_flows_data.h"
 
 #include <iostream>
 #include <fstream>
@@ -39,7 +40,8 @@ struct Graph:
   public ExpPetersenColouring::Data,
   public ExpPreimages::Data,
   public Exp5cdc::Data,
-  public Exp6c4c::Data
+  public Exp6c4c::Data,
+  public ExpUnitVectorFlows::Data
 {
   int number_of_vertices = 0; // TODO: -> vertex_count
   int number_of_edges = 0; // TODO: -> edge_count
@@ -72,6 +74,8 @@ struct Graph:
 };
 
 /*********************************Methods*********************************/
+
+bool read_graph(const string& filetype, Graph& graph);
 
 // Decodes the code (which is in multicode format) of a graph.
 bool decode_multicode(FILE* input, Graph& graph);

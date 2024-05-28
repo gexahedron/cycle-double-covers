@@ -102,6 +102,18 @@ void Graph::finish_init() {
   find_faster_edge_order();
 }
 
+bool read_graph(const string& filetype, Graph& graph) {
+  if (filetype == "mc") {
+    return decode_multicode(stdin, graph);
+  } else if (filetype == "adj") {
+    return decode_adjacency(cin, graph);
+  } else if (filetype == "bghm") {
+    return decode_bghm(cin, graph);
+  }
+  assert(filetype == "g6");
+  return decode_graph6(cin, graph);
+}
+
 bool decode_multicode(FILE* input, Graph& graph) {
   unsigned char code_for_number_of_vertices[1];
   if (!fread(code_for_number_of_vertices, sizeof(unsigned char), 1, input)) {

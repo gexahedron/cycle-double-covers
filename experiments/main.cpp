@@ -4,8 +4,7 @@
  *
  * Created on 14 August 2017
  * Study of properties and relations
- * between various constructions
- * relevant to snarks:
+ * between various constructions relevant to snarks:
  * - normal (Petersen) colouring
  * - o6c4c
  * - o5cdc
@@ -13,7 +12,8 @@
  * - (3, 3)-flow parity-pair-covers (aka 33-pp)
  * - dominating circuits
  * - (m, n, k)-flow double covers
- * - TODO: unit vector flows
+ * - unit vector flows on S3
+ * - unit vector flows on S2
  *
  */
 
@@ -28,6 +28,8 @@
 #include "experiments/preimages.h"
 #include "experiments/o5cdc.h"
 #include "experiments/o6c4c.h"
+// #include "experiments/unit_vector_flows_s3.h"
+#include "experiments/unit_vector_flows.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -48,7 +50,7 @@ int main(int argc, char** argv) {
   while (true) {
     // initialize graph, which we experiment with
     Graph graph;
-    if (!read_graph(args, graph)) {
+    if (!read_graph(args.filetype, graph)) {
       break;
     }
 
@@ -69,8 +71,6 @@ int main(int argc, char** argv) {
 
     // build cycles
     ExpCycles::find_all_cycles(graph);
-    // FIXME: commenting out all useless prints, for now
-    // graph.print();
 
     run_experiments(petersen_graph, graph);
   }
@@ -82,19 +82,6 @@ int main(int argc, char** argv) {
 void init() {
   cerr.precision(17);
   srand(time(NULL));
-}
-
-// TODO: move to graph.cpp
-bool read_graph(const Args& args, Graph& graph) {
-  if (args.filetype == "mc") {
-    return decode_multicode(stdin, graph);
-  } else if (args.filetype == "adj") {
-    return decode_adjacency(cin, graph);
-  } else if (args.filetype == "bghm") {
-    return decode_bghm(cin, graph);
-  }
-  assert(args.filetype == "g6");
-  return decode_graph6(cin, graph);
 }
 
 void process_petersen_graph(Graph& petersen_graph) {
@@ -110,6 +97,8 @@ void process_petersen_graph(Graph& petersen_graph) {
 }
 
 void run_experiments(const Graph& petersen_graph, Graph& graph) {
-  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow
+  // Exp5cdc::find_all_o5cdc(graph); // NOTE: this is very slow, and probably BROKEN
   Exp6c4c::find_all_o6c4c(graph);
+  ExpPetersenColouring::find_all_petersen_colourings(graph);
+  ExpUnitVectorFlows::find_all_unit_vector_flows(graph);
 }

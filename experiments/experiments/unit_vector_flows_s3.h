@@ -1,17 +1,16 @@
 /*
- * File:   unit_vector_flows.h
+ * File:   unit_vector_flows_s3.h
  * Author: Nikolay Ulyanov (ulyanick@gmail.com)
  *
  * TODO:
  *
- * Created on August 17, 2019
+ * Created on January 10, 2024
  *
  */
 
 #pragma once
 
 #include "graph.h"
-
 
 namespace ExpUnitVectorFlows {
 
